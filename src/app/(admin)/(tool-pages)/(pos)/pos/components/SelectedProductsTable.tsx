@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ChevronDownIcon, ChevronUpIcon } from "@/icons";
+import QtyPriceModal from "./(modal)/QtyPriceModal";
 
 export interface PosItem {
   id: number;
@@ -36,6 +37,7 @@ interface SelectedProductsTableProps {
   items: PosItem[];
   onUpdateQty: (id: number, delta: number) => void;
   onRemove: (id: number) => void;
+  onUpdateQtyPrice?: (id: number, addQty: number, newPrice: number) => void;
 }
 
 // Group items by product ID and name
@@ -56,15 +58,26 @@ interface GroupedItem {
   };
 }
 
+/**
+ * ตารางแสดงสินค้าที่เลือกในระบบ POS
+ */
 export default function SelectedProductsTable({
   items,
   onUpdateQty,
   onRemove,
+  onUpdateQtyPrice,
 }: SelectedProductsTableProps) {
   const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
   const [editingPrice, setEditingPrice] = useState<string | null>(null);
   const [tempPrice, setTempPrice] = useState<string>("");
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalData, setModalData] = useState<{
+    productId: number;
+    productName: string;
+    currentQty: number;
+    currentUnitPrice: number;
+  } | null>(null);
 
   // Check if mobile on mount and resize
   React.useEffect(() => {
@@ -74,9 +87,79 @@ export default function SelectedProductsTable({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  const toggleExpand = (id: number) => {
+    const newExpanded = new Set(expandedItems);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedItems(newExpanded);
+  };
+
+  const startEditPrice = (subId: string, currentPrice: number) => {
+    setEditingPrice(subId);
+    setTempPrice(currentPrice.toString());
+  };
+
+  const cancelEditPrice = () => {
+    setEditingPrice(null);
+    setTempPrice("");
+  };
+
+  const saveEditPrice = (itemId: string) => {
+    const newPrice = parseFloat(tempPrice);
+    if (isNaN(newPrice) || newPrice < 0) {
+      cancelEditPrice();
+      return;
+    }
+
+    // For single items, update the price for all instances of this product
+    if (itemId.startsWith("single-")) {
+      const productId = parseInt(itemId.replace("single-", ""));
+      console.log("Update price for product", productId, "to:", newPrice);
+      // TODO: Implement onUpdatePrice handler in parent component
+      // onUpdatePrice(productId, newPrice);
+    } else {
+      // For sub-items, this would need individual item tracking
+      console.log("Update price for sub-item", itemId, "to:", newPrice);
+      // TODO: Implement individual sub-item price updates
+    }
+
+    cancelEditPrice();
+  };
+
+  const removeSubItem = (groupId: number) => {
+    // Remove one instance by decreasing qty
+    onUpdateQty(groupId, -1);
+  };
+
   if (items.length === 0) {
     return null;
   }
+
+  const openQtyPriceModal = (
+    productId: number,
+    productName: string,
+    currentQty: number,
+    currentUnitPrice: number,
+  ) => {
+    setModalData({
+      productId,
+      productName,
+      currentQty,
+      currentUnitPrice,
+    });
+    setModalOpen(true);
+  };
+
+  const handleModalConfirm = (addQty: number, newPrice: number) => {
+    if (modalData && onUpdateQtyPrice) {
+      onUpdateQtyPrice(modalData.productId, addQty, newPrice);
+    }
+    setModalOpen(false);
+    setModalData(null);
+  };
 
   // Group items by product ID
   const groupedItems: GroupedItem[] = [];
@@ -145,11 +228,7 @@ export default function SelectedProductsTable({
                   </div>
                   {hasMultiple && (
                     <button className="p-1">
-                      {isExpanded ? (
-                        <ChevronUpIcon className="h-5 w-5" />
-                      ) : (
-                        <ChevronDownIcon className="h-5 w-5" />
-                      )}
+                      {isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
                     </button>
                   )}
                 </div>
@@ -168,9 +247,41 @@ export default function SelectedProductsTable({
                     <span className="text-sm text-gray-600 dark:text-gray-400">
                       ราคา
                     </span>
-                    <span className="text-base font-bold text-green-600 dark:text-green-400">
-                      ฿{group.totalPrice.toFixed(2)}
-                    </span>
+                    {editingPrice === `single-${group.id}` ? (
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="number"
+                          value={tempPrice}
+                          onChange={(e) => setTempPrice(e.target.value)}
+                          className="w-20 rounded border border-blue-300 bg-white px-2 py-1 text-sm dark:border-blue-700 dark:bg-gray-800"
+                          autoFocus
+                        />
+                        <button
+                          onClick={() => saveEditPrice(`single-${group.id}`)}
+                          className="rounded bg-green-500 px-2 py-1 text-xs text-white hover:bg-green-600"
+                        >
+                          ✓
+                        </button>
+                        <button
+                          onClick={cancelEditPrice}
+                          className="rounded bg-gray-400 px-2 py-1 text-xs text-white hover:bg-gray-500"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() =>
+                          startEditPrice(
+                            `single-${group.id}`,
+                            group.totalPrice / group.totalQty,
+                          )
+                        }
+                        className="text-base font-bold text-green-600 hover:underline dark:text-green-400"
+                      >
+                        ฿{group.totalPrice.toFixed(2)} ✏️
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -196,6 +307,20 @@ export default function SelectedProductsTable({
                       +
                     </Button>
                   </div>
+                  <Button
+                    size="sm"
+                    className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
+                    onClick={() =>
+                      openQtyPriceModal(
+                        group.id,
+                        group.name,
+                        group.totalQty,
+                        group.totalPrice / group.totalQty,
+                      )
+                    }
+                  >
+                    ⚙️ จัดการ
+                  </Button>
                   <Button
                     size="sm"
                     variant="outline"
@@ -279,66 +404,43 @@ export default function SelectedProductsTable({
     );
   }
 
-  const toggleExpand = (id: number) => {
-    const newExpanded = new Set(expandedItems);
-    if (newExpanded.has(id)) {
-      newExpanded.delete(id);
-    } else {
-      newExpanded.add(id);
-    }
-    setExpandedItems(newExpanded);
-  };
-
-  const startEditPrice = (subId: string, currentPrice: number) => {
-    setEditingPrice(subId);
-    setTempPrice(currentPrice.toString());
-  };
-
-  const cancelEditPrice = () => {
-    setEditingPrice(null);
-    setTempPrice("");
-  };
-
-  const saveEditPrice = (subId: string) => {
-    // This would need to be implemented with a new handler
-    // For now, we'll just cancel the edit
-    console.log("Save price for", subId, ":", tempPrice);
-    cancelEditPrice();
-  };
-
-  const removeSubItem = (groupId: number) => {
-    // Remove one instance by decreasing qty
-    onUpdateQty(groupId, -1);
-  };
-
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800">
-      <Table>
+    <div className="w-full overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800">
+      <Table className="min-w-full">
         <TableHeader>
           <TableRow className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30">
-            <TableCell isHeader className="w-12 py-3 text-center font-bold">
+            <TableCell
+              isHeader
+              className="w-12 py-3 text-center font-bold whitespace-nowrap"
+            >
               {" "}
             </TableCell>
-            <TableCell isHeader className="py-3 text-start font-bold">
+            <TableCell isHeader className="min-w-48 py-3 text-start font-bold">
               สินค้า
             </TableCell>
-            <TableCell isHeader className="py-3 text-center font-bold">
+            <TableCell
+              isHeader
+              className="w-24 py-3 text-center font-bold whitespace-nowrap"
+            >
               หมวดหมู่
             </TableCell>
             <TableCell
               isHeader
-              className="hidden py-3 text-center font-bold sm:table-cell"
+              className="hidden w-32 py-3 text-center font-bold whitespace-nowrap sm:table-cell"
             >
               ราคา/หน่วย
             </TableCell>
-            <TableCell isHeader className="py-3 text-center font-bold">
+            <TableCell
+              isHeader
+              className="w-24 py-3 text-center font-bold whitespace-nowrap"
+            >
               จำนวน/หน่วย
             </TableCell>
-            <TableCell isHeader className="py-3 text-end font-bold">
+            <TableCell
+              isHeader
+              className="w-24 py-3 text-end font-bold whitespace-nowrap"
+            >
               รวม
-            </TableCell>
-            <TableCell isHeader className="py-3 text-center font-bold">
-              จัดการ
             </TableCell>
           </TableRow>
         </TableHeader>
@@ -350,7 +452,7 @@ export default function SelectedProductsTable({
 
             return (
               <React.Fragment key={group.id}>
-                {/* Main Row */}
+                {/* Main Row - Product Info */}
                 <TableRow
                   className={`transition-colors hover:bg-indigo-50 dark:hover:bg-indigo-950/20 ${
                     idx % 2 === 0
@@ -359,23 +461,27 @@ export default function SelectedProductsTable({
                   }`}
                 >
                   {/* Expand/Collapse Button */}
-                  <TableCell className="py-3 text-center">
+                  <TableCell className="w-12 py-3 text-center whitespace-nowrap">
                     {hasMultiple && (
                       <button
                         onClick={() => toggleExpand(group.id)}
                         className="rounded-full p-1 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
                       >
                         {isExpanded ? (
-                          <ChevronUpIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                          <span className="flex h-5 w-5 items-center justify-center text-gray-600 dark:text-gray-400">
+                            <ChevronUpIcon />
+                          </span>
                         ) : (
-                          <ChevronDownIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                          <span className="flex h-5 w-5 items-center justify-center text-gray-600 dark:text-gray-400">
+                            <ChevronDownIcon />
+                          </span>
                         )}
                       </button>
                     )}
                   </TableCell>
 
                   {/* Product Name */}
-                  <TableCell className="py-3 font-medium text-gray-900 dark:text-white">
+                  <TableCell className="min-w-48 py-3 font-medium text-gray-900 dark:text-white">
                     {group.name}
                     {hasMultiple && (
                       <span className="ml-2 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700 dark:bg-blue-950 dark:text-blue-300">
@@ -385,7 +491,7 @@ export default function SelectedProductsTable({
                   </TableCell>
 
                   {/* Category Badge */}
-                  <TableCell className="py-3">
+                  <TableCell className="w-24 py-3 text-center whitespace-nowrap">
                     <div className="flex justify-center">
                       {group.category ? (
                         <span
@@ -403,54 +509,122 @@ export default function SelectedProductsTable({
                   </TableCell>
 
                   {/* Unit Price */}
-                  <TableCell className="hidden py-3 text-center text-sm font-medium text-gray-700 sm:table-cell dark:text-gray-300">
-                    ฿{(group.totalPrice / group.totalQty).toFixed(2)}
+                  <TableCell className="hidden w-32 py-3 text-center text-sm font-medium whitespace-nowrap text-gray-700 sm:table-cell dark:text-gray-300">
+                    {editingPrice === `single-${group.id}` ? (
+                      <div className="flex items-center justify-center gap-1">
+                        <input
+                          type="number"
+                          value={tempPrice}
+                          onChange={(e) => setTempPrice(e.target.value)}
+                          className="w-20 rounded border border-blue-300 bg-white px-2 py-1 text-sm dark:border-blue-700 dark:bg-gray-800"
+                          autoFocus
+                        />
+                        <button
+                          onClick={() => saveEditPrice(`single-${group.id}`)}
+                          className="rounded bg-green-500 px-2 py-1 text-xs text-white hover:bg-green-600"
+                        >
+                          ✓
+                        </button>
+                        <button
+                          onClick={cancelEditPrice}
+                          className="rounded bg-gray-400 px-2 py-1 text-xs text-white hover:bg-gray-500"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() =>
+                          startEditPrice(
+                            `single-${group.id}`,
+                            group.totalPrice / group.totalQty,
+                          )
+                        }
+                        className="text-sm text-blue-600 hover:underline dark:text-blue-400"
+                      >
+                        ฿{(group.totalPrice / group.totalQty).toFixed(2)} ✏️
+                      </button>
+                    )}
                   </TableCell>
 
-                  {/* Unit Name + Quantity */}
-                  <TableCell className="py-3">
-                    <div className="flex items-center justify-center gap-1 sm:gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-8 w-8 rounded-full p-0"
-                        onClick={() => onUpdateQty(group.id, -1)}
-                      >
-                        −
-                      </Button>
-                      <span className="min-w-8 text-center font-bold text-gray-900 sm:min-w-10 dark:text-white">
-                        {group.totalQty}
+                  {/* Quantity */}
+                  <TableCell className="w-24 py-3 text-center whitespace-nowrap">
+                    <span className="text-base font-bold text-gray-900 dark:text-white">
+                      {group.totalQty}
+                    </span>
+                    {group.unit && (
+                      <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
+                        {group.unit.name}
                       </span>
-                      <Button
-                        size="sm"
-                        className="h-8 w-8 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 p-0 hover:from-green-600 hover:to-emerald-700"
-                        onClick={() => onUpdateQty(group.id, 1)}
-                      >
-                        +
-                      </Button>
-                    </div>
+                    )}
                   </TableCell>
 
                   {/* Total Price */}
-                  <TableCell className="py-3 text-end text-base font-bold text-green-600 dark:text-green-400">
+                  <TableCell className="w-24 py-3 text-end text-base font-bold whitespace-nowrap text-green-600 dark:text-green-400">
                     ฿{group.totalPrice.toFixed(2)}
                   </TableCell>
+                </TableRow>
 
-                  {/* Delete Button */}
-                  <TableCell className="py-3 text-center">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="transition-all hover:shadow-md"
-                      onClick={() => {
-                        // Remove all items of this product
-                        for (let i = 0; i < group.totalQty; i++) {
-                          onRemove(group.id);
+                {/* Control Row - Actions */}
+                <TableRow
+                  className={`${
+                    idx % 2 === 0
+                      ? "bg-gray-50 dark:bg-gray-900/50"
+                      : "bg-white dark:bg-gray-950"
+                  }`}
+                >
+                  <TableCell colSpan={6} className="py-2">
+                    <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center gap-1">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-8 w-8 rounded-full p-0"
+                          onClick={() => onUpdateQty(group.id, -1)}
+                        >
+                          −
+                        </Button>
+                        <span className="min-w-8 text-center text-sm font-semibold text-gray-600 dark:text-gray-400">
+                          จำนวน
+                        </span>
+                        <Button
+                          size="sm"
+                          className="h-8 w-8 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 p-0 hover:from-green-600 hover:to-emerald-700"
+                          onClick={() => onUpdateQty(group.id, 1)}
+                        >
+                          +
+                        </Button>
+                      </div>
+
+                      <Button
+                        size="sm"
+                        className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
+                        onClick={() =>
+                          openQtyPriceModal(
+                            group.id,
+                            group.name,
+                            group.totalQty,
+                            group.totalPrice / group.totalQty,
+                          )
                         }
-                      }}
-                    >
-                      🗑️
-                    </Button>
+                      >
+                        ⚙️ จัดการจำนวน & ราคา
+                      </Button>
+
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/20 dark:hover:text-red-400"
+                        onClick={() => {
+                          // Remove all items of this product
+                          for (let i = 0; i < group.totalQty; i++) {
+                            onRemove(group.id);
+                          }
+                        }}
+                      >
+                        🗑️ ลบ
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
 
@@ -458,85 +632,99 @@ export default function SelectedProductsTable({
                 {isExpanded && hasMultiple && (
                   <>
                     {group.subItems.map((subItem, subIdx) => (
-                      <TableRow
-                        key={subItem.subId}
-                        className="bg-indigo-50/50 dark:bg-indigo-950/10"
-                      >
-                        {/* Empty cell for alignment */}
-                        <TableCell className="py-2"> </TableCell>
+                      <React.Fragment key={subItem.subId}>
+                        {/* Sub-item Info Row */}
+                        <TableRow className="bg-indigo-50/50 dark:bg-indigo-950/10">
+                          {/* Empty cell for alignment */}
+                          <TableCell className="w-12 py-2"> </TableCell>
 
-                        {/* Sub-item indicator */}
-                        <TableCell className="py-2 pl-8">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
-                              └─
-                            </span>
-                            <span className="text-sm text-gray-700 dark:text-gray-300">
-                              รายการที่ {subIdx + 1}
-                            </span>
-                          </div>
-                        </TableCell>
-
-                        {/* Quantity (always 1 for sub-items) */}
-                        <TableCell className="py-2 text-center">
-                          <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                            1
-                          </span>
-                        </TableCell>
-
-                        {/* Editable Price */}
-                        <TableCell className="hidden py-2 text-end sm:table-cell">
-                          {editingPrice === subItem.subId ? (
-                            <div className="flex items-center justify-end gap-1">
-                              <input
-                                type="number"
-                                value={tempPrice}
-                                onChange={(e) => setTempPrice(e.target.value)}
-                                className="w-20 rounded border border-blue-300 bg-white px-2 py-1 text-sm dark:border-blue-700 dark:bg-gray-800"
-                                autoFocus
-                              />
-                              <button
-                                onClick={() => saveEditPrice(subItem.subId)}
-                                className="rounded bg-green-500 px-2 py-1 text-xs text-white hover:bg-green-600"
-                              >
-                                ✓
-                              </button>
-                              <button
-                                onClick={cancelEditPrice}
-                                className="rounded bg-gray-400 px-2 py-1 text-xs text-white hover:bg-gray-500"
-                              >
-                                ✕
-                              </button>
+                          {/* Sub-item indicator */}
+                          <TableCell className="min-w-48 py-2 pl-8">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs text-gray-500 dark:text-gray-400">
+                                └─
+                              </span>
+                              <span className="text-sm text-gray-700 dark:text-gray-300">
+                                รายการที่ {subIdx + 1}
+                              </span>
                             </div>
-                          ) : (
-                            <button
-                              onClick={() =>
-                                startEditPrice(subItem.subId, subItem.unitPrice)
-                              }
-                              className="text-sm text-blue-600 hover:underline dark:text-blue-400"
-                            >
-                              ฿{subItem.unitPrice.toFixed(2)} ✏️
-                            </button>
-                          )}
-                        </TableCell>
+                          </TableCell>
 
-                        {/* Sub-item Total (same as unit price since qty=1) */}
-                        <TableCell className="py-2 text-end text-sm text-gray-700 dark:text-gray-300">
-                          ฿{subItem.unitPrice.toFixed(2)}
-                        </TableCell>
+                          {/* Category */}
+                          <TableCell className="w-24 py-2 text-center whitespace-nowrap">
+                            <span className="text-xs text-gray-400 dark:text-gray-500">
+                              -
+                            </span>
+                          </TableCell>
 
-                        {/* Delete Sub-item */}
-                        <TableCell className="py-2 text-center">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-6 px-2 text-xs transition-all hover:shadow-md"
-                            onClick={() => removeSubItem(group.id)}
-                          >
-                            ลบ
-                          </Button>
-                        </TableCell>
-                      </TableRow>
+                          {/* Editable Price */}
+                          <TableCell className="hidden w-32 py-2 text-center whitespace-nowrap sm:table-cell">
+                            {editingPrice === subItem.subId ? (
+                              <div className="flex items-center justify-center gap-1">
+                                <input
+                                  type="number"
+                                  value={tempPrice}
+                                  onChange={(e) => setTempPrice(e.target.value)}
+                                  className="w-20 rounded border border-blue-300 bg-white px-2 py-1 text-sm dark:border-blue-700 dark:bg-gray-800"
+                                  autoFocus
+                                />
+                                <button
+                                  onClick={() => saveEditPrice(subItem.subId)}
+                                  className="rounded bg-green-500 px-2 py-1 text-xs text-white hover:bg-green-600"
+                                >
+                                  ✓
+                                </button>
+                                <button
+                                  onClick={cancelEditPrice}
+                                  className="rounded bg-gray-400 px-2 py-1 text-xs text-white hover:bg-gray-500"
+                                >
+                                  ✕
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() =>
+                                  startEditPrice(
+                                    subItem.subId,
+                                    subItem.unitPrice,
+                                  )
+                                }
+                                className="text-sm text-blue-600 hover:underline dark:text-blue-400"
+                              >
+                                ฿{subItem.unitPrice.toFixed(2)} ✏️
+                              </button>
+                            )}
+                          </TableCell>
+
+                          {/* Quantity (always 1) */}
+                          <TableCell className="w-24 py-2 text-center whitespace-nowrap">
+                            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                              1
+                            </span>
+                          </TableCell>
+
+                          {/* Sub-item Total */}
+                          <TableCell className="w-24 py-2 text-end text-sm whitespace-nowrap text-gray-700 dark:text-gray-300">
+                            ฿{subItem.unitPrice.toFixed(2)}
+                          </TableCell>
+                        </TableRow>
+
+                        {/* Sub-item Control Row */}
+                        <TableRow className="bg-indigo-50/30 dark:bg-indigo-950/5">
+                          <TableCell colSpan={6} className="py-2 pl-16">
+                            <div className="flex items-center justify-end gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-7 px-3 text-xs hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/20 dark:hover:text-red-400"
+                                onClick={() => removeSubItem(group.id)}
+                              >
+                                🗑️ ลบรายการนี้
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      </React.Fragment>
                     ))}
                   </>
                 )}
@@ -545,6 +733,18 @@ export default function SelectedProductsTable({
           })}
         </TableBody>
       </Table>
+
+      {/* Qty & Price Modal */}
+      {modalData && (
+        <QtyPriceModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          productName={modalData.productName}
+          currentQty={modalData.currentQty}
+          currentUnitPrice={modalData.currentUnitPrice}
+          onConfirm={handleModalConfirm}
+        />
+      )}
     </div>
   );
 }

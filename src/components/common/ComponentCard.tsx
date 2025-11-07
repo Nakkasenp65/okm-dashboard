@@ -19,7 +19,7 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
     >
       {/* Card Header */}
       <div className="border-b border-gray-100 px-6 py-4 dark:border-gray-800">
-        <h3 className="text-base font-semibold text-gray-900 dark:text-white">
+        <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">
           {title}
         </h3>
         {desc && (

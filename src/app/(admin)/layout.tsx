@@ -7,8 +7,6 @@ import Backdrop from "@/layout/Backdrop";
 import Footer from "@/components/common/Footer";
 import React from "react";
 
-
-
 export default function AdminLayout({
   children,
 }: {
@@ -20,10 +18,8 @@ export default function AdminLayout({
   const mainContentMargin = isMobileOpen
     ? "ml-0"
     : isExpanded || isHovered
-    ? "lg:ml-[290px]"
-    : "lg:ml-[90px]";
-
-  
+      ? "lg:ml-[290px]"
+      : "lg:ml-[90px]";
 
   return (
     <div className="min-h-screen xl:flex">
@@ -37,7 +33,7 @@ export default function AdminLayout({
         {/* Header */}
         <AppHeader />
         {/* Page Content */}
-        <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6 flex-1 w-full">{children}</div>
+        <div className="mx-auto w-full flex-1 p-4 md:p-6">{children}</div>
         {/* Persistent Footer */}
         <Footer />
       </div>

@@ -1,9 +1,10 @@
 "use client";
-import React, { useCallback, useMemo, useState } from "react";
-import ComponentCard from "@/components/common/ComponentCard";
-import PriceSummary from "@/components/pos/PriceSummary";
+import React, { useCallback, useMemo } from "react";
+import PriceSummary from "@/app/(admin)/(tool-pages)/(pos)/pos/components/PriceSummary";
 import SelectedProductsTable, { PosItem } from "./SelectedProductsTable";
 import { usePosMockData } from "./usePosMockData";
+import ComponentCard from "../../../../../../components/common/ComponentCard";
+import Image from "next/image";
 
 interface SellingDetailsProps {
   selectedProducts: PosItem[];
@@ -16,9 +17,6 @@ export default function SellingDetails({
 }: SellingDetailsProps) {
   // Fetch available products (for future add/selection workflows)
   const { loading, error } = usePosMockData();
-
-  // Local state for items being sold
-  const [serviceCharge, setServiceCharge] = useState<number>(0);
 
   // Update quantity handler
   const updateQty = useCallback(
@@ -45,59 +43,52 @@ export default function SellingDetails({
   const summaryItems = useMemo(() => selectedProducts, [selectedProducts]);
 
   return (
-    <div className="flex flex-col gap-3 lg:gap-4">
+    <ComponentCard
+      title="รายละเอียดการขาย"
+      className="flex flex-col gap-3 rounded-lg bg-white lg:gap-4"
+    >
       {/* Selected Products Table */}
       <div className="flex flex-1 flex-col">
-        <ComponentCard
-          title="รายการขาย"
-          className="shadow-md transition-shadow hover:shadow-lg"
-        >
-          {/* Optional inline status for data fetching */}
-          {loading && (
-            <div className="mb-2 rounded-lg bg-blue-50 p-3 text-sm text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
-              ⏳ กำลังโหลดข้อมูลสินค้า...
-            </div>
-          )}
-          {error && (
-            <div className="mb-2 rounded-lg bg-red-50 p-3 text-sm text-red-600 dark:bg-red-950/30 dark:text-red-400">
-              ❌ เกิดข้อผิดพลาดในการโหลดข้อมูล: {error}
-            </div>
-          )}
+        {/* Optional inline status for data fetching */}
+        {loading && (
+          <div className="mb-2 rounded-lg bg-blue-50 p-3 text-sm text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
+            ⏳ กำลังโหลดข้อมูลสินค้า...
+          </div>
+        )}
 
-          <SelectedProductsTable
-            items={selectedProducts}
-            onUpdateQty={updateQty}
-            onRemove={removeItem}
-          />
+        {error && (
+          <div className="mb-2 rounded-lg bg-red-50 p-3 text-sm text-red-600 dark:bg-red-950/30 dark:text-red-400">
+            ❌ เกิดข้อผิดพลาดในการโหลดข้อมูล: {error}
+          </div>
+        )}
 
-          {selectedProducts.length === 0 && (
-            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 py-12 dark:border-gray-700">
-              <div className="text-4xl">🛒</div>
-              <p className="mt-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                ยังไม่มีสินค้าในตะกร้า
-              </p>
-              <p className="mt-1 text-xs text-gray-500 dark:text-gray-500">
-                เริ่มต้นโดยการเพิ่มสินค้า
-              </p>
-            </div>
-          )}
-        </ComponentCard>
+        {/* ตารางสินค้าที่เลือกเข้ามาแล้ว */}
+        <SelectedProductsTable
+          items={selectedProducts}
+          onUpdateQty={updateQty}
+          onRemove={removeItem}
+        />
+
+        {selectedProducts.length === 0 && (
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 py-12 dark:border-gray-700">
+            <Image
+              src="/images/assets/empty-cart.png"
+              alt="Empty Cart"
+              width={100}
+              height={100}
+              className="w-24 opacity-10"
+            />
+            <p className="mt-2 text-2xl font-medium text-gray-200 dark:text-gray-400">
+              ยังไม่มีสินค้าในตะกร้า
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Price Summary */}
       <div className="flex flex-col">
-        <ComponentCard
-          title="ราคารวม"
-          className="shadow-md transition-shadow hover:shadow-lg"
-        >
-          <PriceSummary
-            items={summaryItems}
-            vatRate={0.07}
-            serviceCharge={serviceCharge}
-            onServiceChargeChange={setServiceCharge}
-          />
-        </ComponentCard>
+        <PriceSummary items={summaryItems} vatRate={0.07} serviceCharge={0} />
       </div>
-    </div>
+    </ComponentCard>
   );
 }
