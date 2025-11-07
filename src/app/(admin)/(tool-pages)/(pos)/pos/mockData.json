@@ -1,0 +1,3912 @@
+{
+    "status": {
+        "is": true,
+        "code": 200,
+        "message": "OK"
+    },
+    "data": {
+        "page": 1,
+        "page_per": 50,
+        "total": 153,
+        "from": 1,
+        "to": 50,
+        "tbody": [
+            {
+                "id": 7103878,
+                "name": "AirPods 4",
+                "name_md5": "7d49d9c252",
+                "barcode": "SK4H77Y7QJN",
+                "barcode_md5": "5e28568b2d",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-02-16T13:22:06.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 7103878,
+                    "cost": "2600.00",
+                    "repair": "0.00",
+                    "level_1": "3990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 7103878,
+                    "user_id": 29050,
+                    "user": {
+                        "id": 29050,
+                        "fullname": "Noppadol Lerptakool"
+                    }
+                }
+            },
+            {
+                "id": 13241999,
+                "name": "Apple Airpods 2",
+                "name_md5": "58650b9a7f",
+                "barcode": "SGFJMTD0NLX2Y",
+                "barcode_md5": "40970a3053",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-07-26T07:45:12.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 13241999,
+                    "cost": "500.00",
+                    "repair": "0.00",
+                    "level_1": "1590.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 13241999,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 12864212,
+                "name": "Apple Airpods 4 (ANC)",
+                "name_md5": "82bdb32c8c",
+                "barcode": "SGJP9X9XXPV",
+                "barcode_md5": "7d34a0b1ce",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-07-18T11:17:32.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 12864212,
+                    "cost": "3000.00",
+                    "repair": "0.00",
+                    "level_1": "4990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 12864212,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 12013092,
+                "name": "Apple Airpods Gen4",
+                "name_md5": "3a87b7af9f",
+                "barcode": "SJ1W4P7GH0F",
+                "barcode_md5": "f13182526b",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-06-19T10:10:23.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 12013092,
+                    "cost": "2200.00",
+                    "repair": "0.00",
+                    "level_1": "3990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 12013092,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 14527154,
+                "name": "Apple iPad Air M3 Cellular",
+                "name_md5": "e577615cac",
+                "barcode": "357241836601145",
+                "barcode_md5": "a98460d66b",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402452,
+                "unit_id": 86409,
+                "created_at": "2025-09-17T05:19:07.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14527154,
+                    "cost": "22000.00",
+                    "repair": "0.00",
+                    "level_1": "31900.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402452,
+                    "color": "#0f0101",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14527154,
+                    "user_id": 35093,
+                    "user": {
+                        "id": 35093,
+                        "fullname": "\u0e40\u0e1e\u0e47\u0e0d\u0e20\u0e31\u0e01\u0e14\u0e34\u0e4c \u0e27\u0e07\u0e04\u0e4c\u0e04\u0e33"
+                    }
+                }
+            },
+            {
+                "id": 10978597,
+                "name": "Apple  iPhone 12",
+                "name_md5": "0932ce0489",
+                "barcode": "353067111668960",
+                "barcode_md5": "d6807f4d9d",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402453,
+                "unit_id": 86408,
+                "created_at": "2025-05-25T06:38:10.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 10978597,
+                    "cost": "5000.00",
+                    "repair": "0.00",
+                    "level_1": "10990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402453,
+                    "color": "#050000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 10978597,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 14071764,
+                "name": "Apple iphone 16 promax 256gb",
+                "name_md5": "ef34c1d283",
+                "barcode": "350572417280231",
+                "barcode_md5": "2888918c7e",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402453,
+                "unit_id": 86409,
+                "created_at": "2025-08-22T13:58:11.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14071764,
+                    "cost": "27000.00",
+                    "repair": "0.00",
+                    "level_1": "34000.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402453,
+                    "color": "#050000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14071764,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 13486032,
+                "name": "Apple iPhone 16 Promax 256GB",
+                "name_md5": "f5d9d389a7",
+                "barcode": "355350438678864",
+                "barcode_md5": "b3ae3a7303",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402453,
+                "unit_id": 86409,
+                "created_at": "2025-08-02T12:13:33.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 13486032,
+                    "cost": "29000.00",
+                    "repair": "0.00",
+                    "level_1": "37990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402453,
+                    "color": "#050000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 13486032,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 8741532,
+                "name": "Apple Pencil 1",
+                "name_md5": "caa65745a4",
+                "barcode": "SHKHFRBE3GWTJ",
+                "barcode_md5": "a8b1622f5b",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-04-12T12:26:41.000000Z",
+                "count_name_md5": 6,
+                "prices": {
+                    "stock_id": 8741532,
+                    "cost": "700.00",
+                    "repair": "0.00",
+                    "level_1": "2590.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8741532,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 8185637,
+                "name": "Apple Pencil 2",
+                "name_md5": "3f9051475f",
+                "barcode": "SH95KM2GGJKM9",
+                "barcode_md5": "46092a7941",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-03-29T11:25:26.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 8185637,
+                    "cost": "1000.00",
+                    "repair": "0.00",
+                    "level_1": "2990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8185637,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 14856494,
+                "name": "apple pencil pro",
+                "name_md5": "aec56f4883",
+                "barcode": "SK3MH6706J4",
+                "barcode_md5": "bbd56d08b1",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-10-26T06:59:54.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14856494,
+                    "cost": "1500.00",
+                    "repair": "0.00",
+                    "level_1": "3590.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14856494,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 12462374,
+                "name": "Apple Pencil Pro",
+                "name_md5": "1958e49cb9",
+                "barcode": "SYXHFPW39V4",
+                "barcode_md5": "cf17c59ebe",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-07-02T08:57:44.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 12462374,
+                    "cost": "1700.00",
+                    "repair": "0.00",
+                    "level_1": "2990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 12462374,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 10978723,
+                "name": "Apple Pencil USB - C",
+                "name_md5": "9d477e9485",
+                "barcode": "SDKKGJ9VWRL",
+                "barcode_md5": "37fcfe4d2e",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-05-25T07:03:31.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 10978723,
+                    "cost": "800.00",
+                    "repair": "0.00",
+                    "level_1": "2590.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 10978723,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 14780415,
+                "name": "Apple Watch 10",
+                "name_md5": "00a5f78db2",
+                "barcode": "FQL3C56TJX",
+                "barcode_md5": "a760751203",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86408,
+                "created_at": "2025-10-14T11:30:33.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14780415,
+                    "cost": "3000.00",
+                    "repair": "0.00",
+                    "level_1": "0.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14780415,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 13561092,
+                "name": "Apple Watch S9",
+                "name_md5": "97e38e8595",
+                "barcode": "C9D16Q4925",
+                "barcode_md5": "62a523561e",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-08-05T13:47:22.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 13561092,
+                    "cost": "4000.00",
+                    "repair": "0.00",
+                    "level_1": "0.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 13561092,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 14732225,
+                "name": "Apple Watch SE2",
+                "name_md5": "8135961fa9",
+                "barcode": "SG71FYKXX7Y",
+                "barcode_md5": "fffddfea0d",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-10-07T06:49:37.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14732225,
+                    "cost": "2500.00",
+                    "repair": "0.00",
+                    "level_1": "5990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14732225,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 14581079,
+                "name": "Google Pixel 10 Pro XL",
+                "name_md5": "d99f64a62b",
+                "barcode": "354416433797701",
+                "barcode_md5": "47ea337312",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402462,
+                "unit_id": 86409,
+                "created_at": "2025-09-20T13:13:44.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14581079,
+                    "cost": "31000.00",
+                    "repair": "0.00",
+                    "level_1": "36990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402462,
+                    "color": "#e613ed",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 GOOGLE"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14581079,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 14581085,
+                "name": "Honor Magic V3",
+                "name_md5": "b43e513019",
+                "barcode": "867080071233906",
+                "barcode_md5": "969c138631",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402442,
+                "unit_id": 86409,
+                "created_at": "2025-09-20T13:20:23.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14581085,
+                    "cost": "19000.00",
+                    "repair": "0.00",
+                    "level_1": "27990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402442,
+                    "color": "#fc9d12",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 XIAOMI"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14581085,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 14583336,
+                "name": "Honor Magic V5",
+                "name_md5": "08c20db48b",
+                "barcode": "861430071617473",
+                "barcode_md5": "f64fc727de",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402442,
+                "unit_id": 86409,
+                "created_at": "2025-09-21T09:02:53.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14583336,
+                    "cost": "38000.00",
+                    "repair": "0.00",
+                    "level_1": "43990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402442,
+                    "color": "#fc9d12",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 XIAOMI"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14583336,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 14071785,
+                "name": "\u0e47Honor V3",
+                "name_md5": "5cf585823f",
+                "barcode": "867080071582013",
+                "barcode_md5": "94dfffdec7",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402441,
+                "unit_id": 86408,
+                "created_at": "2025-08-22T13:59:35.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14071785,
+                    "cost": "24000.00",
+                    "repair": "0.00",
+                    "level_1": "28990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402441,
+                    "color": "#0588e6",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 VIVO"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14071785,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 8193952,
+                "name": "Huawei MediaPad T5 Sim",
+                "name_md5": "1074d8ff0e",
+                "barcode": "860556042548578",
+                "barcode_md5": "170780935b",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402442,
+                "unit_id": 86408,
+                "created_at": "2025-03-30T12:31:08.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 8193952,
+                    "cost": "2000.00",
+                    "repair": "0.00",
+                    "level_1": "3990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402442,
+                    "color": "#fc9d12",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 XIAOMI"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8193952,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 14035329,
+                "name": "Huawei Watch GT 4",
+                "name_md5": "4e0ceb7363",
+                "barcode": "Q4ETQ24322003942",
+                "barcode_md5": "ef150b0a57",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-08-20T13:53:34.000000Z",
+                "count_name_md5": 2,
+                "prices": {
+                    "stock_id": 14035329,
+                    "cost": "2000.00",
+                    "repair": "0.00",
+                    "level_1": "3990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14035329,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 8574078,
+                "name": "Infinix Hot 40i",
+                "name_md5": "153a8a621c",
+                "barcode": "353363607968836",
+                "barcode_md5": "179e2dcc55",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402463,
+                "unit_id": 86409,
+                "created_at": "2025-04-02T13:26:20.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 8574078,
+                    "cost": "2600.00",
+                    "repair": "0.00",
+                    "level_1": "4990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402463,
+                    "color": "#e6279a",
+                    "name": "\u0e2d\u0e37\u0e48\u0e19\u0e46"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8574078,
+                    "user_id": 35093,
+                    "user": {
+                        "id": 35093,
+                        "fullname": "\u0e40\u0e1e\u0e47\u0e0d\u0e20\u0e31\u0e01\u0e14\u0e34\u0e4c \u0e27\u0e07\u0e04\u0e4c\u0e04\u0e33"
+                    }
+                }
+            },
+            {
+                "id": 14230462,
+                "name": "Infinix Smart 10",
+                "name_md5": "5f98a99c40",
+                "barcode": "359160584986573",
+                "barcode_md5": "5d38a16922",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402455,
+                "unit_id": 86409,
+                "created_at": "2025-09-03T11:10:31.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14230462,
+                    "cost": "1700.00",
+                    "repair": "0.00",
+                    "level_1": "2990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402455,
+                    "color": "#0b632e",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d 1 Infinix"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14230462,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 14872278,
+                "name": "Infinix Smart10",
+                "name_md5": "b40336af47",
+                "barcode": "359160584917958",
+                "barcode_md5": "e7d3eac141",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402455,
+                "unit_id": 86409,
+                "created_at": "2025-10-28T10:17:11.000000Z",
+                "count_name_md5": 10,
+                "prices": {
+                    "stock_id": 14872278,
+                    "cost": "1700.00",
+                    "repair": "0.00",
+                    "level_1": "2990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402455,
+                    "color": "#0b632e",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d 1 Infinix"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14872278,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 8574063,
+                "name": "iPad Air",
+                "name_md5": "0bfdb9b92a",
+                "barcode": "DMQMCGXKFK15",
+                "barcode_md5": "c24d1fe9bd",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86408,
+                "created_at": "2025-04-02T13:01:38.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 8574063,
+                    "cost": "1500.00",
+                    "repair": "0.00",
+                    "level_1": "2990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8574063,
+                    "user_id": 35093,
+                    "user": {
+                        "id": 35093,
+                        "fullname": "\u0e40\u0e1e\u0e47\u0e0d\u0e20\u0e31\u0e01\u0e14\u0e34\u0e4c \u0e27\u0e07\u0e04\u0e4c\u0e04\u0e33"
+                    }
+                }
+            },
+            {
+                "id": 9553687,
+                "name": "iPad Air 11 M3",
+                "name_md5": "83acb18a3f",
+                "barcode": "FQ9T40QPTJ",
+                "barcode_md5": "d3be0e6473",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86408,
+                "created_at": "2025-05-11T08:26:19.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 9553687,
+                    "cost": "13000.00",
+                    "repair": "0.00",
+                    "level_1": "18990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 9553687,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 14581077,
+                "name": "iPad Air11 M3",
+                "name_md5": "773d7f9c42",
+                "barcode": "SDWF4WYW214",
+                "barcode_md5": "b83a469c0c",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-09-20T13:09:59.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14581077,
+                    "cost": "11000.00",
+                    "repair": "0.00",
+                    "level_1": "17990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14581077,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 8185645,
+                "name": "iPad Air5",
+                "name_md5": "f1dc07c29a",
+                "barcode": "SJ75M6KXKWR",
+                "barcode_md5": "e1b4aaa8a9",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-03-29T11:28:21.000000Z",
+                "count_name_md5": 2,
+                "prices": {
+                    "stock_id": 8185645,
+                    "cost": "14500.00",
+                    "repair": "0.00",
+                    "level_1": "14990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8185645,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 3865382,
+                "name": "iPad Air5 Cellular",
+                "name_md5": "962812a48c",
+                "barcode": "356422243319015",
+                "barcode_md5": "d0bc467d03",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2024-09-13T14:08:09.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 3865382,
+                    "cost": "15600.00",
+                    "repair": "0.00",
+                    "level_1": "19990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 3865382,
+                    "user_id": 29050,
+                    "user": {
+                        "id": 29050,
+                        "fullname": "Noppadol Lerptakool"
+                    }
+                }
+            },
+            {
+                "id": 3864233,
+                "name": "iPad Air5 Wifi",
+                "name_md5": "f0f67cf4b7",
+                "barcode": "M9DG9W6Y65",
+                "barcode_md5": "7b440ecbcf",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402452,
+                "unit_id": 86408,
+                "created_at": "2023-12-17T14:08:05.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 3864233,
+                    "cost": "16024.00",
+                    "repair": "0.00",
+                    "level_1": "20900.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402452,
+                    "color": "#0f0101",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 IPAD"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 3864233,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 14856837,
+                "name": "iPad Air 7 M3",
+                "name_md5": "d260d1d2d2",
+                "barcode": "SLLKFX9J5CQ",
+                "barcode_md5": "e9c499e3bb",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-10-26T07:40:49.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14856837,
+                    "cost": "11000.00",
+                    "repair": "0.00",
+                    "level_1": "16990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14856837,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 14857655,
+                "name": "iPad Gen 10",
+                "name_md5": "f8e938758d",
+                "barcode": "GW9QV9GK9J",
+                "barcode_md5": "9404a79679",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-10-26T11:56:46.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14857655,
+                    "cost": "6000.00",
+                    "repair": "0.00",
+                    "level_1": "10990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14857655,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 13225353,
+                "name": "iPad Gen10 Wifi",
+                "name_md5": "e7b1475b1a",
+                "barcode": "TKV494X2XM",
+                "barcode_md5": "46468bf6c8",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86408,
+                "created_at": "2025-07-23T10:14:27.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 13225353,
+                    "cost": "5500.00",
+                    "repair": "0.00",
+                    "level_1": "9990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 13225353,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 14872109,
+                "name": "iPad Gen11",
+                "name_md5": "28133bb01a",
+                "barcode": "SRV4TXMT925",
+                "barcode_md5": "f650aa357c",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-10-28T10:03:20.000000Z",
+                "count_name_md5": 11,
+                "prices": {
+                    "stock_id": 14872109,
+                    "cost": "11500.00",
+                    "repair": "0.00",
+                    "level_1": "13900.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14872109,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 14822291,
+                "name": "iPad Gen11 Wifi",
+                "name_md5": "ca36115d01",
+                "barcode": "SCL9TT9GK3Q",
+                "barcode_md5": "e1b76da58b",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-10-18T13:10:08.000000Z",
+                "count_name_md5": 2,
+                "prices": {
+                    "stock_id": 14822291,
+                    "cost": "7500.00",
+                    "repair": "0.00",
+                    "level_1": "10990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14822291,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 8574064,
+                "name": "iPad Gen6",
+                "name_md5": "f2e52c13c4",
+                "barcode": "DMPWM68FJMVR",
+                "barcode_md5": "6eb0924dba",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86408,
+                "created_at": "2025-04-02T13:03:49.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 8574064,
+                    "cost": "4000.00",
+                    "repair": "0.00",
+                    "level_1": "6990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8574064,
+                    "user_id": 35093,
+                    "user": {
+                        "id": 35093,
+                        "fullname": "\u0e40\u0e1e\u0e47\u0e0d\u0e20\u0e31\u0e01\u0e14\u0e34\u0e4c \u0e27\u0e07\u0e04\u0e4c\u0e04\u0e33"
+                    }
+                }
+            },
+            {
+                "id": 8741534,
+                "name": "iPad Gen6 Wifi",
+                "name_md5": "8cf7357f3f",
+                "barcode": "SDMPZC0YSJF8K",
+                "barcode_md5": "18a89656a0",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-04-12T12:28:32.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 8741534,
+                    "cost": "2800.00",
+                    "repair": "0.00",
+                    "level_1": "6990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8741534,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 3865563,
+                "name": "iPad Gen 7 Cellular",
+                "name_md5": "d26328dae7",
+                "barcode": "353210103778559",
+                "barcode_md5": "5c02301e96",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2024-10-30T14:08:10.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 3865563,
+                    "cost": "5000.00",
+                    "repair": "0.00",
+                    "level_1": "8990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 3865563,
+                    "user_id": 29050,
+                    "user": {
+                        "id": 29050,
+                        "fullname": "Noppadol Lerptakool"
+                    }
+                }
+            },
+            {
+                "id": 3865743,
+                "name": "iPad Gen9 Wifi",
+                "name_md5": "8d33142e10",
+                "barcode": "CXWVXR2T0Y",
+                "barcode_md5": "7c862f2312",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86408,
+                "created_at": "2024-12-10T14:08:10.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 3865743,
+                    "cost": "3500.00",
+                    "repair": "0.00",
+                    "level_1": "8990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 3865743,
+                    "user_id": 29050,
+                    "user": {
+                        "id": 29050,
+                        "fullname": "Noppadol Lerptakool"
+                    }
+                }
+            },
+            {
+                "id": 3863068,
+                "name": "iPad Mini 3 Cellular",
+                "name_md5": "4dcea6a598",
+                "barcode": "354421066566779",
+                "barcode_md5": "e505c5cc81",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86408,
+                "created_at": "2023-03-05T14:08:02.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 3863068,
+                    "cost": "3000.00",
+                    "repair": "0.00",
+                    "level_1": "4990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 3863068,
+                    "user_id": 29050,
+                    "user": {
+                        "id": 29050,
+                        "fullname": "Noppadol Lerptakool"
+                    }
+                }
+            },
+            {
+                "id": 13767278,
+                "name": "iPad Mini 6",
+                "name_md5": "ae44d00c25",
+                "barcode": "SYYQWMHP340",
+                "barcode_md5": "be27befd78",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-08-16T07:52:18.000000Z",
+                "count_name_md5": 2,
+                "prices": {
+                    "stock_id": 13767278,
+                    "cost": "5000.00",
+                    "repair": "0.00",
+                    "level_1": "9990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 13767278,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 11850034,
+                "name": "iPad Pro 11 M1 Sim",
+                "name_md5": "ae0531d6f9",
+                "barcode": "351640460014374",
+                "barcode_md5": "20498bd3a8",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-06-13T10:16:36.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 11850034,
+                    "cost": "10000.00",
+                    "repair": "0.00",
+                    "level_1": "17990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 11850034,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 7798467,
+                "name": "iPad Smart Keyboard",
+                "name_md5": "4bdb8e435f",
+                "barcode": "SFTPZK27ZJY7D",
+                "barcode_md5": "9e2ed6fbcf",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-02-28T11:44:03.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 7798467,
+                    "cost": "1000.00",
+                    "repair": "0.00",
+                    "level_1": "1990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 7798467,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 7794074,
+                "name": "iPhone11",
+                "name_md5": "9528e17965",
+                "barcode": "355900701806780",
+                "barcode_md5": "928213c7e9",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402451,
+                "unit_id": null,
+                "created_at": "2025-02-28T13:50:09.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 7794074,
+                    "cost": "19500.00",
+                    "repair": "0.00",
+                    "level_1": "12990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402451,
+                    "color": "#0f0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 IPHONE"
+                },
+                "unit": null,
+                "user_import": {
+                    "stock_id": 7794074,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 8185652,
+                "name": "iPhone11Pro",
+                "name_md5": "9398bcf790",
+                "barcode": "353840105126348",
+                "barcode_md5": "3e724393a7",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402453,
+                "unit_id": 86408,
+                "created_at": "2025-03-29T11:33:24.000000Z",
+                "count_name_md5": 2,
+                "prices": {
+                    "stock_id": 8185652,
+                    "cost": "10000.00",
+                    "repair": "0.00",
+                    "level_1": "12990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402453,
+                    "color": "#050000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8185652,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 8476004,
+                "name": "iPhone 11Pro Max",
+                "name_md5": "f97e2d19d6",
+                "barcode": "353925103280187",
+                "barcode_md5": "7c54bf9d51",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402453,
+                "unit_id": 86408,
+                "created_at": "2025-04-01T06:46:55.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 8476004,
+                    "cost": "5000.00",
+                    "repair": "0.00",
+                    "level_1": "14990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402453,
+                    "color": "#050000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8476004,
+                    "user_id": 35093,
+                    "user": {
+                        "id": 35093,
+                        "fullname": "\u0e40\u0e1e\u0e47\u0e0d\u0e20\u0e31\u0e01\u0e14\u0e34\u0e4c \u0e27\u0e07\u0e04\u0e4c\u0e04\u0e33"
+                    }
+                }
+            },
+            {
+                "id": 7810086,
+                "name": "iPhone 11ProMax",
+                "name_md5": "4264dd38fa",
+                "barcode": "352874111341220",
+                "barcode_md5": "0cf1b03ada",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402453,
+                "unit_id": 86408,
+                "created_at": "2025-02-28T13:42:14.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 7810086,
+                    "cost": "9000.00",
+                    "repair": "0.00",
+                    "level_1": "14990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402453,
+                    "color": "#050000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 7810086,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 14714155,
+                "name": "iPhone11ProMax",
+                "name_md5": "d98416840e",
+                "barcode": "353922103356950",
+                "barcode_md5": "cf9311a391",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402453,
+                "unit_id": 86408,
+                "created_at": "2025-10-02T08:00:53.000000Z",
+                "count_name_md5": 2,
+                "prices": {
+                    "stock_id": 14714155,
+                    "cost": "5000.00",
+                    "repair": "0.00",
+                    "level_1": "10990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402453,
+                    "color": "#050000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14714155,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            {
+                "id": 10978716,
+                "name": "iPhone 12",
+                "name_md5": "4bc1881706",
+                "barcode": "359827481845611",
+                "barcode_md5": "eca7670725",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402453,
+                "unit_id": 86409,
+                "created_at": "2025-05-25T06:59:42.000000Z",
+                "count_name_md5": 4,
+                "prices": {
+                    "stock_id": 10978716,
+                    "cost": "5000.00",
+                    "repair": "0.00",
+                    "level_1": "10990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402453,
+                    "color": "#050000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 10978716,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            }
+        ],
+        "data": {
+            "7103878": {
+                "id": 7103878,
+                "name": "AirPods 4",
+                "name_md5": "7d49d9c252",
+                "barcode": "SK4H77Y7QJN",
+                "barcode_md5": "5e28568b2d",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-02-16T13:22:06.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 7103878,
+                    "cost": "2600.00",
+                    "repair": "0.00",
+                    "level_1": "3990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 7103878,
+                    "user_id": 29050,
+                    "user": {
+                        "id": 29050,
+                        "fullname": "Noppadol Lerptakool"
+                    }
+                }
+            },
+            "13241999": {
+                "id": 13241999,
+                "name": "Apple Airpods 2",
+                "name_md5": "58650b9a7f",
+                "barcode": "SGFJMTD0NLX2Y",
+                "barcode_md5": "40970a3053",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-07-26T07:45:12.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 13241999,
+                    "cost": "500.00",
+                    "repair": "0.00",
+                    "level_1": "1590.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 13241999,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "12864212": {
+                "id": 12864212,
+                "name": "Apple Airpods 4 (ANC)",
+                "name_md5": "82bdb32c8c",
+                "barcode": "SGJP9X9XXPV",
+                "barcode_md5": "7d34a0b1ce",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-07-18T11:17:32.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 12864212,
+                    "cost": "3000.00",
+                    "repair": "0.00",
+                    "level_1": "4990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 12864212,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "12013092": {
+                "id": 12013092,
+                "name": "Apple Airpods Gen4",
+                "name_md5": "3a87b7af9f",
+                "barcode": "SJ1W4P7GH0F",
+                "barcode_md5": "f13182526b",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-06-19T10:10:23.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 12013092,
+                    "cost": "2200.00",
+                    "repair": "0.00",
+                    "level_1": "3990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 12013092,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "14527154": {
+                "id": 14527154,
+                "name": "Apple iPad Air M3 Cellular",
+                "name_md5": "e577615cac",
+                "barcode": "357241836601145",
+                "barcode_md5": "a98460d66b",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402452,
+                "unit_id": 86409,
+                "created_at": "2025-09-17T05:19:07.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14527154,
+                    "cost": "22000.00",
+                    "repair": "0.00",
+                    "level_1": "31900.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402452,
+                    "color": "#0f0101",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14527154,
+                    "user_id": 35093,
+                    "user": {
+                        "id": 35093,
+                        "fullname": "\u0e40\u0e1e\u0e47\u0e0d\u0e20\u0e31\u0e01\u0e14\u0e34\u0e4c \u0e27\u0e07\u0e04\u0e4c\u0e04\u0e33"
+                    }
+                }
+            },
+            "10978597": {
+                "id": 10978597,
+                "name": "Apple  iPhone 12",
+                "name_md5": "0932ce0489",
+                "barcode": "353067111668960",
+                "barcode_md5": "d6807f4d9d",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402453,
+                "unit_id": 86408,
+                "created_at": "2025-05-25T06:38:10.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 10978597,
+                    "cost": "5000.00",
+                    "repair": "0.00",
+                    "level_1": "10990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402453,
+                    "color": "#050000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 10978597,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "14071764": {
+                "id": 14071764,
+                "name": "Apple iphone 16 promax 256gb",
+                "name_md5": "ef34c1d283",
+                "barcode": "350572417280231",
+                "barcode_md5": "2888918c7e",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402453,
+                "unit_id": 86409,
+                "created_at": "2025-08-22T13:58:11.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14071764,
+                    "cost": "27000.00",
+                    "repair": "0.00",
+                    "level_1": "34000.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402453,
+                    "color": "#050000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14071764,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "13486032": {
+                "id": 13486032,
+                "name": "Apple iPhone 16 Promax 256GB",
+                "name_md5": "f5d9d389a7",
+                "barcode": "355350438678864",
+                "barcode_md5": "b3ae3a7303",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402453,
+                "unit_id": 86409,
+                "created_at": "2025-08-02T12:13:33.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 13486032,
+                    "cost": "29000.00",
+                    "repair": "0.00",
+                    "level_1": "37990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402453,
+                    "color": "#050000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 13486032,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "8741532": {
+                "id": 8741532,
+                "name": "Apple Pencil 1",
+                "name_md5": "caa65745a4",
+                "barcode": "SHKHFRBE3GWTJ",
+                "barcode_md5": "a8b1622f5b",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-04-12T12:26:41.000000Z",
+                "count_name_md5": 6,
+                "prices": {
+                    "stock_id": 8741532,
+                    "cost": "700.00",
+                    "repair": "0.00",
+                    "level_1": "2590.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8741532,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "8185637": {
+                "id": 8185637,
+                "name": "Apple Pencil 2",
+                "name_md5": "3f9051475f",
+                "barcode": "SH95KM2GGJKM9",
+                "barcode_md5": "46092a7941",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-03-29T11:25:26.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 8185637,
+                    "cost": "1000.00",
+                    "repair": "0.00",
+                    "level_1": "2990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8185637,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "14856494": {
+                "id": 14856494,
+                "name": "apple pencil pro",
+                "name_md5": "aec56f4883",
+                "barcode": "SK3MH6706J4",
+                "barcode_md5": "bbd56d08b1",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-10-26T06:59:54.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14856494,
+                    "cost": "1500.00",
+                    "repair": "0.00",
+                    "level_1": "3590.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14856494,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "12462374": {
+                "id": 12462374,
+                "name": "Apple Pencil Pro",
+                "name_md5": "1958e49cb9",
+                "barcode": "SYXHFPW39V4",
+                "barcode_md5": "cf17c59ebe",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-07-02T08:57:44.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 12462374,
+                    "cost": "1700.00",
+                    "repair": "0.00",
+                    "level_1": "2990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 12462374,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "10978723": {
+                "id": 10978723,
+                "name": "Apple Pencil USB - C",
+                "name_md5": "9d477e9485",
+                "barcode": "SDKKGJ9VWRL",
+                "barcode_md5": "37fcfe4d2e",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-05-25T07:03:31.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 10978723,
+                    "cost": "800.00",
+                    "repair": "0.00",
+                    "level_1": "2590.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 10978723,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "14780415": {
+                "id": 14780415,
+                "name": "Apple Watch 10",
+                "name_md5": "00a5f78db2",
+                "barcode": "FQL3C56TJX",
+                "barcode_md5": "a760751203",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86408,
+                "created_at": "2025-10-14T11:30:33.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14780415,
+                    "cost": "3000.00",
+                    "repair": "0.00",
+                    "level_1": "0.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14780415,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "13561092": {
+                "id": 13561092,
+                "name": "Apple Watch S9",
+                "name_md5": "97e38e8595",
+                "barcode": "C9D16Q4925",
+                "barcode_md5": "62a523561e",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-08-05T13:47:22.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 13561092,
+                    "cost": "4000.00",
+                    "repair": "0.00",
+                    "level_1": "0.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 13561092,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "14732225": {
+                "id": 14732225,
+                "name": "Apple Watch SE2",
+                "name_md5": "8135961fa9",
+                "barcode": "SG71FYKXX7Y",
+                "barcode_md5": "fffddfea0d",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-10-07T06:49:37.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14732225,
+                    "cost": "2500.00",
+                    "repair": "0.00",
+                    "level_1": "5990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14732225,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "14581079": {
+                "id": 14581079,
+                "name": "Google Pixel 10 Pro XL",
+                "name_md5": "d99f64a62b",
+                "barcode": "354416433797701",
+                "barcode_md5": "47ea337312",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402462,
+                "unit_id": 86409,
+                "created_at": "2025-09-20T13:13:44.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14581079,
+                    "cost": "31000.00",
+                    "repair": "0.00",
+                    "level_1": "36990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402462,
+                    "color": "#e613ed",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 GOOGLE"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14581079,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "14581085": {
+                "id": 14581085,
+                "name": "Honor Magic V3",
+                "name_md5": "b43e513019",
+                "barcode": "867080071233906",
+                "barcode_md5": "969c138631",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402442,
+                "unit_id": 86409,
+                "created_at": "2025-09-20T13:20:23.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14581085,
+                    "cost": "19000.00",
+                    "repair": "0.00",
+                    "level_1": "27990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402442,
+                    "color": "#fc9d12",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 XIAOMI"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14581085,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "14583336": {
+                "id": 14583336,
+                "name": "Honor Magic V5",
+                "name_md5": "08c20db48b",
+                "barcode": "861430071617473",
+                "barcode_md5": "f64fc727de",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402442,
+                "unit_id": 86409,
+                "created_at": "2025-09-21T09:02:53.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14583336,
+                    "cost": "38000.00",
+                    "repair": "0.00",
+                    "level_1": "43990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402442,
+                    "color": "#fc9d12",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 XIAOMI"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14583336,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "14071785": {
+                "id": 14071785,
+                "name": "\u0e47Honor V3",
+                "name_md5": "5cf585823f",
+                "barcode": "867080071582013",
+                "barcode_md5": "94dfffdec7",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402441,
+                "unit_id": 86408,
+                "created_at": "2025-08-22T13:59:35.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14071785,
+                    "cost": "24000.00",
+                    "repair": "0.00",
+                    "level_1": "28990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402441,
+                    "color": "#0588e6",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 VIVO"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14071785,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "8193952": {
+                "id": 8193952,
+                "name": "Huawei MediaPad T5 Sim",
+                "name_md5": "1074d8ff0e",
+                "barcode": "860556042548578",
+                "barcode_md5": "170780935b",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402442,
+                "unit_id": 86408,
+                "created_at": "2025-03-30T12:31:08.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 8193952,
+                    "cost": "2000.00",
+                    "repair": "0.00",
+                    "level_1": "3990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402442,
+                    "color": "#fc9d12",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 XIAOMI"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8193952,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "14035329": {
+                "id": 14035329,
+                "name": "Huawei Watch GT 4",
+                "name_md5": "4e0ceb7363",
+                "barcode": "Q4ETQ24322003942",
+                "barcode_md5": "ef150b0a57",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-08-20T13:53:34.000000Z",
+                "count_name_md5": 2,
+                "prices": {
+                    "stock_id": 14035329,
+                    "cost": "2000.00",
+                    "repair": "0.00",
+                    "level_1": "3990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14035329,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "8574078": {
+                "id": 8574078,
+                "name": "Infinix Hot 40i",
+                "name_md5": "153a8a621c",
+                "barcode": "353363607968836",
+                "barcode_md5": "179e2dcc55",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402463,
+                "unit_id": 86409,
+                "created_at": "2025-04-02T13:26:20.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 8574078,
+                    "cost": "2600.00",
+                    "repair": "0.00",
+                    "level_1": "4990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402463,
+                    "color": "#e6279a",
+                    "name": "\u0e2d\u0e37\u0e48\u0e19\u0e46"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8574078,
+                    "user_id": 35093,
+                    "user": {
+                        "id": 35093,
+                        "fullname": "\u0e40\u0e1e\u0e47\u0e0d\u0e20\u0e31\u0e01\u0e14\u0e34\u0e4c \u0e27\u0e07\u0e04\u0e4c\u0e04\u0e33"
+                    }
+                }
+            },
+            "14230462": {
+                "id": 14230462,
+                "name": "Infinix Smart 10",
+                "name_md5": "5f98a99c40",
+                "barcode": "359160584986573",
+                "barcode_md5": "5d38a16922",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402455,
+                "unit_id": 86409,
+                "created_at": "2025-09-03T11:10:31.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14230462,
+                    "cost": "1700.00",
+                    "repair": "0.00",
+                    "level_1": "2990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402455,
+                    "color": "#0b632e",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d 1 Infinix"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14230462,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "14872278": {
+                "id": 14872278,
+                "name": "Infinix Smart10",
+                "name_md5": "b40336af47",
+                "barcode": "359160584917958",
+                "barcode_md5": "e7d3eac141",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402455,
+                "unit_id": 86409,
+                "created_at": "2025-10-28T10:17:11.000000Z",
+                "count_name_md5": 10,
+                "prices": {
+                    "stock_id": 14872278,
+                    "cost": "1700.00",
+                    "repair": "0.00",
+                    "level_1": "2990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402455,
+                    "color": "#0b632e",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d 1 Infinix"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14872278,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "8574063": {
+                "id": 8574063,
+                "name": "iPad Air",
+                "name_md5": "0bfdb9b92a",
+                "barcode": "DMQMCGXKFK15",
+                "barcode_md5": "c24d1fe9bd",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86408,
+                "created_at": "2025-04-02T13:01:38.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 8574063,
+                    "cost": "1500.00",
+                    "repair": "0.00",
+                    "level_1": "2990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8574063,
+                    "user_id": 35093,
+                    "user": {
+                        "id": 35093,
+                        "fullname": "\u0e40\u0e1e\u0e47\u0e0d\u0e20\u0e31\u0e01\u0e14\u0e34\u0e4c \u0e27\u0e07\u0e04\u0e4c\u0e04\u0e33"
+                    }
+                }
+            },
+            "9553687": {
+                "id": 9553687,
+                "name": "iPad Air 11 M3",
+                "name_md5": "83acb18a3f",
+                "barcode": "FQ9T40QPTJ",
+                "barcode_md5": "d3be0e6473",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86408,
+                "created_at": "2025-05-11T08:26:19.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 9553687,
+                    "cost": "13000.00",
+                    "repair": "0.00",
+                    "level_1": "18990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 9553687,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "14581077": {
+                "id": 14581077,
+                "name": "iPad Air11 M3",
+                "name_md5": "773d7f9c42",
+                "barcode": "SDWF4WYW214",
+                "barcode_md5": "b83a469c0c",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-09-20T13:09:59.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14581077,
+                    "cost": "11000.00",
+                    "repair": "0.00",
+                    "level_1": "17990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14581077,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "8185645": {
+                "id": 8185645,
+                "name": "iPad Air5",
+                "name_md5": "f1dc07c29a",
+                "barcode": "SJ75M6KXKWR",
+                "barcode_md5": "e1b4aaa8a9",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-03-29T11:28:21.000000Z",
+                "count_name_md5": 2,
+                "prices": {
+                    "stock_id": 8185645,
+                    "cost": "14500.00",
+                    "repair": "0.00",
+                    "level_1": "14990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8185645,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "3865382": {
+                "id": 3865382,
+                "name": "iPad Air5 Cellular",
+                "name_md5": "962812a48c",
+                "barcode": "356422243319015",
+                "barcode_md5": "d0bc467d03",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2024-09-13T14:08:09.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 3865382,
+                    "cost": "15600.00",
+                    "repair": "0.00",
+                    "level_1": "19990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 3865382,
+                    "user_id": 29050,
+                    "user": {
+                        "id": 29050,
+                        "fullname": "Noppadol Lerptakool"
+                    }
+                }
+            },
+            "3864233": {
+                "id": 3864233,
+                "name": "iPad Air5 Wifi",
+                "name_md5": "f0f67cf4b7",
+                "barcode": "M9DG9W6Y65",
+                "barcode_md5": "7b440ecbcf",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402452,
+                "unit_id": 86408,
+                "created_at": "2023-12-17T14:08:05.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 3864233,
+                    "cost": "16024.00",
+                    "repair": "0.00",
+                    "level_1": "20900.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402452,
+                    "color": "#0f0101",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 IPAD"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 3864233,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "14856837": {
+                "id": 14856837,
+                "name": "iPad Air 7 M3",
+                "name_md5": "d260d1d2d2",
+                "barcode": "SLLKFX9J5CQ",
+                "barcode_md5": "e9c499e3bb",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-10-26T07:40:49.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14856837,
+                    "cost": "11000.00",
+                    "repair": "0.00",
+                    "level_1": "16990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14856837,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "14857655": {
+                "id": 14857655,
+                "name": "iPad Gen 10",
+                "name_md5": "f8e938758d",
+                "barcode": "GW9QV9GK9J",
+                "barcode_md5": "9404a79679",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-10-26T11:56:46.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 14857655,
+                    "cost": "6000.00",
+                    "repair": "0.00",
+                    "level_1": "10990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14857655,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "13225353": {
+                "id": 13225353,
+                "name": "iPad Gen10 Wifi",
+                "name_md5": "e7b1475b1a",
+                "barcode": "TKV494X2XM",
+                "barcode_md5": "46468bf6c8",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86408,
+                "created_at": "2025-07-23T10:14:27.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 13225353,
+                    "cost": "5500.00",
+                    "repair": "0.00",
+                    "level_1": "9990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 13225353,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "14872109": {
+                "id": 14872109,
+                "name": "iPad Gen11",
+                "name_md5": "28133bb01a",
+                "barcode": "SRV4TXMT925",
+                "barcode_md5": "f650aa357c",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-10-28T10:03:20.000000Z",
+                "count_name_md5": 11,
+                "prices": {
+                    "stock_id": 14872109,
+                    "cost": "11500.00",
+                    "repair": "0.00",
+                    "level_1": "13900.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14872109,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "14822291": {
+                "id": 14822291,
+                "name": "iPad Gen11 Wifi",
+                "name_md5": "ca36115d01",
+                "barcode": "SCL9TT9GK3Q",
+                "barcode_md5": "e1b76da58b",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-10-18T13:10:08.000000Z",
+                "count_name_md5": 2,
+                "prices": {
+                    "stock_id": 14822291,
+                    "cost": "7500.00",
+                    "repair": "0.00",
+                    "level_1": "10990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14822291,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "8574064": {
+                "id": 8574064,
+                "name": "iPad Gen6",
+                "name_md5": "f2e52c13c4",
+                "barcode": "DMPWM68FJMVR",
+                "barcode_md5": "6eb0924dba",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86408,
+                "created_at": "2025-04-02T13:03:49.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 8574064,
+                    "cost": "4000.00",
+                    "repair": "0.00",
+                    "level_1": "6990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8574064,
+                    "user_id": 35093,
+                    "user": {
+                        "id": 35093,
+                        "fullname": "\u0e40\u0e1e\u0e47\u0e0d\u0e20\u0e31\u0e01\u0e14\u0e34\u0e4c \u0e27\u0e07\u0e04\u0e4c\u0e04\u0e33"
+                    }
+                }
+            },
+            "8741534": {
+                "id": 8741534,
+                "name": "iPad Gen6 Wifi",
+                "name_md5": "8cf7357f3f",
+                "barcode": "SDMPZC0YSJF8K",
+                "barcode_md5": "18a89656a0",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-04-12T12:28:32.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 8741534,
+                    "cost": "2800.00",
+                    "repair": "0.00",
+                    "level_1": "6990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8741534,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "3865563": {
+                "id": 3865563,
+                "name": "iPad Gen 7 Cellular",
+                "name_md5": "d26328dae7",
+                "barcode": "353210103778559",
+                "barcode_md5": "5c02301e96",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2024-10-30T14:08:10.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 3865563,
+                    "cost": "5000.00",
+                    "repair": "0.00",
+                    "level_1": "8990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 3865563,
+                    "user_id": 29050,
+                    "user": {
+                        "id": 29050,
+                        "fullname": "Noppadol Lerptakool"
+                    }
+                }
+            },
+            "3865743": {
+                "id": 3865743,
+                "name": "iPad Gen9 Wifi",
+                "name_md5": "8d33142e10",
+                "barcode": "CXWVXR2T0Y",
+                "barcode_md5": "7c862f2312",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86408,
+                "created_at": "2024-12-10T14:08:10.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 3865743,
+                    "cost": "3500.00",
+                    "repair": "0.00",
+                    "level_1": "8990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 3865743,
+                    "user_id": 29050,
+                    "user": {
+                        "id": 29050,
+                        "fullname": "Noppadol Lerptakool"
+                    }
+                }
+            },
+            "3863068": {
+                "id": 3863068,
+                "name": "iPad Mini 3 Cellular",
+                "name_md5": "4dcea6a598",
+                "barcode": "354421066566779",
+                "barcode_md5": "e505c5cc81",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86408,
+                "created_at": "2023-03-05T14:08:02.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 3863068,
+                    "cost": "3000.00",
+                    "repair": "0.00",
+                    "level_1": "4990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 3863068,
+                    "user_id": 29050,
+                    "user": {
+                        "id": 29050,
+                        "fullname": "Noppadol Lerptakool"
+                    }
+                }
+            },
+            "13767278": {
+                "id": 13767278,
+                "name": "iPad Mini 6",
+                "name_md5": "ae44d00c25",
+                "barcode": "SYYQWMHP340",
+                "barcode_md5": "be27befd78",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-08-16T07:52:18.000000Z",
+                "count_name_md5": 2,
+                "prices": {
+                    "stock_id": 13767278,
+                    "cost": "5000.00",
+                    "repair": "0.00",
+                    "level_1": "9990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 13767278,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "11850034": {
+                "id": 11850034,
+                "name": "iPad Pro 11 M1 Sim",
+                "name_md5": "ae0531d6f9",
+                "barcode": "351640460014374",
+                "barcode_md5": "20498bd3a8",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402454,
+                "unit_id": 86409,
+                "created_at": "2025-06-13T10:16:36.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 11850034,
+                    "cost": "10000.00",
+                    "repair": "0.00",
+                    "level_1": "17990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402454,
+                    "color": "#0d0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 11850034,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "7798467": {
+                "id": 7798467,
+                "name": "iPad Smart Keyboard",
+                "name_md5": "4bdb8e435f",
+                "barcode": "SFTPZK27ZJY7D",
+                "barcode_md5": "9e2ed6fbcf",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402457,
+                "unit_id": 86409,
+                "created_at": "2025-02-28T11:44:03.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 7798467,
+                    "cost": "1000.00",
+                    "repair": "0.00",
+                    "level_1": "1990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402457,
+                    "color": "#9f30e3",
+                    "name": "Gadget"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 7798467,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "7794074": {
+                "id": 7794074,
+                "name": "iPhone11",
+                "name_md5": "9528e17965",
+                "barcode": "355900701806780",
+                "barcode_md5": "928213c7e9",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402451,
+                "unit_id": null,
+                "created_at": "2025-02-28T13:50:09.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 7794074,
+                    "cost": "19500.00",
+                    "repair": "0.00",
+                    "level_1": "12990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402451,
+                    "color": "#0f0000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 IPHONE"
+                },
+                "unit": null,
+                "user_import": {
+                    "stock_id": 7794074,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "8185652": {
+                "id": 8185652,
+                "name": "iPhone11Pro",
+                "name_md5": "9398bcf790",
+                "barcode": "353840105126348",
+                "barcode_md5": "3e724393a7",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402453,
+                "unit_id": 86408,
+                "created_at": "2025-03-29T11:33:24.000000Z",
+                "count_name_md5": 2,
+                "prices": {
+                    "stock_id": 8185652,
+                    "cost": "10000.00",
+                    "repair": "0.00",
+                    "level_1": "12990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402453,
+                    "color": "#050000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8185652,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "8476004": {
+                "id": 8476004,
+                "name": "iPhone 11Pro Max",
+                "name_md5": "f97e2d19d6",
+                "barcode": "353925103280187",
+                "barcode_md5": "7c54bf9d51",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402453,
+                "unit_id": 86408,
+                "created_at": "2025-04-01T06:46:55.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 8476004,
+                    "cost": "5000.00",
+                    "repair": "0.00",
+                    "level_1": "14990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402453,
+                    "color": "#050000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 8476004,
+                    "user_id": 35093,
+                    "user": {
+                        "id": 35093,
+                        "fullname": "\u0e40\u0e1e\u0e47\u0e0d\u0e20\u0e31\u0e01\u0e14\u0e34\u0e4c \u0e27\u0e07\u0e04\u0e4c\u0e04\u0e33"
+                    }
+                }
+            },
+            "7810086": {
+                "id": 7810086,
+                "name": "iPhone 11ProMax",
+                "name_md5": "4264dd38fa",
+                "barcode": "352874111341220",
+                "barcode_md5": "0cf1b03ada",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402453,
+                "unit_id": 86408,
+                "created_at": "2025-02-28T13:42:14.000000Z",
+                "count_name_md5": 1,
+                "prices": {
+                    "stock_id": 7810086,
+                    "cost": "9000.00",
+                    "repair": "0.00",
+                    "level_1": "14990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402453,
+                    "color": "#050000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 7810086,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "14714155": {
+                "id": 14714155,
+                "name": "iPhone11ProMax",
+                "name_md5": "d98416840e",
+                "barcode": "353922103356950",
+                "barcode_md5": "cf9311a391",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402453,
+                "unit_id": 86408,
+                "created_at": "2025-10-02T08:00:53.000000Z",
+                "count_name_md5": 2,
+                "prices": {
+                    "stock_id": 14714155,
+                    "cost": "5000.00",
+                    "repair": "0.00",
+                    "level_1": "10990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402453,
+                    "color": "#050000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE"
+                },
+                "unit": {
+                    "id": 86408,
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 14714155,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            },
+            "10978716": {
+                "id": 10978716,
+                "name": "iPhone 12",
+                "name_md5": "4bc1881706",
+                "barcode": "359827481845611",
+                "barcode_md5": "eca7670725",
+                "merchant_id": 1645,
+                "reminder_limit": 0,
+                "category_id": 402453,
+                "unit_id": 86409,
+                "created_at": "2025-05-25T06:59:42.000000Z",
+                "count_name_md5": 4,
+                "prices": {
+                    "stock_id": 10978716,
+                    "cost": "5000.00",
+                    "repair": "0.00",
+                    "level_1": "10990.00",
+                    "level_2": "0.00",
+                    "level_3": "0.00",
+                    "level_4": "0.00"
+                },
+                "category": {
+                    "id": 402453,
+                    "color": "#050000",
+                    "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE"
+                },
+                "unit": {
+                    "id": 86409,
+                    "name": "\u0e01\u0e25\u0e48\u0e2d\u0e07"
+                },
+                "user_import": {
+                    "stock_id": 10978716,
+                    "user_id": 30034,
+                    "user": {
+                        "id": 30034,
+                        "fullname": "Weerapong Ponsena"
+                    }
+                }
+            }
+        }
+    }
+}
