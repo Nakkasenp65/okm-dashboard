@@ -308,7 +308,7 @@ export default function BarcodeScannerModal({
             onClick={onClose}
             className="w-full bg-gradient-to-r from-blue-500 to-purple-600 py-3 text-base font-semibold shadow-lg hover:from-blue-600 hover:to-purple-700"
           >
-            ✓ เสร็จสิ้น
+            เสร็จสิ้น
           </Button>
         </div>
       </div>

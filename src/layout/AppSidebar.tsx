@@ -232,6 +232,7 @@ const toolsItems: NavItem[] = [
     name: "POS",
     subItems: [
       { name: "ระบบหน้าร้าน", path: "/pos" },
+      { name: "จัดการสต็อกสินค้า", path: "/pos-stock" },
       { name: "การตั้งค่า", path: "/pos-setting" },
     ],
   },

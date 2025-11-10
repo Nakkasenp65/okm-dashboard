@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import Button from "../../../../../../../components/ui/button/Button";
-import { Modal } from "../../../../../../../components/ui/modal";
+import Button from "../../../../../../components/ui/button/Button";
+import { Modal } from "../../../../../../components/ui/modal";
 
 type RawProduct = {
   id: number;

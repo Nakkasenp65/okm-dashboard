@@ -9,6 +9,17 @@ const nextConfig: NextConfig = {
     });
     return config;
   },
+  images: {
+    domains: [
+      "lh3.googleusercontent.com",
+      "store.storeimages.cdn-apple.com",
+      "profile.line-scdn.net",
+      "cdn.simpleicons.org",
+      "applehouseth.com",
+    ],
+  },
+
+  reactStrictMode: false,
 };
 
 export default nextConfig;
