@@ -14,6 +14,7 @@ import ProductGrid from "./(product-catalog)/ProductGrid";
 interface ProductCatalogProps {
   onAddProduct: (product: Product) => void;
   products: Product[];
+  availableStock: Map<number, number>;
 }
 
 // Constants for localStorage
@@ -54,6 +55,7 @@ const saveDisplayOptionsToStorage = (options: DisplayOptions): void => {
 export default function ProductCategory({
   onAddProduct,
   products,
+  availableStock,
 }: ProductCatalogProps) {
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [selectedCondition, setSelectedCondition] = useState<
@@ -191,6 +193,7 @@ export default function ProductCategory({
               products={processedProducts}
               displayOptions={displayOptions}
               onAddProduct={onAddProduct}
+              availableStock={availableStock}
             />
           </>
         )}

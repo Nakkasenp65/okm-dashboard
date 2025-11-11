@@ -165,7 +165,7 @@ export default function MixedPaymentComponent({
         <div className="my-8 flex flex-col items-center gap-4 text-center">
           <selected.icon className="text-5xl text-blue-500" />
           <h2 className="text-2xl font-bold">
-            เพิ่มการชำระด้วย "{selected.label}"
+            เพิ่มการชำระด้วย &quot;{selected.label}&quot;
           </h2>
         </div>
 

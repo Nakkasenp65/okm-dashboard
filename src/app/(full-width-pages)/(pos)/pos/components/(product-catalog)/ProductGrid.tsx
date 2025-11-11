@@ -8,12 +8,14 @@ interface ProductGridProps {
   products: Product[];
   displayOptions: DisplayOptions;
   onAddProduct: (product: Product) => void;
+  availableStock: Map<number, number>;
 }
 
 export default function ProductGrid({
   products,
   displayOptions,
   onAddProduct,
+  availableStock,
 }: ProductGridProps) {
   if (displayOptions.displayMode === "list") {
     return (
@@ -26,6 +28,7 @@ export default function ProductGrid({
               displayOptions={displayOptions}
               onAddProduct={onAddProduct}
               isListMode={true}
+              availableStock={availableStock.get(product.id) || 0}
             />
           ))
         ) : (
@@ -41,7 +44,7 @@ export default function ProductGrid({
 
   // Grid Mode (default)
   return (
-    <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2 xl:grid-cols-3">
       {products.length > 0 ? (
         products.map((product) => (
           <ProductDisplay
@@ -50,6 +53,7 @@ export default function ProductGrid({
             displayOptions={displayOptions}
             onAddProduct={onAddProduct}
             isListMode={false}
+            availableStock={availableStock.get(product.id) || 0}
           />
         ))
       ) : (

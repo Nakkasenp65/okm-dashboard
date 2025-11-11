@@ -175,7 +175,7 @@ export default function DiscountModal({
       isOpen={isOpen}
       onClose={onClose}
       showCloseButton={true}
-      className="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-2xl p-0 shadow-2xl"
+      className="flex h-[80vh] w-full max-w-2xl flex-col rounded-2xl p-0 shadow-2xl"
     >
       {/* Header and Tabs */}
       <div className="shrink-0 border-b border-gray-200 p-6 dark:border-gray-700">

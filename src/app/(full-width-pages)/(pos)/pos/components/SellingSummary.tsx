@@ -24,8 +24,8 @@ export default function SellingSummary({
   return (
     <div className="mt-4 border-t border-gray-200 pt-4 dark:border-gray-700">
       <div className="space-y-2 text-sm">
-        <div className="flex justify-between font-semibold text-gray-800 dark:text-gray-200">
-          <span>ยอดรวม</span>
+        <div className="flex justify-between text-base font-semibold text-gray-800 dark:text-gray-200">
+          <span>ยอดก่อนหักส่วนลด</span>
           <span>{subtotal.toFixed(2)} ฿</span>
         </div>
         {appliedDiscounts.map((discount) => {

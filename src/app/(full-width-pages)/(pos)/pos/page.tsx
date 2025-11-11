@@ -11,94 +11,115 @@ import {
   Product,
   transformApiDataToProducts,
 } from "./components/dataTransformer";
-import { Customer } from "./components/(modal)/CustomerModal";
+import CustomerModal, { Customer } from "./components/(modal)/CustomerModal";
 import { Discount } from "./components/(modal)/DiscountModal";
 import { CashDrawerActivity } from "./components/(modal)/CashDrawerModal";
-import { StaffMember } from "./components/(modal)/SummaryModal";
-import { Payment } from "./components/(modal)/PaymentModal";
+import { StaffMember } from "./components/(receipt)/receiptTypes";
+import PaymentModal, { Payment } from "./components/(modal)/PaymentModal";
+import SummaryModal from "./components/(modal)/SummaryModal";
+import ConfirmationModal from "./components/(modal)/ConfirmationModal";
+import { useConfirmation } from "./hooks/useConfirmation";
 
-// --- TYPE DEFINITIONS ---
-
-// Type สำหรับบันทึกธุรกรรมลิ้นชัก
 export interface CashDrawerTransaction extends CashDrawerActivity {
   id: string;
   timestamp: Date;
 }
 
-// Type สำหรับสินค้าแต่ละชิ้น (Sub-item) ในตะกร้า
 export interface SubItem {
   uniqueId: string;
   productId: number;
   name: string;
   unitPrice: number;
+  imei?: string; // IMEI/Serial Number
 }
 
-// Type สำหรับสินค้าที่ถูกจัดกลุ่มในตะกร้า
 export interface GroupedProduct {
   productId: number;
   name: string;
   items: SubItem[];
 }
 
-// Type สำหรับข้อมูลสรุปที่ส่งให้ SummaryModal
 export interface SelectedItem {
   id: number;
   name: string;
-  qty: number;
-  unitPrice: number;
+  quantity: number;
+  price: number;
 }
 
-// --- MOCK DATA ---
+export type PosMode = "retail" | "company" | "record-income";
+type PosOperationMode = "sell" | "consignment" | "repair";
+
 const MOCK_STAFF: StaffMember[] = [
   { id: 1, name: "Noppadol Lerptakool" },
   { id: 2, name: "Weerapong Ponsena" },
   { id: 3, name: "Admin (ผู้ดูแลระบบ)" },
 ];
 
-// --- MAIN PAGE COMPONENT ---
-export default function Page() {
-  // --- STATE MANAGEMENT ---
+const operationModes = [
+  { id: "sell", label: "ขายซื้อ" },
+  { id: "consignment", label: "ขายฝาก" },
+  { id: "repair", label: "ซ่อม" },
+];
 
-  // State หลักของตะกร้าสินค้าเป็น Map
+export default function Page() {
   const [selectedProducts, setSelectedProducts] = useState<
     Map<number, GroupedProduct>
   >(new Map());
-
   const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [availableStock, setAvailableStock] = useState<Map<number, number>>(
+    new Map(),
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentCustomer, setCurrentCustomer] = useState<Customer | null>(null);
   const [appliedDiscounts, setAppliedDiscounts] = useState<Discount[]>([]);
   const [, setCashDrawerTransactions] = useState<CashDrawerTransaction[]>([]);
   const [currentIssuer] = useState<StaffMember>(MOCK_STAFF[0]);
+  const [activePosOperationMode, setActivePosOperationMode] =
+    useState<PosOperationMode>("sell");
 
-  // Lock Screen State
+  // --- Centralized Modal State ---
+  const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
+  const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
+
+  const confirmation = useConfirmation();
+
+  const [paymentModalInfo, setPaymentModalInfo] = useState<{
+    isOpen: boolean;
+    mode: PosMode;
+  }>({ isOpen: false, mode: "retail" });
+
   const [isLockedScreen, setIsLockedScreen] = useState(true);
   const POS_PIN = "1234";
 
   const handleUnlockScreen = (pin: string) => {
     if (pin === POS_PIN) {
       setIsLockedScreen(false);
-      console.log("✅ POS ปลดล็อคสำเร็จ");
+      console.log("✅ POS unlocked successfully");
     }
   };
 
   const router = useRouter();
 
-  // --- DATA FETCHING ---
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
         setError(null);
-        // ในระบบจริง ส่วนนี้จะ fetch จาก API
         const apiResponse = await import("./mockData.json");
         const rawProducts = apiResponse.default.data.tbody;
         const transformedProducts = transformApiDataToProducts(rawProducts);
         setAllProducts(transformedProducts);
+
+        // Initialize available stock
+        const stockMap = new Map<number, number>();
+        transformedProducts.forEach((product) => {
+          stockMap.set(product.id, product.stock);
+        });
+        setAvailableStock(stockMap);
       } catch (err) {
         console.error("Failed to load or transform product data:", err);
-        setError("ไม่สามารถโหลดข้อมูลสินค้าได้");
+        setError("Could not load product data");
       } finally {
         setIsLoading(false);
       }
@@ -106,19 +127,20 @@ export default function Page() {
     fetchProducts();
   }, []);
 
-  // --- EVENT HANDLERS ---
-
-  // ฟังก์ชันเพิ่มสินค้า (Immutable)
   const addProductToCart = useCallback((productToAdd: Product) => {
     setSelectedProducts((prevMap) => {
       const newMap = new Map(prevMap);
       const existingGroup = newMap.get(productToAdd.id);
+
+      // Generate IMEI/SN (mock)
+      const imei = `IMEI${productToAdd.id}${Date.now().toString().slice(-6)}`;
 
       const newSubItem: SubItem = {
         uniqueId: `${productToAdd.id}-${Date.now()}-${Math.random()}`,
         productId: productToAdd.id,
         name: productToAdd.name,
         unitPrice: productToAdd.price,
+        imei: imei,
       };
 
       if (existingGroup) {
@@ -136,12 +158,26 @@ export default function Page() {
       }
       return newMap;
     });
+
+    // Decrease available stock
+    setAvailableStock((prev) => {
+      const newStock = new Map(prev);
+      const currentStock = newStock.get(productToAdd.id) || 0;
+      if (currentStock > 0) {
+        newStock.set(productToAdd.id, currentStock - 1);
+      }
+      return newStock;
+    });
   }, []);
 
-  // ฟังก์ชันอัปเดตตะกร้าจาก Component ลูก
   const updateCart = (productId: number, updatedItems: SubItem[]) => {
     setSelectedProducts((prevMap) => {
       const newMap = new Map(prevMap);
+      const oldGroup = newMap.get(productId);
+      const oldItemCount = oldGroup?.items.length || 0;
+      const newItemCount = updatedItems.length;
+      const difference = oldItemCount - newItemCount;
+
       if (updatedItems.length === 0) {
         newMap.delete(productId);
       } else {
@@ -154,6 +190,17 @@ export default function Page() {
           newMap.set(productId, updatedGroup);
         }
       }
+
+      // Restore stock for removed items
+      if (difference > 0) {
+        setAvailableStock((prev) => {
+          const newStock = new Map(prev);
+          const currentStock = newStock.get(productId) || 0;
+          newStock.set(productId, currentStock + difference);
+          return newStock;
+        });
+      }
+
       return newMap;
     });
   };
@@ -168,30 +215,54 @@ export default function Page() {
   };
 
   const handlePaymentSuccess = (payments: Payment[], change: number) => {
-    console.log("การชำระเงินสำเร็จ:", { payments, change });
-    // Logic for saving the transaction
+    console.log("Transaction successful, state preserved for printing:", {
+      payments,
+      change,
+    });
+  };
+
+  const handleFinishTransaction = () => {
+    console.log("Finishing transaction and clearing state.");
     setSelectedProducts(new Map());
     setAppliedDiscounts([]);
     setCurrentCustomer(null);
+    handleClosePaymentModal();
   };
 
-  // --- DERIVED STATE & CALCULATIONS using useMemo for performance ---
+  const handleClosePaymentModal = () => {
+    setPaymentModalInfo({ isOpen: false, mode: "retail" });
+  };
+
+  const handleOpenRetailPayment = () => {
+    if (selectedProducts.size > 0) {
+      setPaymentModalInfo({ isOpen: true, mode: "retail" });
+    } else {
+      confirmation.showConfirmation({
+        title: "ไม่สามารถชำระเงินได้",
+        message: "กรุณาเพิ่มสินค้าก่อนชำระเงิน",
+        type: "warning",
+        confirmText: "ตกลง",
+        showCancel: false,
+      });
+    }
+  };
+
+  const handleOpenCompanyPayment = () => {
+    setPaymentModalInfo({ isOpen: true, mode: "record-income" });
+  };
+
   const { subtotal, total, allCartItemsForSummary } = useMemo(() => {
     const allItems: SubItem[] = Array.from(selectedProducts.values()).flatMap(
       (group) => group.items,
     );
-
     const sub = allItems.reduce((sum, item) => sum + item.unitPrice, 0);
-
     let discountAmount = 0;
     appliedDiscounts.forEach((d) => {
       discountAmount +=
         d.type === "percentage" ? sub * (d.value / 100) : d.value;
     });
-
     const finalTotal = Math.max(0, sub - discountAmount);
 
-    // แปลงข้อมูลจาก Map ไปเป็น Array รูปแบบ SelectedItem สำหรับส่งให้ Modal
     const summaryItems: SelectedItem[] = Array.from(
       selectedProducts.values(),
     ).map((group) => {
@@ -199,11 +270,13 @@ export default function Page() {
         (sum, item) => sum + item.unitPrice,
         0,
       );
+      const quantity = group.items.length;
+      const price = quantity > 0 ? groupTotal / quantity : 0;
       return {
         id: group.productId,
         name: group.name,
-        qty: group.items.length,
-        unitPrice: group.items.length > 0 ? groupTotal / group.items.length : 0, // ราคาเฉลี่ย
+        quantity: quantity,
+        price: price,
       };
     });
 
@@ -214,23 +287,76 @@ export default function Page() {
     };
   }, [selectedProducts, appliedDiscounts]);
 
+  const handlePrintShortReceipt = () => {
+    setIsSummaryModalOpen(true);
+  };
+
+  const handlePrintFullReceipt = () => {
+    setIsSummaryModalOpen(true);
+  };
+
+  const handleSendEReceipt = () => {
+    console.log("📧 Sending E-Receipt...");
+    if (currentCustomer) {
+      confirmation.showConfirmation({
+        title: "ส่ง E-Receipt",
+        message: `ส่ง E-Receipt ไปยัง: ${currentCustomer.name}\n(ฟีเจอร์นี้ยังอยู่ในขั้นตอนพัฒนา)`,
+        type: "info",
+        confirmText: "ตกลง",
+        showCancel: false,
+      });
+    } else {
+      confirmation.showConfirmation({
+        title: "ไม่พบข้อมูลลูกค้า",
+        message: "กรุณาเลือกลูกค้าก่อนส่ง E-Receipt",
+        type: "warning",
+        confirmText: "ตกลง",
+        showCancel: false,
+      });
+    }
+  };
+
+  const handleCustomerSelect = (customer: Customer) => {
+    setCurrentCustomer(customer);
+    setIsCustomerModalOpen(false); // Close only the customer modal
+  };
+
   return (
     <div
       id="pos-page-container"
       className="flex h-screen flex-col bg-gray-900 dark:bg-black"
     >
-      {/* Lock Screen Overlay */}
       <POSLockScreen
         isLocked={isLockedScreen}
         onUnlock={handleUnlockScreen}
         correctPin={POS_PIN}
       />
 
-      <div className="w-full shrink-0 bg-gray-900 p-2">
-        <Button onClick={() => router.back()}>
+      <div className="flex w-full shrink-0 items-center bg-gray-900 p-2 pt-4">
+        <Button onClick={() => router.replace("/")}>
           <FaArrowLeftLong />
-          ย้อนกลับไป CP
+          กลับสู่หน้า CP
         </Button>
+
+        <div className="flex flex-1 items-center justify-end">
+          <div className="flex items-center gap-1 rounded-lg bg-gray-800 p-1">
+            {operationModes.map((mode) => (
+              <button
+                key={mode.id}
+                onClick={() =>
+                  setActivePosOperationMode(mode.id as PosOperationMode)
+                }
+                className={`rounded-md px-4 py-1.5 text-sm font-semibold transition-colors duration-200 ${
+                  activePosOperationMode === mode.id
+                    ? "bg-blue-500 text-white shadow"
+                    : "text-gray-300 hover:bg-gray-700/50"
+                }`}
+              >
+                {mode.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-1 overflow-hidden">
@@ -245,6 +371,7 @@ export default function Page() {
             <SellingDetails
               onAddProduct={addProductToCart}
               availableProducts={allProducts}
+              availableStock={availableStock}
               isLoading={isLoading}
               error={error}
             />
@@ -259,25 +386,81 @@ export default function Page() {
               currentCustomer={currentCustomer}
               appliedDiscounts={appliedDiscounts}
               onDiscountsChange={setAppliedDiscounts}
-              onPaymentSuccess={handlePaymentSuccess}
+              onOpenRetailPayment={handleOpenRetailPayment}
             />
           </div>
         </div>
         <SidebarMenu
-          selectedProducts={allCartItemsForSummary}
-          setSelectedProducts={() => setSelectedProducts(new Map())}
           onCustomerSelect={setCurrentCustomer}
           currentCustomer={currentCustomer}
           appliedDiscounts={appliedDiscounts}
           onDiscountsChange={setAppliedDiscounts}
           onCashDrawerActivity={handleCashDrawerActivity}
           onLockScreen={() => setIsLockedScreen(true)}
-          subtotal={subtotal}
-          total={total}
-          billIssuers={MOCK_STAFF}
-          currentIssuer={currentIssuer}
+          onOpenCompanyPayment={handleOpenCompanyPayment}
+          onOpenCustomerModal={() => setIsCustomerModalOpen(true)}
+          onOpenSummaryModal={() => setIsSummaryModalOpen(true)}
+          onClearCart={() => {
+            confirmation.showConfirmation({
+              title: "ล้างข้อมูลการขาย",
+              message:
+                "คุณต้องการล้างข้อมูลการขายทั้งหมดหรือไม่? (สินค้า, ลูกค้า, ส่วนลด)",
+              type: "warning",
+              confirmText: "ยืนยัน",
+              cancelText: "ยกเลิก",
+              showCancel: true,
+              onConfirm: () => {
+                setSelectedProducts(new Map());
+                setCurrentCustomer(null);
+                setAppliedDiscounts([]);
+              },
+            });
+          }}
         />
       </div>
+
+      <PaymentModal
+        isOpen={paymentModalInfo.isOpen}
+        mode={paymentModalInfo.mode}
+        onClose={handleClosePaymentModal}
+        totalToPay={total}
+        onPaymentSuccess={handlePaymentSuccess}
+        onFinishTransaction={handleFinishTransaction}
+        onPrintShortReceipt={handlePrintShortReceipt}
+        onPrintFullReceipt={handlePrintFullReceipt}
+        onSendEReceipt={handleSendEReceipt}
+      />
+
+      <SummaryModal
+        isOpen={isSummaryModalOpen}
+        onClose={() => setIsSummaryModalOpen(false)}
+        onOpenCustomerSearch={() => setIsCustomerModalOpen(true)}
+        items={allCartItemsForSummary}
+        customer={currentCustomer}
+        subtotal={subtotal}
+        total={total}
+        billIssuers={MOCK_STAFF}
+        currentIssuer={currentIssuer}
+        discounts={appliedDiscounts}
+      />
+
+      <CustomerModal
+        isOpen={isCustomerModalOpen}
+        onClose={() => setIsCustomerModalOpen(false)}
+        onSelectCustomer={handleCustomerSelect}
+      />
+
+      <ConfirmationModal
+        isOpen={confirmation.isOpen}
+        onClose={confirmation.hideConfirmation}
+        onConfirm={confirmation.config.onConfirm}
+        title={confirmation.config.title}
+        message={confirmation.config.message}
+        type={confirmation.config.type}
+        confirmText={confirmation.config.confirmText}
+        cancelText={confirmation.config.cancelText}
+        showCancel={confirmation.config.showCancel}
+      />
     </div>
   );
 }

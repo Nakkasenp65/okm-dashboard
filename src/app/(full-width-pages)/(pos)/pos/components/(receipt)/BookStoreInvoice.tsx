@@ -1,114 +1,126 @@
 "use client";
 import React from "react";
-import { ReceiptPreviewProps } from "./TaxInvoice"; // Import the shared interface
-import { MOCK_SHOP_INFO } from "../(modal)/SummaryModal";
+import { MOCK_SHOP_INFO, ReceiptPreviewProps } from "./receiptTypes";
 
-export default function BookStoreInvoice({
-  receiptData,
-  items,
-  total,
-  issuer,
-}: ReceiptPreviewProps) {
-  const tableRows = 12;
-  const emptyRows = Math.max(0, tableRows - items.length);
-
-  const numberToThaiWords = (num: number): string => {
-    return `(${num.toFixed(2)} บาท)`;
-  };
+const BookStoreInvoice = (props: ReceiptPreviewProps) => {
+  const { receiptData, items, subtotal, total, issuer, discounts, options } =
+    props;
+  const totalDiscount = subtotal - total;
 
   return (
-    <div className="font-['Sarabun',_sans-serif] text-sm text-black">
+    <div className="flex h-full flex-col border border-black p-4">
       <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <div>
-            <p className="font-bold">{MOCK_SHOP_INFO.formalName}</p>
-            <p>{MOCK_SHOP_INFO.formalAddressLine1}</p>
-            <p>{MOCK_SHOP_INFO.formalAddressLine2}</p>
-            <p>{MOCK_SHOP_INFO.formalPhone}</p>
-          </div>
+        <div>
+          <h1 className="font-bold">{MOCK_SHOP_INFO.formalName}</h1>
+          <p>{MOCK_SHOP_INFO.formalAddressLine1}</p>
+          <p>{MOCK_SHOP_INFO.formalAddressLine2}</p>
+          <p>{MOCK_SHOP_INFO.formalPhone}</p>
+          <p>เลขประจำตัวผู้เสียภาษี: {MOCK_SHOP_INFO.taxId}</p>
         </div>
-        <div className="flex-shrink-0 border border-black p-2 text-center">
-          <h2 className="font-bold">ใบเสร็จรับเงิน/RECEIPT</h2>
-          <div className="mt-2 grid grid-cols-2 gap-x-4">
-            <span>เล่มที่:</span>
-            <span>{receiptData.bookNumber}</span>
-            <span>เลขที่:</span>
-            <span>{receiptData.receiptNumber}</span>
-            <span>วันที่:</span>
-            <span>{new Date().toLocaleDateString("th-TH")}</span>
-          </div>
+        <div className="text-right">
+          <h2 className="font-bold">ใบส่งของ/ใบแจ้งหนี้</h2>
+          <p>เล่มที่: {receiptData.bookNumber}</p>
+          <p>เลขที่: {receiptData.receiptNumber}</p>
+          <p>วันที่: {new Date().toLocaleDateString("th-TH")}</p>
         </div>
       </div>
 
-      <div className="mt-4 flex items-center">
-        <span>ได้รับเงินจาก</span>
-        <span className="ml-2 flex-grow border-b border-dotted border-black text-center font-semibold">
-          {receiptData.customerName}
-        </span>
+      {/* --- UPDATED CUSTOMER INFO BLOCK --- */}
+      <div className="my-4 border-y border-black py-2">
+        <p>ลูกค้า: {receiptData.customerName}</p>
+        <p>
+          {receiptData.customerType === "company"
+            ? "เลขประจำตัวผู้เสียภาษี"
+            : "เลขประจำตัวประชาชน"}
+          : {receiptData.customerTaxId || "-"}
+        </p>
+        <p className="break-words whitespace-pre-wrap">
+          ที่อยู่: {receiptData.customerAddress || "-"}
+        </p>
+        {receiptData.customerType === "company" &&
+          options.showCustomerBranch && (
+            <p>สาขา: {receiptData.customerBranch}</p>
+          )}
       </div>
 
-      <table className="mt-2 w-full border-collapse border border-black">
-        <thead>
-          <tr className="text-center">
-            <th className="w-[5%] border border-black p-1">ลำดับ</th>
-            <th className="w-[55%] border border-black p-1">รายการ</th>
-            <th className="w-[10%] border border-black p-1">จำนวน</th>
-            <th className="w-[15%] border border-black p-1">ราคา/หน่วย</th>
-            <th className="w-[15%] border border-black p-1">จำนวนเงิน</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((item, index) => (
-            <tr key={item.id}>
-              <td className="border border-black p-1 text-center">
-                {index + 1}
-              </td>
-              <td className="border border-black p-1">{item.name}</td>
-              <td className="border border-black p-1 text-center">
-                {item.qty}
-              </td>
-              <td className="border border-black p-1 text-right">
-                {item.unitPrice.toFixed(2)}
-              </td>
-              <td className="border border-black p-1 text-right">
-                {(item.unitPrice * item.qty).toFixed(2)}
-              </td>
+      <div className="flex-grow">
+        <table className="w-full">
+          <thead className="border-b border-black">
+            <tr>
+              <th className="p-1 text-left font-bold">ลำดับ</th>
+              <th className="p-1 text-left font-bold">รายการ</th>
+              <th className="p-1 text-right font-bold">จำนวน</th>
+              <th className="p-1 text-right font-bold">หน่วยละ</th>
+              <th className="p-1 text-right font-bold">จำนวนเงิน</th>
             </tr>
-          ))}
-          {Array.from({ length: emptyRows }).map((_, index) => (
-            <tr key={`empty-${index}`}>
-              <td className="border border-black p-1">&nbsp;</td>
-              <td className="border border-black p-1">&nbsp;</td>
-              <td className="border border-black p-1">&nbsp;</td>
-              <td className="border border-black p-1">&nbsp;</td>
-              <td className="border border-black p-1">&nbsp;</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {items.map((item, index) => (
+              <tr key={item.id} className="border-b">
+                <td className="p-1">{index + 1}</td>
+                <td className="p-1">{item.name}</td>
+                <td className="p-1 text-right">{item.quantity}</td>
+                <td className="p-1 text-right">{item.price.toFixed(2)}</td>
+                <td className="p-1 text-right">
+                  {(item.quantity * item.price).toFixed(2)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="pt-2">
+        <div className="flex justify-end">
+          <div className="w-2/3 space-y-1">
+            <div className="flex justify-between">
+              <span>รวมเป็นเงิน</span>
+              <span>{subtotal.toFixed(2)}</span>
+            </div>
 
-      <div className="mt-2 flex justify-between">
-        <div className="flex w-2/3 flex-col justify-between">
-          <div>
-            <span>(ตัวอักษร)</span>
-            <span className="ml-2 border-b border-dotted border-black">
-              {numberToThaiWords(total)}
-            </span>
+            {options.showDiscounts && totalDiscount > 0 && (
+              <>
+                {options.showDiscountNames ? (
+                  discounts.map((d) => {
+                    const discountValue =
+                      d.type === "percentage"
+                        ? subtotal * (d.value / 100)
+                        : d.value;
+                    return (
+                      <div key={d.id} className="flex justify-between">
+                        <span>{d.name}</span>
+                        <span>-{discountValue.toFixed(2)}</span>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="flex justify-between">
+                    <span>ส่วนลดรวม</span>
+                    <span>-{totalDiscount.toFixed(2)}</span>
+                  </div>
+                )}
+              </>
+            )}
+
+            <div className="flex justify-between border-t border-black pt-1 font-bold">
+              <span className="font-bold">ยอดสุทธิ</span>
+              <span className="font-bold">{total.toFixed(2)}</span>
+            </div>
           </div>
-          <div className="mt-8 text-center">
-            <p>.........................................</p>
+        </div>
+        <div className="mt-8 flex justify-between">
+          <div className="text-center">
+            <p className="pt-8">.................................</p>
+            <p>(ผู้รับของ)</p>
+          </div>
+          <div className="text-center">
+            <p className="pt-8">.................................</p>
             <p>({issuer.name})</p>
-            <p>ผู้รับเงิน</p>
+            <p>ผู้ส่งของ</p>
           </div>
-        </div>
-        <div className="flex w-1/3 flex-col">
-          <div className="flex justify-between border-b border-black">
-            <span>รวมเงิน</span>
-            <span>{total.toFixed(2)}</span>
-          </div>
-          <div className="mt-2 text-center text-xs">(ประทับตรา)</div>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default BookStoreInvoice;

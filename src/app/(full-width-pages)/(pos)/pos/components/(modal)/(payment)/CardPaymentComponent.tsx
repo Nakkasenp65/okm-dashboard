@@ -2,30 +2,157 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { BANK_DATA } from "@/data/BANK_DATA";
-import { CARD_NETWORK_DATA, DECORATIVE_LOGOS } from "@/data/CARD_NETWORK_DATA";
+import Button from "@/components/ui/button/Button";
+import { FaQrcode, FaLink, FaCheckCircle, FaSpinner } from "react-icons/fa";
+import { FaRegCopy } from "react-icons/fa6";
+
+// --- Types ---
+interface PaymentRecord {
+  method: string;
+  amount: number;
+  details?: {
+    paymentLink?: string;
+    transactionTime?: string;
+  };
+}
 
 interface CardPaymentComponentProps {
   totalToPay: number;
+  onPaymentSuccess: (payments: PaymentRecord[], change: number) => void;
 }
 
+type PaymentStatus = "idle" | "generating" | "generated";
+
+// --- Component ---
 export default function CardPaymentComponent({
   totalToPay,
+  onPaymentSuccess,
 }: CardPaymentComponentProps) {
-  const [cardChargeType, setCardChargeType] = useState<"credit" | "debit">(
-    "credit",
-  );
-  const [selectedNetwork, setSelectedNetwork] = useState<string>("");
-  const [selectedBank, setSelectedBank] = useState<string>("");
-  const [last4Digits, setLast4Digits] = useState("");
-  const [approvalCode, setApprovalCode] = useState("");
+  const [status, setStatus] = useState<PaymentStatus>("idle");
+  const [paymentLink, setPaymentLink] = useState("");
+  const [qrCodeUrl, setQrCodeUrl] = useState("");
+
+  const handleGenerateLink = () => {
+    setStatus("generating");
+
+    // TODO: Simulate API call to generate payment link and QR code
+    setTimeout(() => {
+      const uniqueId = Date.now();
+      const generatedLink = `https://example.com/pay?id=${uniqueId}&amount=${totalToPay}`;
+      const generatedQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+        generatedLink,
+      )}`;
+
+      setPaymentLink(generatedLink);
+      setQrCodeUrl(generatedQrUrl);
+      setStatus("generated");
+    }, 2000); // Simulate a 2-second delay
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(paymentLink);
+    alert("คัดลอกลิงก์แล้ว!");
+  };
+
+  const handleConfirmPayment = () => {
+    // This function confirms that the payment has been manually verified (e.g., staff saw the success screen on the customer's phone)
+    const paymentRecord: PaymentRecord[] = [
+      {
+        method: "ชำระด้วยบัตร (QR/Link)",
+        amount: totalToPay,
+        details: {
+          paymentLink: paymentLink,
+          transactionTime: new Date().toISOString(),
+        },
+      },
+    ];
+    onPaymentSuccess(paymentRecord, 0);
+  };
+
+  const renderContent = () => {
+    switch (status) {
+      case "generating":
+        return (
+          <div className="flex flex-col items-center justify-center gap-4 text-center">
+            <FaSpinner className="animate-spin text-4xl text-blue-500" />
+            <p className="font-semibold text-gray-700 dark:text-gray-300">
+              กำลังสร้างลิงก์และ QR Code...
+            </p>
+          </div>
+        );
+
+      case "generated":
+        return (
+          <div className="flex flex-col items-center gap-4 text-center">
+            <h4 className="font-semibold text-gray-800 dark:text-white">
+              กรุณาสแกน QR Code หรือใช้ลิงก์เพื่อชำระเงิน
+            </h4>
+            {qrCodeUrl && (
+              <div className="rounded-lg bg-white p-2 shadow-md">
+                <Image
+                  src={qrCodeUrl}
+                  alt="Payment QR Code"
+                  width={200}
+                  height={200}
+                />
+              </div>
+            )}
+            <div className="flex w-full items-center gap-2 rounded-lg bg-gray-200 p-2 dark:bg-gray-800">
+              <FaLink className="text-gray-500" />
+              <input
+                type="text"
+                readOnly
+                value={paymentLink}
+                className="w-full flex-1 border-none bg-transparent text-sm text-gray-700 select-all focus:ring-0 dark:text-gray-300"
+              />
+              <button
+                onClick={handleCopyLink}
+                className="rounded-md p-2 text-gray-600 transition-colors hover:bg-gray-300 dark:text-gray-400 dark:hover:bg-gray-700"
+                title="คัดลอกลิงก์"
+              >
+                <FaRegCopy />
+              </button>
+            </div>
+            <p className="text-xs text-gray-500">
+              หลังจากลูกค้าชำระเงินสำเร็จแล้ว
+              กรุณากดปุ่มยืนยันด้านล่างเพื่อปิดการขาย
+            </p>
+            <Button
+              onClick={handleConfirmPayment}
+              className="mt-4 w-full bg-green-500 py-3 text-lg font-bold text-white hover:bg-green-600"
+            >
+              <FaCheckCircle className="mr-2" />
+              ตรวจสอบและยืนยันการชำระเงิน
+            </Button>
+          </div>
+        );
+
+      case "idle":
+      default:
+        return (
+          <div className="flex flex-col items-center justify-center gap-4 text-center">
+            <FaQrcode className="text-6xl text-gray-400" />
+            <p className="text-gray-600 dark:text-gray-300">
+              คลิกเพื่อสร้างลิงก์และ QR Code
+              สำหรับให้ลูกค้าชำระเงินผ่านบัตรเครดิต/เดบิต
+            </p>
+            <Button
+              onClick={handleGenerateLink}
+              className="w-full py-3 text-lg font-semibold"
+            >
+              สร้างลิงก์ชำระเงิน
+            </Button>
+          </div>
+        );
+    }
+  };
 
   return (
     <div className="flex h-full flex-col p-6">
       {/* --- Header --- */}
       <div className="mb-6 flex items-baseline justify-between">
         <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-          ชำระด้วยบัตร
+          ชำระด้วยบัตร (QR/Link)
         </h3>
         <div className="text-right">
           <p className="text-sm text-gray-500 uppercase dark:text-gray-400">
@@ -37,155 +164,9 @@ export default function CardPaymentComponent({
         </div>
       </div>
 
-      {/* --- Form Section --- */}
-      <div className="flex-1 space-y-4 overflow-y-auto">
-        {/* Card Charge Type Radio */}
-        <div className="flex items-center gap-6 rounded-lg bg-gray-100 p-2 dark:bg-gray-700">
-          <label
-            className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-md p-2 transition-colors"
-            style={{
-              backgroundColor:
-                cardChargeType === "credit" ? "white" : "transparent",
-              color: cardChargeType === "credit" ? "#3b82f6" : "",
-            }}
-          >
-            <input
-              type="radio"
-              name="cardType"
-              value="credit"
-              checked={cardChargeType === "credit"}
-              onChange={() => setCardChargeType("credit")}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500"
-            />
-            <span className="font-semibold">เครดิต</span>
-          </label>
-          <label
-            className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-md p-2 transition-colors"
-            style={{
-              backgroundColor:
-                cardChargeType === "debit" ? "white" : "transparent",
-              color: cardChargeType === "debit" ? "#3b82f6" : "",
-            }}
-          >
-            <input
-              type="radio"
-              name="cardType"
-              value="debit"
-              checked={cardChargeType === "debit"}
-              onChange={() => setCardChargeType("debit")}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500"
-            />
-            <span className="font-semibold">เดบิต</span>
-          </label>
-        </div>
-
-        {/* Select Card Network */}
-        <div>
-          <label
-            htmlFor="card-network"
-            className="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-300"
-          >
-            ประเภทบัตร
-          </label>
-          <select
-            id="card-network"
-            value={selectedNetwork}
-            onChange={(e) => setSelectedNetwork(e.target.value)}
-            className="w-full rounded-lg border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
-          >
-            <option value="" disabled>
-              กรุณาเลือกประเภทบัตร
-            </option>
-            {CARD_NETWORK_DATA.map((network) => (
-              <option key={network.id} value={network.id}>
-                {network.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Select Bank */}
-        <div>
-          <label
-            htmlFor="card-bank"
-            className="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-300"
-          >
-            ธนาคาร
-          </label>
-          <select
-            id="card-bank"
-            value={selectedBank}
-            onChange={(e) => setSelectedBank(e.target.value)}
-            className="w-full rounded-lg border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
-          >
-            <option value="" disabled>
-              กรุณาเลือกธนาคาร
-            </option>
-            {BANK_DATA.map((bank) => (
-              <option key={bank.short_name_en} value={bank.short_name_en}>
-                {bank.name_th}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Optional Fields */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label
-              htmlFor="last-4-digits"
-              className="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-300"
-            >
-              เลข 4 ตัวท้าย (ถ้ามี)
-            </label>
-            <input
-              type="text"
-              id="last-4-digits"
-              value={last4Digits}
-              onChange={(e) =>
-                setLast4Digits(e.target.value.replace(/\D/g, "").slice(0, 4))
-              }
-              maxLength={4}
-              placeholder="1234"
-              className="w-full rounded-lg border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="approval-code"
-              className="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-300"
-            >
-              รหัสอนุมัติ (ถ้ามี)
-            </label>
-            <input
-              type="text"
-              id="approval-code"
-              value={approvalCode}
-              onChange={(e) => setApprovalCode(e.target.value)}
-              placeholder="AB1234"
-              className="w-full rounded-lg border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* --- Footer with Logos --- */}
-      <div className="mt-6 shrink-0 border-t border-gray-200 pt-4 dark:border-gray-700">
-        <div className="flex items-center justify-center gap-4 opacity-50">
-          {DECORATIVE_LOGOS.map((logo) => (
-            <div key={logo.id} className="relative h-8 w-12">
-              <Image
-                src={logo.url}
-                alt={logo.id}
-                layout="fill"
-                objectFit="contain"
-              />
-            </div>
-          ))}
-        </div>
-        <p className="mt-2 text-center text-xs text-gray-400">
-          ระบบนี้เป็นเพียงการบันทึกข้อมูล ไม่มีการเชื่อมต่อกับระบบชำระเงินจริง
-        </p>
+      {/* --- Dynamic Content Area --- */}
+      <div className="flex flex-1 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-100/50 p-8 dark:border-gray-700 dark:bg-black/20">
+        {renderContent()}
       </div>
     </div>
   );

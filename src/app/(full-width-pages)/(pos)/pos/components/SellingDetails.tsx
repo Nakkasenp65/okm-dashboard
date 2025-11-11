@@ -8,6 +8,7 @@ import { Product } from "./dataTransformer"; // Import Product type
 interface SellingDetailsProps {
   onAddProduct: (productToAdd: Product) => void;
   availableProducts: Product[];
+  availableStock: Map<number, number>;
   isLoading: boolean;
   error: string | null;
 }
@@ -15,6 +16,7 @@ interface SellingDetailsProps {
 export default function SellingDetails({
   onAddProduct,
   availableProducts,
+  availableStock,
   isLoading,
   error,
 }: SellingDetailsProps) {
@@ -43,6 +45,7 @@ export default function SellingDetails({
           <ProductCategory
             onAddProduct={onAddProduct} // ส่ง onAddProduct ที่ได้รับมาลงไปตรงๆ
             products={availableProducts}
+            availableStock={availableStock}
           />
         )}
       </div>

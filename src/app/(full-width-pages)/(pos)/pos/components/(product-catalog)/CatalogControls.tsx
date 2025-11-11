@@ -23,23 +23,23 @@ export default function CatalogControls({
 }: CatalogControlsProps) {
   return (
     <div className="mb-4 rounded-lg bg-white p-4 shadow-sm dark:bg-gray-800">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <div className="relative md:col-span-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
+        <div className="relative md:col-span-6">
           <FaSearch className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
             placeholder="ค้นหาตามชื่อ หรือ IMEI..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-md border-gray-300 p-2 pl-10 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+            className="w-full rounded-md border border-gray-300 bg-gray-50 p-2 pl-10 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
           />
         </div>
-        <div className="relative md:col-span-1">
+        <div className="relative md:col-span-3">
           <FaSort className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" />
           <select
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value)}
-            className="w-full appearance-none rounded-md border-gray-300 p-2 pl-10 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+            className="w-full appearance-none rounded-md border border-gray-300 p-2 pl-10 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
           >
             <option value="date-desc">วันที่เพิ่ม: ล่าสุด</option>
             <option value="date-asc">วันที่เพิ่ม: เก่าสุด</option>
@@ -50,7 +50,7 @@ export default function CatalogControls({
             <option value="imei-asc">IMEI: A-Z</option>
           </select>
         </div>
-        <div className="flex gap-2 md:col-span-1">
+        <div className="flex gap-2 md:col-span-3">
           {/* Display Mode Toggle Buttons */}
           <button
             onClick={() => onChangeDisplayMode("grid")}

@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
       "profile.line-scdn.net",
       "cdn.simpleicons.org",
       "applehouseth.com",
+      "rocket.in.th",
     ],
   },
 
