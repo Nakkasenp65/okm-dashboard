@@ -1,11 +1,81 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import { MOCK_SHOP_INFO, ReceiptPreviewProps } from "./receiptTypes";
 
+const VAT_RATE = 0.07; // 7%
+
 const BookStoreInvoice = (props: ReceiptPreviewProps) => {
-  const { receiptData, items, subtotal, total, issuer, discounts, options } =
-    props;
+  const {
+    receiptData,
+    items,
+    subtotal,
+    total,
+    issuer,
+    discounts,
+    options,
+    withholdingTaxPercent,
+  } = props;
   const totalDiscount = subtotal - total;
+  const { vatMode, applyWithholdingTax, withholdingTaxVatMode } = options;
+
+  // ✅ คำนวณ VAT ตามโหมดที่เลือก (เหมือน StandardReceipt)
+  const { subTotalBeforeVat, vatAmount, grandTotal } = useMemo(() => {
+    switch (vatMode) {
+      case "included":
+        const includedGrandTotal = total;
+        const includedSubTotal = total / (1 + VAT_RATE);
+        const includedVatAmount = includedGrandTotal - includedSubTotal;
+        return {
+          subTotalBeforeVat: includedSubTotal,
+          vatAmount: includedVatAmount,
+          grandTotal: includedGrandTotal,
+        };
+      case "excluded":
+        const excludedSubTotal = total;
+        const excludedVatAmount = total * VAT_RATE;
+        const excludedGrandTotal = excludedSubTotal + excludedVatAmount;
+        return {
+          subTotalBeforeVat: excludedSubTotal,
+          vatAmount: excludedVatAmount,
+          grandTotal: excludedGrandTotal,
+        };
+      case "off":
+      default:
+        return {
+          subTotalBeforeVat: total,
+          vatAmount: 0,
+          grandTotal: total,
+        };
+    }
+  }, [total, vatMode]);
+
+  // ✅ คำนวณภาษีหัก ณ ที่จ่าย
+  // - withholdingTaxVatMode = "pre-vat": คำนวณจากยอดก่อน VAT (subTotalBeforeVat)
+  // - withholdingTaxVatMode = "post-vat": คำนวณจากยอดรวมทั้งสิ้น (grandTotal)
+  const withholdingTaxBase = useMemo(() => {
+    if (!applyWithholdingTax) return 0;
+
+    if (withholdingTaxVatMode === "post-vat") {
+      // คำนวณจากยอดรวมทั้งสิ้น (หลัง VAT)
+      return grandTotal;
+    } else {
+      // คำนวณจากยอดก่อน VAT (pre-vat)
+      // ถ้าไม่ได้คิด VAT ให้ใช้ grandTotal
+      return vatMode !== "off" ? subTotalBeforeVat : grandTotal;
+    }
+  }, [
+    applyWithholdingTax,
+    withholdingTaxVatMode,
+    grandTotal,
+    vatMode,
+    subTotalBeforeVat,
+  ]);
+
+  const withholdingTaxAmount =
+    withholdingTaxBase * (withholdingTaxPercent / 100);
+
+  // ✅ ยอดชำระสุทธิ = ยอดรวมทั้งสิ้น - ภาษีหัก ณ ที่จ่าย
+  const netPayment = grandTotal - withholdingTaxAmount;
 
   return (
     <div className="flex h-full flex-col border border-black p-4">
@@ -101,10 +171,38 @@ const BookStoreInvoice = (props: ReceiptPreviewProps) => {
               </>
             )}
 
+            {/* ✅ แสดง VAT (ถ้ามี) */}
+            {vatMode !== "off" && (
+              <>
+                <div className="flex justify-between">
+                  <span>มูลค่าก่อนภาษี</span>
+                  <span>{subTotalBeforeVat.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>ภาษีมูลค่าเพิ่ม 7%</span>
+                  <span>{vatAmount.toFixed(2)}</span>
+                </div>
+              </>
+            )}
+
             <div className="flex justify-between border-t border-black pt-1 font-bold">
-              <span className="font-bold">ยอดสุทธิ</span>
-              <span className="font-bold">{total.toFixed(2)}</span>
+              <span className="font-bold">ยอดรวมทั้งสิ้น</span>
+              <span className="font-bold">{grandTotal.toFixed(2)}</span>
             </div>
+
+            {/* ✅ แสดงภาษีหัก ณ ที่จ่าย (ถ้ามี) */}
+            {options.applyWithholdingTax && withholdingTaxAmount > 0 && (
+              <>
+                <div className="flex justify-between text-sm">
+                  <span>ภาษีหัก ณ ที่จ่าย {withholdingTaxPercent}%</span>
+                  <span>{withholdingTaxAmount.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between font-bold">
+                  <span className="font-bold">ยอดชำระสุทธิ</span>
+                  <span className="font-bold">{netPayment.toFixed(2)}</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
         <div className="mt-8 flex justify-between">

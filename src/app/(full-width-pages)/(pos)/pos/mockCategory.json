@@ -1,0 +1,243 @@
+{
+  "status": {
+    "is": true,
+    "code": 200,
+    "message": "OK"
+  },
+  "data": [
+    {
+      "id": 402457,
+      "merchant_id": 1645,
+      "name": "Gadget",
+      "text": "Gadget",
+      "color": "#9f30e3",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402459,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d 1 Beyond",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d 1 Beyond",
+      "color": "#525252",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402450,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 HUAWEI",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 HUAWEI",
+      "color": "#eb0e0e",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402455,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d 1 Infinix",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d 1 Infinix",
+      "color": "#0b632e",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402452,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 IPAD",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 IPAD",
+      "color": "#0f0101",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402451,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 IPHONE",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 IPHONE",
+      "color": "#0f0000",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402460,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d 1 Nokia",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d 1 Nokia",
+      "color": "#1761cf",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402449,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 ONEPLUS",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 ONEPLUS",
+      "color": "#fa0202",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402446,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 OPPO",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 OPPO",
+      "color": "#129c0b",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402456,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d 1 Realme",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d 1 Realme",
+      "color": "#fae419",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402445,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 SAMSUNG",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 SAMSUNG",
+      "color": "#0032de",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402447,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 VIVO",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 VIVO",
+      "color": "#0cbaf2",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402448,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 XIAOMI",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d1 XIAOMI",
+      "color": "#ed9d07",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402461,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d 2 GOOGLE",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d 2 GOOGLE",
+      "color": "#525252",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402462,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 GOOGLE",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 GOOGLE",
+      "color": "#e613ed",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402444,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 HUAWEI",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 HUAWEI",
+      "color": "#ff0000",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402454,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPAD",
+      "color": "#0d0000",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402453,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 IPHONE",
+      "color": "#050000",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402443,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 ONEPLUS",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 ONEPLUS",
+      "color": "#f50000",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402440,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 OPPO",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 OPPO",
+      "color": "#016909",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402458,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d 2 Realme",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d 2 Realme",
+      "color": "#fae419",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402439,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 Samsung",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 Samsung",
+      "color": "#0937e6",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402441,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 VIVO",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 VIVO",
+      "color": "#0588e6",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402442,
+      "merchant_id": 1645,
+      "name": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 XIAOMI",
+      "text": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e21\u0e37\u0e2d2 XIAOMI",
+      "color": "#fc9d12",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402438,
+      "merchant_id": 1645,
+      "name": "\u0e1f\u0e34\u0e25\u0e4c\u0e21",
+      "text": "\u0e1f\u0e34\u0e25\u0e4c\u0e21",
+      "color": "#525252",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    },
+    {
+      "id": 402463,
+      "merchant_id": 1645,
+      "name": "\u0e2d\u0e37\u0e48\u0e19\u0e46",
+      "text": "\u0e2d\u0e37\u0e48\u0e19\u0e46",
+      "color": "#e6279a",
+      "created_at": "2025-01-14T14:07:44.000000Z",
+      "updated_at": "2025-01-14T14:07:44.000000Z"
+    }
+  ]
+}

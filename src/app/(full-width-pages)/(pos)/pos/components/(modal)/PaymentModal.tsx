@@ -9,6 +9,7 @@ import {
   FaTruck,
   FaMix,
   FaUniversity,
+  FaPencilAlt,
 } from "react-icons/fa";
 import CashPaymentComponent, {
   CashPaymentHandle,
@@ -33,10 +34,12 @@ export type PaymentMethod =
   | "app"
   | "mixed"
   | "promptpay";
+
 export interface Payment {
   method: string;
   amount: number;
   details?: Record<string, unknown>;
+  note?: string;
 }
 
 type VatCalculationMode = "off" | "included" | "excluded";
@@ -52,6 +55,12 @@ interface PaymentModalProps {
   onPrintShortReceipt: () => void;
   onPrintFullReceipt: () => void;
   onSendEReceipt: () => void;
+  vatMode: VatCalculationMode;
+  setVatMode: (mode: VatCalculationMode) => void;
+  withholdingTaxPercent: number;
+  setWithholdingTaxPercent: (percent: number) => void;
+  withholdingTaxVatMode: "pre-vat" | "post-vat";
+  setWithholdingTaxVatMode: (mode: "pre-vat" | "post-vat") => void;
 }
 
 const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
@@ -93,7 +102,15 @@ export default function PaymentModal({
   onPrintShortReceipt,
   onPrintFullReceipt,
   onSendEReceipt,
+  vatMode,
+  setVatMode,
+  withholdingTaxPercent,
+  setWithholdingTaxPercent,
+  withholdingTaxVatMode,
+  setWithholdingTaxVatMode,
 }: PaymentModalProps) {
+  console.log(totalToPay);
+
   const tabsToDisplay = mode === "retail" ? retailTabs : companyTabs;
   const [activeTab, setActiveTab] = useState<PaymentMethod>(
     tabsToDisplay[0].id as PaymentMethod,
@@ -101,7 +118,8 @@ export default function PaymentModal({
   const [paymentStep, setPaymentStep] = useState<"paying" | "success">(
     "paying",
   );
-  const [vatMode, setVatMode] = useState<VatCalculationMode>("off");
+  // ✅ Removed local vatMode state - now using props from page
+  const [note, setNote] = useState("");
 
   const cashPaymentRef = useRef<CashPaymentHandle>(null);
   const [mixedPayments, setMixedPayments] = useState<Payment[]>([]);
@@ -138,6 +156,18 @@ export default function PaymentModal({
     }
   }, [totalToPay, vatMode]);
 
+  // ✅ KEY CHANGE: Withholding tax calculation - always based on subTotalBeforeVat (pre-vat)
+  const withholdingTaxAmount =
+    subTotalBeforeVat * (withholdingTaxPercent / 100);
+
+  // ✅ KEY CHANGE: Final payment amount based on withholdingTaxVatMode
+  // If pre-vat: show before deduction (add back the tax)
+  // If post-vat: show after all deductions (just grandTotal)
+  const finalPaymentAmount =
+    withholdingTaxPercent > 0 && withholdingTaxVatMode === "pre-vat"
+      ? grandTotal + withholdingTaxAmount
+      : grandTotal;
+
   const totalPaidInMix = useMemo(
     () => mixedPayments.reduce((sum, p) => sum + p.amount, 0),
     [mixedPayments],
@@ -151,19 +181,29 @@ export default function PaymentModal({
       setActiveTab(currentTabs[0].id as PaymentMethod);
       setMixedPayments([]);
       setVatMode("off");
+      setNote("");
       cashPaymentRef.current?.reset();
     }
-  }, [isOpen, mode]);
+  }, [isOpen, mode, setVatMode]);
 
   const handleConfirmPayment = () => {
-    // If the active tab is 'card', do nothing, as its confirmation is handled internally.
     if (activeTab === "card") {
       return;
     }
 
     let finalPayments: Payment[] = [];
     let finalChange = 0;
-    const amountToPay = grandTotal;
+    // ✅ KEY CHANGE: Use finalPaymentAmount for payment calculation
+    const amountToPay = finalPaymentAmount;
+
+    // ✅ KEY CHANGE: สร้าง object payment พร้อม note (ไม่ต้องเช็ค mode)
+    const createPaymentObject = (method: string, amount: number): Payment => {
+      const payment: Payment = { method, amount };
+      if (note.trim() !== "") {
+        payment.note = note.trim();
+      }
+      return payment;
+    };
 
     switch (activeTab) {
       case "cash":
@@ -179,43 +219,67 @@ export default function PaymentModal({
           });
           return;
         }
-        finalPayments.push({
-          method: PAYMENT_METHOD_LABELS.cash,
-          amount: amountToPay,
-        });
+        finalPayments.push(
+          createPaymentObject(PAYMENT_METHOD_LABELS.cash, amountToPay),
+        );
         finalChange = change;
         break;
       case "transfer":
       case "online":
-      // 'card' case is removed from here as it's handled internally
       case "credit":
       case "app":
       case "promptpay":
-        finalPayments.push({
-          method: PAYMENT_METHOD_LABELS[activeTab],
-          amount: amountToPay,
-        });
+        finalPayments.push(
+          createPaymentObject(PAYMENT_METHOD_LABELS[activeTab], amountToPay),
+        );
         break;
       case "mixed":
         if (remainingInMix > 0.001) {
           confirmation.showConfirmation({
             title: "ยังชำระไม่ครบจำนวน",
-            message: `คงเหลือจำนวนเงินที่ต้องชำระอีก ${remainingInMix.toFixed(
-              2,
-            )} บาท`,
+            message: `คงเหลือจำนวนเงินที่ต้องชำระอีก ${(
+              finalPaymentAmount - totalPaidInMix
+            ).toFixed(2)} บาท`,
             type: "warning",
             confirmText: "ตกลง",
             showCancel: false,
           });
           return;
         }
-        finalPayments = mixedPayments;
-        finalChange = Math.abs(remainingInMix);
+        // ✅ KEY CHANGE: เพิ่ม note เข้าไปในทุกรายการของ mixed payment
+        finalPayments = mixedPayments.map((p) => ({
+          ...p,
+          ...(note.trim() !== "" && { note: note.trim() }),
+        }));
+        finalChange = Math.abs(finalPaymentAmount - totalPaidInMix);
         break;
     }
 
     onPaymentSuccess(finalPayments, finalChange);
     setPaymentStep("success");
+  };
+
+  // ✅ KEY CHANGE: ลบเงื่อนไขออกจาก Component และปรับข้อความให้เป็นกลาง
+  const NoteInputSection = () => {
+    return (
+      <div className="border-t border-gray-200 bg-white/50 p-4 dark:border-gray-700/50 dark:bg-gray-800/30">
+        <label
+          htmlFor="payment-note"
+          className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300"
+        >
+          <FaPencilAlt className="text-xs" />
+          หมายเหตุ (Note / Remark)
+        </label>
+        <textarea
+          id="payment-note"
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          rows={2}
+          placeholder="ระบุรายละเอียดเพิ่มเติม (ถ้ามี)..."
+          className="w-full rounded-lg border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+        />
+      </div>
+    );
   };
 
   return (
@@ -224,7 +288,7 @@ export default function PaymentModal({
         isOpen={isOpen}
         onClose={onClose}
         showCloseButton={false}
-        className="h-[80vh] w-full max-w-6xl rounded-2xl p-0 shadow-2xl"
+        className="no-scrollbar h-screen w-full overflow-auto rounded-none shadow-2xl md:h-[92vh] md:max-w-7xl md:rounded-2xl"
       >
         {paymentStep === "success" ? (
           <SuccessScreen
@@ -232,7 +296,7 @@ export default function PaymentModal({
               activeTab === "cash"
                 ? (cashPaymentRef.current?.getChange() ?? 0)
                 : activeTab === "mixed"
-                  ? Math.abs(remainingInMix)
+                  ? Math.abs(finalPaymentAmount - totalPaidInMix)
                   : 0
             }
             onFinishTransaction={onFinishTransaction}
@@ -241,26 +305,27 @@ export default function PaymentModal({
             onSendEReceipt={onSendEReceipt}
           />
         ) : (
-          <div className="flex h-full bg-gray-50 dark:bg-gray-900">
-            {/* Left Panel: Payment Method Selection */}
-            <div className="flex w-3/5 flex-col border-r border-gray-200 dark:border-gray-700/50">
-              <div className="p-6">
-                <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-white">
+          <div className="flex h-full flex-col bg-gray-50 md:flex-row dark:bg-gray-900">
+            <div className="flex w-full flex-col border-b border-gray-200 md:w-3/5 md:border-r md:border-b-0 dark:border-gray-700/50">
+              <div className="border-b border-gray-200 p-3 md:p-5 dark:border-gray-700/50">
+                <h2 className="mb-2 text-lg font-bold text-gray-800 md:mb-3 md:text-xl dark:text-white">
                   เลือกวิธีการชำระเงิน
                 </h2>
-                <div className="grid grid-cols-7 gap-3">
+                <div className="grid grid-cols-4 gap-1 md:grid-cols-7 md:gap-2">
                   {tabsToDisplay.map((tab) => (
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id as PaymentMethod)}
-                      className={`flex flex-col items-center justify-center gap-2 rounded-xl p-3 font-semibold transition-all duration-200 ${
+                      className={`flex flex-col items-center justify-center gap-1 rounded-lg p-1.5 font-semibold transition-all duration-200 md:gap-1.5 md:rounded-xl md:p-2.5 ${
                         activeTab === tab.id
                           ? "scale-105 bg-blue-500 text-white shadow-lg"
                           : "bg-gray-200/50 text-gray-700 hover:bg-gray-200 dark:bg-gray-800/60 dark:text-gray-300 dark:hover:bg-gray-700"
                       }`}
                     >
-                      <tab.icon size={24} />
-                      <span className="text-sm">{tab.label}</span>
+                      <tab.icon size={18} className="md:h-[22px] md:w-[22px]" />
+                      <span className="text-[10px] leading-tight md:text-xs">
+                        {tab.label}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -295,14 +360,14 @@ export default function PaymentModal({
                   />
                 )}
                 {["credit", "app"].includes(activeTab) && (
-                  <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center">
-                    <span className="text-6xl">
+                  <div className="flex h-full flex-col items-center justify-center gap-4 p-4 text-center md:p-8">
+                    <span className="text-4xl md:text-6xl">
                       {activeTab === "credit" ? "📝" : "📱"}
                     </span>
-                    <h3 className="text-2xl font-bold text-gray-700 dark:text-gray-300">
+                    <h3 className="text-xl font-bold text-gray-700 md:text-2xl dark:text-gray-300">
                       {PAYMENT_METHOD_LABELS[activeTab]}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-gray-600 md:text-base dark:text-gray-400">
                       ส่วนนี้จะแสดงข้อมูล/แบบฟอร์ม
                       <br />
                       ที่เกี่ยวข้องกับการชำระเงินประเภทนี้
@@ -310,18 +375,18 @@ export default function PaymentModal({
                   </div>
                 )}
               </div>
+              <NoteInputSection />
             </div>
-            {/* Right Panel: Summary */}
-            <div className="flex w-2/5 flex-col justify-between bg-white p-8 dark:bg-gray-800/50">
+            <div className="flex w-full flex-col justify-between overflow-y-auto bg-white p-3 md:w-2/5 md:p-6 dark:bg-gray-800/50">
               <div>
-                <h3 className="mb-6 text-2xl font-bold text-gray-800 dark:text-white">
+                <h3 className="mb-3 text-lg font-bold text-gray-800 md:mb-5 md:text-2xl dark:text-white">
                   สรุปยอดชำระ
                 </h3>
-                <div className="mb-6">
-                  <h4 className="text-md mb-3 font-semibold text-gray-700 dark:text-gray-300">
+                <div className="mb-3 md:mb-5">
+                  <h4 className="mb-2 text-xs font-semibold text-gray-700 md:mb-3 md:text-sm dark:text-gray-300">
                     การคำนวณภาษีมูลค่าเพิ่ม (VAT)
                   </h4>
-                  <div className="flex rounded-lg bg-gray-200/60 p-1 dark:bg-gray-900/70">
+                  <div className="flex gap-1 rounded-lg bg-gray-200/60 p-1 md:gap-1.5 dark:bg-gray-900/70">
                     {(
                       ["off", "included", "excluded"] as VatCalculationMode[]
                     ).map((mode, index) => (
@@ -329,49 +394,143 @@ export default function PaymentModal({
                         key={mode}
                         variant={vatMode === mode ? "primary" : "outline"}
                         onClick={() => setVatMode(mode)}
-                        className="w-full text-sm font-semibold transition-all"
+                        className="flex-1 py-1.5 text-[10px] font-semibold transition-all md:py-2 md:text-xs"
                       >
-                        {["ไม่คิด VAT", "ราคารวม VAT", "ราคาบวก VAT"][index]}
+                        <span className="hidden sm:inline">
+                          {["ไม่คิด VAT", "ราคารวม VAT", "ราคาบวก VAT"][index]}
+                        </span>
+                        <span className="sm:hidden">
+                          {["ไม่คิด", "รวม", "บวก"][index]}
+                        </span>
                       </Button>
                     ))}
                   </div>
                 </div>
 
-                <div className="space-y-3 rounded-2xl border border-gray-200 bg-white/50 p-5 shadow-sm backdrop-blur-sm dark:border-gray-700/50 dark:bg-gray-700/30">
+                {/* Withholding Tax Section */}
+                <div className="mb-3 md:mb-5">
+                  <label className="mb-2 flex cursor-pointer items-center justify-between md:mb-3">
+                    <span className="text-xs font-semibold text-gray-700 md:text-sm dark:text-gray-300">
+                      ภาษีหัก ณ ที่จ่าย
+                    </span>
+                    <input
+                      type="checkbox"
+                      checked={withholdingTaxPercent > 0}
+                      onChange={(e) =>
+                        setWithholdingTaxPercent(e.target.checked ? 3 : 0)
+                      }
+                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                  </label>
+                  {withholdingTaxPercent > 0 && (
+                    <div className="space-y-2 rounded-lg border border-gray-200 bg-gray-50/50 p-2 md:space-y-3 md:p-3 dark:border-gray-700/50 dark:bg-gray-800/30">
+                      <div>
+                        <label className="mb-1 block text-[10px] font-medium text-gray-600 md:mb-1.5 md:text-xs dark:text-gray-400">
+                          เปอร์เซ็นต์ (%)
+                        </label>
+                        <input
+                          type="number"
+                          value={withholdingTaxPercent}
+                          onChange={(e) =>
+                            setWithholdingTaxPercent(Number(e.target.value))
+                          }
+                          min="0"
+                          max="100"
+                          step="0.5"
+                          className="w-full rounded-md border-gray-300 p-2 text-right text-xs shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 md:text-sm dark:border-gray-600 dark:bg-gray-700"
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-[10px] font-medium text-gray-600 md:mb-1.5 md:text-xs dark:text-gray-400">
+                          คำนวณจาก
+                        </label>
+                        <div className="flex gap-1 md:gap-1.5">
+                          <Button
+                            variant={
+                              withholdingTaxVatMode === "pre-vat"
+                                ? "primary"
+                                : "outline"
+                            }
+                            onClick={() => setWithholdingTaxVatMode("pre-vat")}
+                            className="flex-1 py-1.5 text-[10px] font-semibold md:text-xs"
+                          >
+                            ยอดก่อน VAT
+                          </Button>
+                          <Button
+                            variant={
+                              withholdingTaxVatMode === "post-vat"
+                                ? "primary"
+                                : "outline"
+                            }
+                            onClick={() => setWithholdingTaxVatMode("post-vat")}
+                            className="flex-1 py-1.5 text-[10px] font-semibold md:text-xs"
+                          >
+                            ยอดรวม VAT
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2 rounded-xl border border-gray-200 bg-gradient-to-br from-white/80 to-gray-50/50 p-3 shadow-sm backdrop-blur-sm md:space-y-3 md:p-5 dark:border-gray-700/50 dark:from-gray-700/30 dark:to-gray-800/30">
                   {vatMode !== "off" && (
                     <>
-                      <div className="flex justify-between text-sm">
+                      <div className="flex justify-between text-xs md:text-sm">
                         <span className="text-gray-600 dark:text-gray-400">
-                          ยอดก่อนภาษี
+                          มูลค่าก่อนภาษี
                         </span>
                         <span className="font-semibold text-gray-800 dark:text-white">
-                          {subTotalBeforeVat.toFixed(2)}
+                          ฿{subTotalBeforeVat.toFixed(2)}
                         </span>
                       </div>
-                      <div className="flex justify-between text-sm">
+                      <div className="flex justify-between text-xs md:text-sm">
                         <span className="text-gray-600 dark:text-gray-400">
                           ภาษี (7%)
                         </span>
                         <span className="font-semibold text-gray-800 dark:text-white">
-                          {vatAmount.toFixed(2)}
+                          ฿{vatAmount.toFixed(2)}
                         </span>
                       </div>
-                      <div className="border-t border-gray-200 pt-3 dark:border-gray-600" />
+                      {withholdingTaxPercent > 0 && (
+                        <div className="flex justify-between text-xs md:text-sm">
+                          <span className="text-gray-600 dark:text-gray-400">
+                            ภาษีหัก ณ ที่จ่าย {withholdingTaxPercent}%
+                          </span>
+                          <span className="font-semibold text-gray-800 dark:text-white">
+                            ({withholdingTaxAmount.toFixed(2)})
+                          </span>
+                        </div>
+                      )}
+                      <div className="border-t border-gray-200 pt-2 dark:border-gray-600" />
                     </>
                   )}
 
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-gray-800 dark:text-white">
-                      ยอดรวมสุทธิ
+                  {/* Show intermediate amount if withholding tax post-vat mode */}
+                  {withholdingTaxPercent > 0 &&
+                    withholdingTaxVatMode === "post-vat" && (
+                      <div className="flex justify-between text-xs md:text-sm">
+                        <span className="text-gray-600 dark:text-gray-400">
+                          ยอดชำระรวม (ก่อนหัก)
+                        </span>
+                        <span className="font-semibold text-gray-800 dark:text-white">
+                          ฿{(grandTotal + withholdingTaxAmount).toFixed(2)}
+                        </span>
+                      </div>
+                    )}
+
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="text-sm font-bold text-gray-800 md:text-base dark:text-white">
+                      ยอดชำระสุทธิ
                     </span>
-                    <span className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                      ฿{grandTotal.toFixed(2)}
+                    <span className="text-2xl font-bold text-blue-600 md:text-3xl dark:text-blue-400">
+                      ฿{finalPaymentAmount.toFixed(2)}
                     </span>
                   </div>
 
                   {activeTab === "mixed" && (
-                    <div className="border-t border-gray-200 pt-3 dark:border-gray-600">
-                      <div className="flex justify-between py-1 text-sm">
+                    <div className="border-t border-gray-200 pt-2 md:pt-3 dark:border-gray-600">
+                      <div className="flex justify-between py-1 text-xs md:text-sm">
                         <span className="text-gray-600 dark:text-gray-400">
                           ชำระแล้ว
                         </span>
@@ -380,32 +539,34 @@ export default function PaymentModal({
                         </span>
                       </div>
                       <div className="flex justify-between py-1">
-                        <span className="font-bold text-gray-700 dark:text-gray-300">
+                        <span className="text-sm font-bold text-gray-700 md:text-base dark:text-gray-300">
                           คงเหลือ
                         </span>
                         <span
-                          className={`text-lg font-bold ${
+                          className={`text-base font-bold md:text-lg ${
                             remainingInMix > 0.001
                               ? "text-red-500"
                               : "text-green-600 dark:text-green-400"
                           }`}
                         >
-                          ฿{remainingInMix.toFixed(2)}
+                          ฿{(finalPaymentAmount - totalPaidInMix).toFixed(2)}
                         </span>
                       </div>
                     </div>
                   )}
                 </div>
               </div>
-              <div className="space-y-3 pt-6">
+              <div className="space-y-2 pt-3 md:space-y-2.5 md:pt-5">
                 <Button
                   onClick={handleConfirmPayment}
                   disabled={
-                    (activeTab === "mixed" && remainingInMix > 0.001) ||
+                    (activeTab === "mixed" &&
+                      finalPaymentAmount - totalPaidInMix > 0.001) ||
                     activeTab === "card"
                   }
-                  className={`w-full py-4 text-lg font-bold transition-all duration-300 ${
-                    (activeTab === "mixed" && remainingInMix > 0.001) ||
+                  className={`w-full py-3 text-sm font-bold transition-all duration-300 md:py-3.5 md:text-base ${
+                    (activeTab === "mixed" &&
+                      finalPaymentAmount - totalPaidInMix > 0.001) ||
                     activeTab === "card"
                       ? "cursor-not-allowed bg-gray-400 opacity-50 dark:bg-gray-600"
                       : "bg-green-500 text-white shadow-lg hover:bg-green-600 hover:shadow-xl"
@@ -416,7 +577,7 @@ export default function PaymentModal({
                 <Button
                   onClick={onClose}
                   variant="outline"
-                  className="w-full py-3 font-semibold text-gray-600 hover:bg-gray-200/50 dark:text-gray-400 dark:hover:bg-gray-700/50"
+                  className="w-full py-2 text-xs font-semibold text-gray-600 hover:bg-gray-200/50 md:py-2.5 md:text-sm dark:text-gray-400 dark:hover:bg-gray-700/50"
                 >
                   ปิด
                 </Button>

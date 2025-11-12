@@ -1,58 +1,20 @@
-// app/admin/pos/components/dataTransformer.ts
-
 // --- Types ---
+
+// The final, clean Product Type we want to use in our app
 export interface Product {
   id: number;
   name: string;
   barcode: string;
   price: number;
   cost: number;
-  brand: string; // ** เพิ่ม property นี้ **
-  condition: "มือหนึ่ง" | "มือสอง"; // สมมติว่ามีข้อมูลนี้
-  stock: number; // สมมติว่ามีข้อมูลนี้
+  brand: string;
+  condition: "มือหนึ่ง" | "มือสอง" | "อุปกรณ์เสริม";
+  stock: number;
   createdAt: Date;
+  categoryColor?: string; // ** <--- KEY CHANGE: เพิ่ม Property นี้ที่นี่ **
 }
 
-// --- Helper Function to Extract Brand ---
-// ฟังก์ชันนี้จะพยายามหาชื่อแบรนด์จากชื่อสินค้า
-const KNOWN_BRANDS = [
-  "Samsung",
-  "Vivo",
-  "Oppo",
-  "Xiaomi",
-  "Redmi",
-  "Realme",
-  "Honor",
-  "Google",
-  "Huawei",
-  "Infinix",
-  // Apple keywords are handled separately below
-];
-
-const APPLE_KEYWORDS = ["apple", "iphone", "ipad", "airpods"];
-
-const extractBrandFromName = (name: string): string => {
-  const lowerCaseName = name.toLowerCase();
-
-  // 1. Check for Apple keywords first
-  for (const keyword of APPLE_KEYWORDS) {
-    if (lowerCaseName.includes(keyword)) {
-      return "Apple";
-    }
-  }
-
-  // 2. If not Apple, check for other known brands
-  for (const brand of KNOWN_BRANDS) {
-    if (lowerCaseName.includes(brand.toLowerCase())) {
-      return brand;
-    }
-  }
-
-  // 3. If no brand is found, return "Others"
-  return "Others";
-};
-
-// Type for API response item
+// Interface for the raw product data coming from the main API (mockData.json)
 interface ApiProductItem {
   id: number;
   name: string;
@@ -62,13 +24,89 @@ interface ApiProductItem {
     cost?: string | number;
   };
   category?: {
-    name?: string;
+    id: number;
+    color: string;
+    name: string;
   };
   count_name_md5?: number;
   created_at: string;
 }
 
-// --- Main Transformer Function ---
+// --- Logic to extract Brand and Condition from Category Name ---
+
+interface ExtractedInfo {
+  brand: string;
+  condition: "มือหนึ่ง" | "มือสอง" | "อุปกรณ์เสริม";
+}
+
+const extractInfoFromCategory = (
+  categoryName: string = "",
+  productName: string = "",
+): ExtractedInfo => {
+  const lowerCategoryName = categoryName.toLowerCase();
+  const lowerProductName = productName.toLowerCase();
+
+  // Step 1: Determine the Condition
+  let condition: "มือหนึ่ง" | "มือสอง" | "อุปกรณ์เสริม" = "อุปกรณ์เสริม";
+  if (
+    lowerCategoryName.includes("เครื่องมือ1") ||
+    lowerCategoryName.includes("เครื่องมือ 1")
+  ) {
+    condition = "มือหนึ่ง";
+  } else if (
+    lowerCategoryName.includes("เครื่องมือ2") ||
+    lowerCategoryName.includes("เครื่องมือ 2")
+  ) {
+    condition = "มือสอง";
+  } else if (lowerCategoryName === "gadget" || lowerCategoryName === "ฟิล์ม") {
+    condition = "อุปกรณ์เสริม";
+  }
+
+  // Step 2: Determine the Brand
+  const categoryWords = categoryName.split(" ");
+  const lastWord = categoryWords[categoryWords.length - 1].toLowerCase();
+
+  const knownBrands = [
+    "apple",
+    "iphone",
+    "ipad",
+    "samsung",
+    "vivo",
+    "oppo",
+    "xiaomi",
+    "redmi",
+    "realme",
+    "honor",
+    "google",
+    "huawei",
+    "infinix",
+    "nokia",
+    "oneplus",
+    "beyond",
+  ];
+
+  for (const brand of knownBrands) {
+    if (lastWord.includes(brand)) {
+      const finalBrand = brand.charAt(0).toUpperCase() + brand.slice(1);
+      if (finalBrand === "Iphone" || finalBrand === "Ipad")
+        return { brand: "Apple", condition };
+      return { brand: finalBrand, condition };
+    }
+  }
+
+  for (const brand of knownBrands) {
+    if (lowerProductName.includes(brand)) {
+      const finalBrand = brand.charAt(0).toUpperCase() + brand.slice(1);
+      if (finalBrand === "Iphone" || finalBrand === "Ipad")
+        return { brand: "Apple", condition };
+      return { brand: finalBrand, condition };
+    }
+  }
+
+  return { brand: "อื่นๆ", condition };
+};
+
+// --- Main Transformer Function (Updated) ---
 export const transformApiDataToProducts = (
   apiData: ApiProductItem[],
 ): Product[] => {
@@ -78,10 +116,10 @@ export const transformApiDataToProducts = (
   }
 
   return apiData.map((item) => {
-    const brand = extractBrandFromName(item.name);
-    const isNew =
-      item.category?.name?.includes("เครื่องมือ1") ||
-      item.category?.name?.includes("เครื่องมือ 1");
+    const { brand, condition } = extractInfoFromCategory(
+      item.category?.name,
+      item.name,
+    );
 
     return {
       id: item.id,
@@ -89,10 +127,11 @@ export const transformApiDataToProducts = (
       barcode: item.barcode,
       price: parseFloat(String(item.prices?.level_1 || 0)),
       cost: parseFloat(String(item.prices?.cost || 0)),
-      brand: brand, // ** กำหนดค่า brand ที่นี่ **
-      condition: isNew ? "มือหนึ่ง" : "มือสอง", // Logic การกำหนดสภาพสินค้า (ตัวอย่าง)
-      stock: item.count_name_md5 || 1, // ใช้ count_name_md5 เป็นจำนวนสต็อก (ตัวอย่าง)
+      brand: brand,
+      condition: condition,
+      stock: item.count_name_md5 || 1,
       createdAt: new Date(item.created_at),
+      categoryColor: item.category?.color, // ส่วน Logic ตรงนี้ถูกต้องอยู่แล้ว
     };
   });
 };

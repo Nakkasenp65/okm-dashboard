@@ -6,18 +6,21 @@ export interface StaffMember {
   name: string;
 }
 
+// TODO: เพิ่มรายละเอียดอื่น ๆ ของร้านค้าได้ตามต้องการ
 export const MOCK_SHOP_INFO = {
   companyName: "บริษัท โอเคโมบาย จำกัด",
   formalName: "บริษัท โอเคโมบาย จำกัด",
-  formalAddressLine1: "1 Ratchawithi Rd, Thanon Phaya Thai, Ratchathewi",
-  formalAddressLine2: "Bangkok 10400",
+  formalAddressLine1:
+    "โอเคโมบาย ห้างเซ็นเตอร์วัน ชั้น 2 ห้องเลขที่ 2019 เลขที่ 1 แขวงถนนพญาไท เขตราชเทวี",
+  formalAddressLine2: "กรุงเทพฯ 10400",
   formalPhone: "โทร. 0-2470-8222, 0-2470-8224",
-  logoUrl:
-    "https://lh3.googleusercontent.com/d/1_placeholder_logo_url_for_kmutt_bookstore",
+  logoUrl: "/images/logo/logo-icon.png",
   companyNameEn: "OK MOBILE LTD.",
-  address: "1 Ratchawithi Rd, Thanon Phaya Thai, Ratchathewi, Bangkok 10400",
-  phone: "02-329-5555",
-  fax: "02-727-7777",
+  address:
+    "โอเคโมบาย ห้างเซ็นเตอร์วัน ชั้น 2 ห้องเลขที่ 2019 เลขที่ 1 แขวงถนนพญาไท เขตราชเทวี",
+  phone: "062-776-6774",
+  LINE: "@okmobile (มี@)",
+  // fax: "02-727-7777",
   taxId: "0115544990123",
   branch: "สาขาที่ออกใบกำกับภาษี สำนักงานใหญ่",
 };
@@ -32,16 +35,20 @@ export interface ReceiptData {
   customerTaxId: string;
   customerAddress: string;
   customerBranch: string;
-  customerType: "individual" | "company"; // <-- ADDED
+  customerType: "individual" | "company";
   bookNumber: string;
 }
+
+export type VatCalculationMode = "off" | "included" | "excluded";
 
 export interface PrintOptions {
   showDiscounts: boolean;
   showDiscountNames: boolean;
   applyWithholdingTax: boolean;
   isTaxInvoice: boolean;
-  showCustomerBranch: boolean; // <-- ADDED
+  showCustomerBranch: boolean;
+  vatMode: VatCalculationMode;
+  withholdingTaxVatMode: "post-vat" | "pre-vat";
 }
 
 export interface ReceiptPreviewProps {

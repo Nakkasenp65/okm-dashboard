@@ -68,16 +68,45 @@ export default function ProductCategory({
   );
   const [isOptionsModalOpen, setOptionsModalOpen] = useState(false);
 
-  // Load display options from localStorage on component mount
   useEffect(() => {
     const storedOptions = getDisplayOptionsFromStorage();
     setDisplayOptions(storedOptions);
   }, []);
 
-  const availableBrands = useMemo(() => {
-    const brands = new Set(products.map((p) => p.brand));
-    return Array.from(brands);
+  const brandsWithInfo = useMemo(() => {
+    const relevantProducts = products.filter(
+      (p) => p.condition === "มือหนึ่ง" || p.condition === "มือสอง",
+    );
+    const brandsMap = new Map<string, { color?: string }>();
+    relevantProducts.forEach((product) => {
+      if (!brandsMap.has(product.brand)) {
+        brandsMap.set(product.brand, { color: product.categoryColor });
+      }
+    });
+    return Array.from(brandsMap.entries()).map(([brand, data]) => ({
+      brand,
+      color: data.color,
+    }));
   }, [products]);
+
+  // ✅ KEY CHANGE: สร้าง useMemo เพื่อคำนวณสภาพสินค้าที่มีอยู่สำหรับแบรนด์ที่เลือก
+  const availableConditionsForBrand = useMemo(() => {
+    if (!selectedBrand) return [];
+
+    // ใช้ Set เพื่อเก็บค่าที่ไม่ซ้ำกัน
+    const conditions = new Set<Product["condition"]>();
+    products
+      .filter((p) => p.brand === selectedBrand) // กรองสินค้าตามแบรนด์ที่เลือก
+      .forEach((p) => {
+        // เพิ่มเฉพาะสภาพที่เกี่ยวข้อง (ไม่เอา อุปกรณ์เสริม)
+        if (p.condition === "มือหนึ่ง" || p.condition === "มือสอง") {
+          conditions.add(p.condition);
+        }
+      });
+
+    // แปลง Set กลับเป็น Array เพื่อให้ map ได้ง่าย
+    return Array.from(conditions);
+  }, [products, selectedBrand]);
 
   const processedProducts = useMemo(() => {
     let filtered = products;
@@ -141,7 +170,6 @@ export default function ProductCategory({
 
   return (
     <div className="flex h-full w-full flex-col rounded-lg bg-gray-50 dark:bg-gray-900">
-      {/* --- Breadcrumb / Header --- */}
       <div className="shrink-0 p-4">
         <div className="flex items-center gap-2">
           {selectedBrand && (
@@ -168,16 +196,18 @@ export default function ProductCategory({
         </div>
       </div>
 
-      {/* --- Main Content Area --- */}
       <div className="flex-1 overflow-y-auto px-4 pb-4">
-        {/* 2. Conditionally render the new child components */}
         {!selectedBrand ? (
           <BrandSelection
-            availableBrands={availableBrands}
+            brands={brandsWithInfo}
             onSelectBrand={setSelectedBrand}
           />
         ) : !selectedCondition ? (
-          <ConditionSelection onSelectCondition={setSelectedCondition} />
+          // ✅ KEY CHANGE: ส่ง prop `availableConditions` ไปให้ Component
+          <ConditionSelection
+            onSelectCondition={setSelectedCondition}
+            availableConditions={availableConditionsForBrand}
+          />
         ) : (
           <>
             <CatalogControls
@@ -199,7 +229,6 @@ export default function ProductCategory({
         )}
       </div>
 
-      {/* --- Modal --- */}
       <DisplayOptionsModal
         isOpen={isOptionsModalOpen}
         onClose={() => setOptionsModalOpen(false)}

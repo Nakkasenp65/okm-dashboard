@@ -1,24 +1,35 @@
 "use client";
+import { FaArrowLeftLong } from "react-icons/fa6";
+import React, { useState, useMemo, useCallback, useEffect } from "react"; // Import useEffect
+import { useRouter } from "next/navigation";
+import Button from "../../../../components/ui/button/Button";
 import SellingDetails from "./components/SellingDetails";
 import SellingAction from "./components/SellingAction";
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import Button from "../../../../components/ui/button/Button";
-import { FaArrowLeftLong } from "react-icons/fa6";
 import SidebarMenu from "./components/SidebarMenu";
 import POSLockScreen from "./components/(modal)/POSLockScreenModal";
-import { useRouter } from "next/navigation";
-import {
-  Product,
-  transformApiDataToProducts,
-} from "./components/dataTransformer";
 import CustomerModal, { Customer } from "./components/(modal)/CustomerModal";
-import { Discount } from "./components/(modal)/DiscountModal";
-import { CashDrawerActivity } from "./components/(modal)/CashDrawerModal";
-import { StaffMember } from "./components/(receipt)/receiptTypes";
 import PaymentModal, { Payment } from "./components/(modal)/PaymentModal";
+import { StaffMember } from "./components/(receipt)/receiptTypes";
+import CashDrawerModal, {
+  CashDrawerActivity,
+} from "./components/(modal)/CashDrawerModal";
 import SummaryModal from "./components/(modal)/SummaryModal";
+import DiscountModal, { Discount } from "./components/(modal)/DiscountModal";
 import ConfirmationModal from "./components/(modal)/ConfirmationModal";
+import { Product } from "./components/dataTransformer";
 import { useConfirmation } from "./hooks/useConfirmation";
+import { usePosMockData } from "./components/usePosMockData";
+import SellerProfile from "./components/SellerProfile";
+import {
+  FaUser,
+  FaTag,
+  FaCashRegister,
+  FaBoxArchive,
+  FaPrint,
+} from "react-icons/fa6";
+
+// ✅ เพิ่ม VatCalculationMode type
+export type VatCalculationMode = "off" | "included" | "excluded";
 
 export interface CashDrawerTransaction extends CashDrawerActivity {
   id: string;
@@ -30,7 +41,7 @@ export interface SubItem {
   productId: number;
   name: string;
   unitPrice: number;
-  imei?: string; // IMEI/Serial Number
+  imei?: string;
 }
 
 export interface GroupedProduct {
@@ -62,113 +73,121 @@ const operationModes = [
 ];
 
 export default function Page() {
+  const {
+    products: allProducts,
+    initialStock,
+    loading: isLoading,
+    error,
+  } = usePosMockData();
+
+  const [currentStock, setCurrentStock] = useState<Map<number, number>>(
+    new Map(),
+  );
+
   const [selectedProducts, setSelectedProducts] = useState<
     Map<number, GroupedProduct>
   >(new Map());
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const [availableStock, setAvailableStock] = useState<Map<number, number>>(
-    new Map(),
-  );
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [currentCustomer, setCurrentCustomer] = useState<Customer | null>(null);
   const [appliedDiscounts, setAppliedDiscounts] = useState<Discount[]>([]);
   const [, setCashDrawerTransactions] = useState<CashDrawerTransaction[]>([]);
-  const [currentIssuer] = useState<StaffMember>(MOCK_STAFF[0]);
+  const [currentIssuer, setCurrentIssuer] = useState<StaffMember>(
+    MOCK_STAFF[0],
+  );
   const [activePosOperationMode, setActivePosOperationMode] =
     useState<PosOperationMode>("sell");
 
-  // --- Centralized Modal State ---
+  // ✅ ภาษีมูลค่าเพิ่ม
+  const [vatMode, setVatModeState] = useState<VatCalculationMode>("off");
+  const setVatMode = useCallback((mode: VatCalculationMode) => {
+    setVatModeState(mode);
+  }, []);
+
+  // ✅ ภาษี ณ ที่จ่าย
+  const [withholdingTaxPercent, setWithholdingTaxPercentState] =
+    useState<number>(0);
+
+  const setWithholdingTaxPercent = useCallback((percent: number) => {
+    setWithholdingTaxPercentState(percent);
+  }, []);
+
+  // ✅ โหมดภาษี ณ ที่จ่าย
+  const [withholdingTaxVatMode, setWithholdingTaxVatModeState] = useState<
+    "pre-vat" | "post-vat"
+  >("pre-vat");
+  const setWithholdingTaxVatMode = useCallback(
+    (mode: "pre-vat" | "post-vat") => {
+      setWithholdingTaxVatModeState(mode);
+    },
+    [],
+  );
+
   const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
-
+  const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
+  const [isCashDrawerModalOpen, setIsCashDrawerModalOpen] = useState(false);
   const confirmation = useConfirmation();
-
   const [paymentModalInfo, setPaymentModalInfo] = useState<{
     isOpen: boolean;
     mode: PosMode;
   }>({ isOpen: false, mode: "retail" });
-
   const [isLockedScreen, setIsLockedScreen] = useState(true);
   const POS_PIN = "1234";
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && initialStock.size > 0) {
+      setCurrentStock(new Map(initialStock));
+    }
+  }, [isLoading, initialStock]);
 
   const handleUnlockScreen = (pin: string) => {
     if (pin === POS_PIN) {
       setIsLockedScreen(false);
-      console.log("✅ POS unlocked successfully");
     }
   };
 
-  const router = useRouter();
+  const addProductToCart = useCallback(
+    (productToAdd: Product) => {
+      // ✅ KEY CHANGE: อัปเดต currentStock โดยตรง
+      setCurrentStock((prevStock) => {
+        const newStock = new Map(prevStock);
+        const stock = newStock.get(productToAdd.id) || 0;
+        if (stock > 0) {
+          newStock.set(productToAdd.id, stock - 1);
+        }
+        return newStock;
+      });
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const apiResponse = await import("./mockData.json");
-        const rawProducts = apiResponse.default.data.tbody;
-        const transformedProducts = transformApiDataToProducts(rawProducts);
-        setAllProducts(transformedProducts);
-
-        // Initialize available stock
-        const stockMap = new Map<number, number>();
-        transformedProducts.forEach((product) => {
-          stockMap.set(product.id, product.stock);
-        });
-        setAvailableStock(stockMap);
-      } catch (err) {
-        console.error("Failed to load or transform product data:", err);
-        setError("Could not load product data");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchProducts();
-  }, []);
-
-  const addProductToCart = useCallback((productToAdd: Product) => {
-    setSelectedProducts((prevMap) => {
-      const newMap = new Map(prevMap);
-      const existingGroup = newMap.get(productToAdd.id);
-
-      // Generate IMEI/SN (mock)
-      const imei = `IMEI${productToAdd.id}${Date.now().toString().slice(-6)}`;
-
-      const newSubItem: SubItem = {
-        uniqueId: `${productToAdd.id}-${Date.now()}-${Math.random()}`,
-        productId: productToAdd.id,
-        name: productToAdd.name,
-        unitPrice: productToAdd.price,
-        imei: imei,
-      };
-
-      if (existingGroup) {
-        const updatedGroup: GroupedProduct = {
-          ...existingGroup,
-          items: [...existingGroup.items, newSubItem],
-        };
-        newMap.set(productToAdd.id, updatedGroup);
-      } else {
-        newMap.set(productToAdd.id, {
+      setSelectedProducts((prevMap) => {
+        const newMap = new Map(prevMap);
+        const existingGroup = newMap.get(productToAdd.id);
+        const imei = `IMEI${productToAdd.id}${Date.now().toString().slice(-6)}`;
+        const newSubItem: SubItem = {
+          uniqueId: `${productToAdd.id}-${Date.now()}-${Math.random()}`,
           productId: productToAdd.id,
           name: productToAdd.name,
-          items: [newSubItem],
-        });
-      }
-      return newMap;
-    });
+          unitPrice: productToAdd.price,
+          imei: imei,
+        };
 
-    // Decrease available stock
-    setAvailableStock((prev) => {
-      const newStock = new Map(prev);
-      const currentStock = newStock.get(productToAdd.id) || 0;
-      if (currentStock > 0) {
-        newStock.set(productToAdd.id, currentStock - 1);
-      }
-      return newStock;
-    });
-  }, []);
+        if (existingGroup) {
+          const updatedGroup: GroupedProduct = {
+            ...existingGroup,
+            items: [...existingGroup.items, newSubItem],
+          };
+          newMap.set(productToAdd.id, updatedGroup);
+        } else {
+          newMap.set(productToAdd.id, {
+            productId: productToAdd.id,
+            name: productToAdd.name,
+            items: [newSubItem],
+          });
+        }
+        return newMap;
+      });
+    },
+    [], // ไม่ต้องมี dependency แล้ว เพราะเราใช้ functional update
+  );
 
   const updateCart = (productId: number, updatedItems: SubItem[]) => {
     setSelectedProducts((prevMap) => {
@@ -191,12 +210,12 @@ export default function Page() {
         }
       }
 
-      // Restore stock for removed items
+      // ✅ KEY CHANGE: อัปเดต currentStock เมื่อมีการคืนของ
       if (difference > 0) {
-        setAvailableStock((prev) => {
-          const newStock = new Map(prev);
-          const currentStock = newStock.get(productId) || 0;
-          newStock.set(productId, currentStock + difference);
+        setCurrentStock((prevStock) => {
+          const newStock = new Map(prevStock);
+          const stock = newStock.get(productId) || 0;
+          newStock.set(productId, stock + difference);
           return newStock;
         });
       }
@@ -222,11 +241,12 @@ export default function Page() {
   };
 
   const handleFinishTransaction = () => {
-    console.log("Finishing transaction and clearing state.");
     setSelectedProducts(new Map());
     setAppliedDiscounts([]);
     setCurrentCustomer(null);
     handleClosePaymentModal();
+    // ✅ KEY CHANGE: รีเซ็ต Stock กลับไปเป็นค่าเริ่มต้นหลังจบ Transaction
+    setCurrentStock(new Map(initialStock));
   };
 
   const handleClosePaymentModal = () => {
@@ -287,16 +307,10 @@ export default function Page() {
     };
   }, [selectedProducts, appliedDiscounts]);
 
-  const handlePrintShortReceipt = () => {
-    setIsSummaryModalOpen(true);
-  };
-
-  const handlePrintFullReceipt = () => {
-    setIsSummaryModalOpen(true);
-  };
+  const handlePrintShortReceipt = () => setIsSummaryModalOpen(true);
+  const handlePrintFullReceipt = () => setIsSummaryModalOpen(true);
 
   const handleSendEReceipt = () => {
-    console.log("📧 Sending E-Receipt...");
     if (currentCustomer) {
       confirmation.showConfirmation({
         title: "ส่ง E-Receipt",
@@ -318,7 +332,7 @@ export default function Page() {
 
   const handleCustomerSelect = (customer: Customer) => {
     setCurrentCustomer(customer);
-    setIsCustomerModalOpen(false); // Close only the customer modal
+    setIsCustomerModalOpen(false);
   };
 
   return (
@@ -332,53 +346,67 @@ export default function Page() {
         correctPin={POS_PIN}
       />
 
-      <div className="flex w-full shrink-0 items-center bg-gray-900 p-2 pt-4">
-        <Button onClick={() => router.replace("/")}>
+      <div className="flex w-full shrink-0 items-center gap-2 bg-gray-900 p-2 pt-4">
+        <Button onClick={() => router.replace("/")} className="shrink-0">
           <FaArrowLeftLong />
-          กลับสู่หน้า CP
+          <span className="ml-2 hidden sm:inline">กลับสู่หน้า CP</span>
         </Button>
 
-        <div className="flex flex-1 items-center justify-end">
-          <div className="flex items-center gap-1 rounded-lg bg-gray-800 p-1">
+        <div className="flex h-full flex-1 items-center justify-end gap-1 sm:gap-2">
+          <div className="flex h-full items-center gap-0.5 rounded-xl bg-gray-800 p-0.5 sm:gap-1 sm:p-1">
             {operationModes.map((mode) => (
               <button
                 key={mode.id}
                 onClick={() =>
                   setActivePosOperationMode(mode.id as PosOperationMode)
                 }
-                className={`rounded-md px-4 py-1.5 text-sm font-semibold transition-colors duration-200 ${
+                className={`rounded-md px-2 py-1 text-xs font-semibold transition-colors duration-200 sm:px-4 sm:py-1.5 sm:text-sm ${
                   activePosOperationMode === mode.id
                     ? "bg-blue-500 text-white shadow"
                     : "text-gray-300 hover:bg-gray-700/50"
                 }`}
               >
-                {mode.label}
+                <span className="hidden sm:inline">{mode.label}</span>
+                <span className="sm:hidden">
+                  {mode.id === "sell"
+                    ? "ขาย"
+                    : mode.id === "consignment"
+                      ? "ฝาก"
+                      : "ซ่อม"}
+                </span>
               </button>
             ))}
           </div>
+
+          {/* Seller Profile */}
+          <SellerProfile
+            currentSeller={currentIssuer}
+            allStaff={MOCK_STAFF}
+            onSellerChange={setCurrentIssuer}
+          />
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden pb-16 md:pb-0">
         <div
           id="pos-page-grid"
-          className="grid h-full flex-1 grid-cols-24 gap-2 p-2"
+          className="flex h-full flex-1 flex-col gap-2 overflow-y-auto p-2 md:grid md:grid-cols-24 md:overflow-hidden"
         >
           <div
             id="pos-selling-details-section"
-            className="no-scrollbar col-span-12 overflow-y-auto rounded-lg lg:col-span-16"
+            className="no-scrollbar order-1 shrink-0 overflow-y-auto rounded-lg md:order-none md:col-span-12 md:shrink lg:col-span-16"
           >
             <SellingDetails
               onAddProduct={addProductToCart}
               availableProducts={allProducts}
-              availableStock={availableStock}
+              availableStock={currentStock}
               isLoading={isLoading}
               error={error}
             />
           </div>
           <div
             id="pos-selling-action-section"
-            className="col-span-12 flex w-full flex-col gap-2 overflow-hidden lg:col-span-8"
+            className="order-2 flex w-full shrink-0 flex-col gap-2 overflow-hidden md:order-none md:col-span-12 md:flex-1 md:shrink lg:col-span-8"
           >
             <SellingAction
               selectedProductsMap={selectedProducts}
@@ -390,33 +418,39 @@ export default function Page() {
             />
           </div>
         </div>
-        <SidebarMenu
-          onCustomerSelect={setCurrentCustomer}
-          currentCustomer={currentCustomer}
-          appliedDiscounts={appliedDiscounts}
-          onDiscountsChange={setAppliedDiscounts}
-          onCashDrawerActivity={handleCashDrawerActivity}
-          onLockScreen={() => setIsLockedScreen(true)}
-          onOpenCompanyPayment={handleOpenCompanyPayment}
-          onOpenCustomerModal={() => setIsCustomerModalOpen(true)}
-          onOpenSummaryModal={() => setIsSummaryModalOpen(true)}
-          onClearCart={() => {
-            confirmation.showConfirmation({
-              title: "ล้างข้อมูลการขาย",
-              message:
-                "คุณต้องการล้างข้อมูลการขายทั้งหมดหรือไม่? (สินค้า, ลูกค้า, ส่วนลด)",
-              type: "warning",
-              confirmText: "ยืนยัน",
-              cancelText: "ยกเลิก",
-              showCancel: true,
-              onConfirm: () => {
-                setSelectedProducts(new Map());
-                setCurrentCustomer(null);
-                setAppliedDiscounts([]);
-              },
-            });
-          }}
-        />
+
+        {/* Desktop Sidebar - ซ่อนในมือถือ */}
+        <div className="hidden md:block">
+          <SidebarMenu
+            onCustomerSelect={setCurrentCustomer}
+            currentCustomer={currentCustomer}
+            appliedDiscounts={appliedDiscounts}
+            onDiscountsChange={setAppliedDiscounts}
+            onCashDrawerActivity={handleCashDrawerActivity}
+            onLockScreen={() => setIsLockedScreen(true)}
+            onOpenCompanyPayment={handleOpenCompanyPayment}
+            onOpenCustomerModal={() => setIsCustomerModalOpen(true)}
+            onOpenSummaryModal={() => setIsSummaryModalOpen(true)}
+            onClearCart={() => {
+              confirmation.showConfirmation({
+                title: "ล้างข้อมูลการขาย",
+                message:
+                  "คุณต้องการล้างข้อมูลการขายทั้งหมดหรือไม่? (สินค้า, ลูกค้า, ส่วนลด)",
+                type: "warning",
+                confirmText: "ยืนยัน",
+                cancelText: "ยกเลิก",
+                showCancel: true,
+                onConfirm: () => {
+                  setSelectedProducts(new Map());
+                  setCurrentCustomer(null);
+                  setAppliedDiscounts([]);
+                  // ✅ KEY CHANGE: รีเซ็ต Stock เมื่อล้างตะกร้า
+                  setCurrentStock(new Map(initialStock));
+                },
+              });
+            }}
+          />
+        </div>
       </div>
 
       <PaymentModal
@@ -429,6 +463,12 @@ export default function Page() {
         onPrintShortReceipt={handlePrintShortReceipt}
         onPrintFullReceipt={handlePrintFullReceipt}
         onSendEReceipt={handleSendEReceipt}
+        vatMode={vatMode}
+        setVatMode={setVatMode}
+        withholdingTaxPercent={withholdingTaxPercent}
+        setWithholdingTaxPercent={setWithholdingTaxPercent}
+        withholdingTaxVatMode={withholdingTaxVatMode}
+        setWithholdingTaxVatMode={setWithholdingTaxVatMode}
       />
 
       <SummaryModal
@@ -442,6 +482,12 @@ export default function Page() {
         billIssuers={MOCK_STAFF}
         currentIssuer={currentIssuer}
         discounts={appliedDiscounts}
+        vatMode={vatMode}
+        setVatMode={setVatMode}
+        withholdingTaxPercent={withholdingTaxPercent}
+        setWithholdingTaxPercent={setWithholdingTaxPercent}
+        withholdingTaxVatMode={withholdingTaxVatMode}
+        setWithholdingTaxVatMode={setWithholdingTaxVatMode}
       />
 
       <CustomerModal
@@ -461,6 +507,60 @@ export default function Page() {
         cancelText={confirmation.config.cancelText}
         showCancel={confirmation.config.showCancel}
       />
+
+      <DiscountModal
+        isOpen={isDiscountModalOpen}
+        onClose={() => setIsDiscountModalOpen(false)}
+        initialDiscounts={appliedDiscounts}
+        onApplyDiscounts={setAppliedDiscounts}
+      />
+
+      <CashDrawerModal
+        isOpen={isCashDrawerModalOpen}
+        onClose={() => setIsCashDrawerModalOpen(false)}
+        onConfirm={handleCashDrawerActivity}
+      />
+
+      {/* Mobile Bottom Navigation */}
+      <div className="fixed right-0 bottom-0 left-0 z-50 border-t border-gray-700 bg-gray-900 md:hidden">
+        <div className="grid grid-cols-5 gap-1 p-2">
+          <button
+            onClick={() => setIsCustomerModalOpen(true)}
+            className="flex flex-col items-center justify-center rounded-lg px-1 py-2 transition-colors hover:bg-gray-800"
+          >
+            <FaUser size={20} className="mb-1 text-white" />
+            <span className="text-[10px] text-white">สมาชิก</span>
+          </button>
+          <button
+            onClick={() => setIsDiscountModalOpen(true)}
+            className="flex flex-col items-center justify-center rounded-lg px-1 py-2 transition-colors hover:bg-gray-800"
+          >
+            <FaTag size={20} className="mb-1 text-white" />
+            <span className="text-[10px] text-white">ส่วนลด</span>
+          </button>
+          <button
+            onClick={() => setIsCashDrawerModalOpen(true)}
+            className="flex flex-col items-center justify-center rounded-lg px-1 py-2 transition-colors hover:bg-gray-800"
+          >
+            <FaCashRegister size={20} className="mb-1 text-white" />
+            <span className="text-[10px] text-white">ลิ้นชัก</span>
+          </button>
+          <button
+            onClick={() => setIsSummaryModalOpen(true)}
+            className="flex flex-col items-center justify-center rounded-lg px-1 py-2 transition-colors hover:bg-gray-800"
+          >
+            <FaPrint size={20} className="mb-1 text-white" />
+            <span className="text-[10px] text-white">พิมพ์</span>
+          </button>
+          <button
+            onClick={handleOpenRetailPayment}
+            className="flex flex-col items-center justify-center rounded-lg bg-blue-600 px-1 py-2 transition-colors hover:bg-blue-700"
+          >
+            <FaBoxArchive size={20} className="mb-1 text-white" />
+            <span className="text-[10px] font-semibold text-white">ชำระ</span>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

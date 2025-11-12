@@ -20,10 +20,6 @@ export default function SellingDetails({
   isLoading,
   error,
 }: SellingDetailsProps) {
-  // ไม่จำเป็นต้องมีฟังก์ชัน addProductToCart ที่นี่แล้ว
-  // เพราะเราได้รับ onAddProduct มาจาก Page Component โดยตรง
-  // ซึ่งเป็น Logic การเพิ่มสินค้าที่ถูกต้องตามโครงสร้างข้อมูลใหม่ (Map)
-
   return (
     <div className="flex h-full flex-col">
       {/* Container หลักที่ยืดหยุ่นตามความสูง */}

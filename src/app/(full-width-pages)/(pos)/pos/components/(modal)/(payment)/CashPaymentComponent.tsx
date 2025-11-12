@@ -97,9 +97,9 @@ const CashPaymentComponent = forwardRef<CashPaymentHandle, CashPaymentProps>(
     ];
 
     return (
-      <div className="flex h-full gap-8 p-8 dark:from-gray-800 dark:to-gray-900">
+      <div className="flex h-full flex-col gap-4 p-4 md:flex-row md:gap-8 md:p-8 dark:from-gray-800 dark:to-gray-900">
         {/* Left side: Summary */}
-        <div className="flex w-1/2 flex-col gap-6">
+        <div className="flex w-full flex-col gap-4 md:w-1/2 md:gap-6">
           <div className="rounded-2xl border border-gray-200 bg-white p-2 shadow-sm dark:border-gray-700 dark:bg-gray-800">
             <div className="mb-8">
               <p className="mb-2 text-base font-semibold text-gray-500 dark:text-gray-400">
@@ -116,12 +116,22 @@ const CashPaymentComponent = forwardRef<CashPaymentHandle, CashPaymentProps>(
               >
                 รับเงินมา
               </label>
+              {/* Mobile: editable input */}
               <input
                 id="cash-received-input"
+                type="number"
+                inputMode="decimal"
+                placeholder="0.00"
+                value={cashReceived}
+                onChange={(e) => setCashReceived(e.target.value)}
+                className="block w-full rounded-lg border-2 border-blue-300 bg-white p-4 text-right text-2xl font-bold text-blue-600 transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 md:hidden dark:border-blue-600 dark:bg-gray-700 dark:text-blue-400"
+              />
+              {/* Desktop: readonly display */}
+              <input
                 type="text"
                 readOnly
                 value={`฿ ${cashReceived || "0.00"}`}
-                className="w-full rounded-lg border-2 border-blue-300 bg-white p-4 text-right text-2xl font-bold text-blue-600 transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 dark:border-blue-600 dark:bg-gray-700 dark:text-blue-400"
+                className="hidden w-full cursor-not-allowed rounded-lg border-2 border-blue-300 bg-gray-50 p-4 text-right text-2xl font-bold text-blue-600 transition-all md:block dark:border-blue-600 dark:bg-gray-800 dark:text-blue-400"
               />
             </div>
           </div>
@@ -137,8 +147,8 @@ const CashPaymentComponent = forwardRef<CashPaymentHandle, CashPaymentProps>(
           </div>
         </div>
 
-        {/* Right side: Input Area */}
-        <div className="flex w-1/2 flex-col gap-6">
+        {/* Right side: Input Area - ซ่อนใน mobile */}
+        <div className="hidden w-full flex-col gap-4 md:flex md:w-1/2 md:gap-6">
           {/* Quick Pay Buttons */}
           <div className="grid grid-cols-2 gap-3">
             {quickPayButtons.map(({ label, amount }) => (

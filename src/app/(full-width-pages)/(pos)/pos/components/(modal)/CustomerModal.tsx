@@ -24,9 +24,10 @@ export interface Customer {
   color: string;
   age?: number;
   notes?: string;
-  taxId?: string;
+  citizenId?: string;
   address?: string;
   branch?: string;
+  customerType?: "individual" | "company";
 }
 
 const MOCK_CUSTOMERS: Customer[] = [
@@ -39,6 +40,8 @@ const MOCK_CUSTOMERS: Customer[] = [
     emoji: "👑",
     color: "from-pink-400 to-rose-600",
     age: 45,
+    citizenId: "1234567890123",
+    address: "123 ถนนสีวลี ซอยพัฒนา แขวงเพชรบุรี เขตราชเทวี กรุงเทพฯ 10400",
   },
   {
     id: "2",
@@ -49,6 +52,8 @@ const MOCK_CUSTOMERS: Customer[] = [
     emoji: "💎",
     color: "from-cyan-400 to-blue-600",
     age: 32,
+    citizenId: "2345678901234",
+    address: "456 ถนนเพชรบุรี แขวงมักกะสัน เขตราชเทวี กรุงเทพฯ 10400",
   },
   {
     id: "3",
@@ -59,6 +64,8 @@ const MOCK_CUSTOMERS: Customer[] = [
     emoji: "🥇",
     color: "from-yellow-400 to-amber-600",
     age: 51,
+    citizenId: "3456789012345",
+    address: "789 ถนนพระราม 4 แขวงตึกแกน เขตสวนหลวง กรุงเทพฯ 10100",
   },
   // Add more mock data to test pagination
   {
@@ -70,6 +77,8 @@ const MOCK_CUSTOMERS: Customer[] = [
     emoji: "🥈",
     color: "from-gray-300 to-slate-500",
     age: 28,
+    citizenId: "4567890123456",
+    address: "321 ถนนสุขุมวิท แขวงนานา เขตเขตคลองเตย กรุงเทพฯ 10110",
   },
   {
     id: "5",
@@ -89,6 +98,8 @@ const MOCK_CUSTOMERS: Customer[] = [
     emoji: "🥇",
     color: "from-yellow-400 to-amber-600",
     age: 42,
+    citizenId: "5678901234567",
+    address: "654 ถนนวิทยุ แขวงลุมพินี เขตปทุมวัน กรุงเทพฯ 10330",
   },
   {
     id: "7",
@@ -99,6 +110,8 @@ const MOCK_CUSTOMERS: Customer[] = [
     emoji: "💎",
     color: "from-cyan-400 to-blue-600",
     age: 35,
+    citizenId: "6789012345678",
+    address: "987 ถนนสีลม แขวงสีลม เขตบางรัก กรุงเทพฯ 10500",
   },
 ];
 
@@ -385,8 +398,8 @@ export default function CustomerModal({
                   </select>
                 </div>
 
-                {/* --- Customer Table --- */}
-                <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+                {/* --- Customer Table (Desktop) --- */}
+                <div className="hidden overflow-x-auto rounded-lg border border-gray-200 md:block dark:border-gray-700">
                   <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead className="bg-gray-50 dark:bg-gray-800">
                       <tr>
@@ -473,16 +486,88 @@ export default function CustomerModal({
                   </table>
                 </div>
 
+                {/* --- Customer Cards (Mobile) --- */}
+                <div className="block space-y-3 md:hidden">
+                  {paginatedCustomers.length > 0 ? (
+                    paginatedCustomers.map((customer) => (
+                      <div
+                        key={customer.id}
+                        onClick={() => setSelectedCustomerId(customer.id)}
+                        className={`rounded-lg border-2 p-4 transition-all ${
+                          selectedCustomerId === customer.id
+                            ? "border-purple-500 bg-purple-50 shadow-md dark:border-purple-400 dark:bg-purple-950/40"
+                            : "border-gray-200 bg-white hover:border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-gray-600"
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div
+                            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-2xl shadow-md ${customer.color}`}
+                          >
+                            {customer.emoji}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-start justify-between gap-2">
+                              <div>
+                                <h4 className="font-semibold text-gray-900 dark:text-white">
+                                  {customer.name}
+                                </h4>
+                                <p className="font-mono text-xs text-gray-500 dark:text-gray-400">
+                                  {customer.memberId}
+                                </p>
+                              </div>
+                              <span
+                                className={`rounded-full bg-gradient-to-r px-2.5 py-0.5 text-xs font-bold text-white shadow-sm ${customer.color}`}
+                              >
+                                {customer.level}
+                              </span>
+                            </div>
+                            <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                              📞 {customer.phone}
+                            </div>
+                            <div className="mt-3">
+                              <Button
+                                size="sm"
+                                variant={
+                                  selectedCustomerId === customer.id
+                                    ? "primary"
+                                    : "outline"
+                                }
+                                onClick={() =>
+                                  setSelectedCustomerId(customer.id)
+                                }
+                                className="w-full py-2.5 text-sm font-medium"
+                              >
+                                {selectedCustomerId === customer.id
+                                  ? "✓ เลือกแล้ว"
+                                  : "เลือก"}
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="rounded-lg border border-gray-200 bg-white px-6 py-16 text-center text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
+                      ไม่พบข้อมูลลูกค้าที่ตรงกับเงื่อนไข
+                    </div>
+                  )}
+                </div>
+
                 {/* --- Pagination Controls --- */}
-                <div className="mt-4 flex items-center justify-between">
-                  <Button onClick={() => setView("add")} variant="outline">
+                <div className="mt-4 flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
+                  <Button
+                    onClick={() => setView("add")}
+                    variant="outline"
+                    className="py-2.5 text-sm font-medium md:py-2 md:text-base"
+                  >
                     เพิ่มลูกค้าใหม่
                   </Button>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <Button
                       onClick={() => setCurrentPage((p) => p - 1)}
                       disabled={currentPage === 1}
                       variant="outline"
+                      className="flex-1 py-2.5 text-sm font-medium sm:flex-none md:py-2 md:text-base"
                     >
                       ก่อนหน้า
                     </Button>
@@ -493,6 +578,7 @@ export default function CustomerModal({
                       onClick={() => setCurrentPage((p) => p + 1)}
                       disabled={currentPage >= totalPages}
                       variant="outline"
+                      className="flex-1 py-2.5 text-sm font-medium sm:flex-none md:py-2 md:text-base"
                     >
                       ถัดไป
                     </Button>
@@ -505,7 +591,7 @@ export default function CustomerModal({
                 <Button
                   variant="outline"
                   onClick={onClose}
-                  className="py-3 text-base font-medium"
+                  className="py-3 text-sm font-medium md:text-base"
                 >
                   ยกเลิก
                 </Button>
@@ -513,7 +599,7 @@ export default function CustomerModal({
                   variant="primary"
                   onClick={handleConfirmSelection}
                   disabled={!selectedCustomerId}
-                  className="bg-gradient-to-r from-purple-500 to-pink-600 py-3 text-base font-semibold shadow-lg transition-all hover:from-purple-600 hover:to-pink-700 disabled:opacity-50"
+                  className="bg-gradient-to-r from-purple-500 to-pink-600 py-3 text-sm font-semibold shadow-lg transition-all hover:from-purple-600 hover:to-pink-700 disabled:opacity-50 md:text-base"
                 >
                   ยืนยันเลือกลูกค้า
                 </Button>
