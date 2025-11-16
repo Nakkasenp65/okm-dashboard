@@ -1,127 +1,32 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/button/Button";
-import { FaArrowLeft, FaSearch } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaSearch,
+  FaUser,
+  FaMapMarkerAlt,
+  FaStar,
+} from "react-icons/fa";
 import ConfirmationModal from "./ConfirmationModal";
 import { useConfirmation } from "../../hooks/useConfirmation";
+import PosAddressForm from "./PosAddressForm";
+import {
+  Customer,
+  CustomerLevelType,
+  StructuredAddress,
+} from "../../types/Pos";
 
-// Export Type/Interface so other components can use it
-export type CustomerLevelType =
-  | "ทั่วไป"
-  | "Silver"
-  | "Gold"
-  | "Platinum"
-  | "Diamond";
-
-export interface Customer {
-  id: string;
-  name: string;
-  level: CustomerLevelType;
-  phone: string;
-  memberId: string;
-  emoji: string;
-  color: string;
-  age?: number;
-  notes?: string;
-  citizenId?: string;
-  address?: string;
-  branch?: string;
-  customerType?: "individual" | "company";
-}
-
-const MOCK_CUSTOMERS: Customer[] = [
-  {
-    id: "1",
-    name: "สมชาย ใจดี",
-    level: "Diamond",
-    phone: "081-234-5678",
-    memberId: "DIA001",
-    emoji: "👑",
-    color: "from-pink-400 to-rose-600",
-    age: 45,
-    citizenId: "1234567890123",
-    address: "123 ถนนสีวลี ซอยพัฒนา แขวงเพชรบุรี เขตราชเทวี กรุงเทพฯ 10400",
-  },
-  {
-    id: "2",
-    name: "สมหญิง มีสุข",
-    level: "Platinum",
-    phone: "082-345-6789",
-    memberId: "PLA002",
-    emoji: "💎",
-    color: "from-cyan-400 to-blue-600",
-    age: 32,
-    citizenId: "2345678901234",
-    address: "456 ถนนเพชรบุรี แขวงมักกะสัน เขตราชเทวี กรุงเทพฯ 10400",
-  },
-  {
-    id: "3",
-    name: "ประเสริฐ รุ่งเรือง",
-    level: "Gold",
-    phone: "083-456-7890",
-    memberId: "GOL003",
-    emoji: "🥇",
-    color: "from-yellow-400 to-amber-600",
-    age: 51,
-    citizenId: "3456789012345",
-    address: "789 ถนนพระราม 4 แขวงตึกแกน เขตสวนหลวง กรุงเทพฯ 10100",
-  },
-  // Add more mock data to test pagination
-  {
-    id: "4",
-    name: "มานี รักไทย",
-    level: "Silver",
-    phone: "084-567-8901",
-    memberId: "SIL004",
-    emoji: "🥈",
-    color: "from-gray-300 to-slate-500",
-    age: 28,
-    citizenId: "4567890123456",
-    address: "321 ถนนสุขุมวิท แขวงนานา เขตเขตคลองเตย กรุงเทพฯ 10110",
-  },
-  {
-    id: "5",
-    name: "ลูกค้าทั่วไป",
-    level: "ทั่วไป",
-    phone: "-",
-    memberId: "N/A",
-    emoji: "👤",
-    color: "from-gray-400 to-gray-600",
-  },
-  {
-    id: "6",
-    name: "วิชัย เก่งกาจ",
-    level: "Gold",
-    phone: "086-789-0123",
-    memberId: "GOL006",
-    emoji: "🥇",
-    color: "from-yellow-400 to-amber-600",
-    age: 42,
-    citizenId: "5678901234567",
-    address: "654 ถนนวิทยุ แขวงลุมพินี เขตปทุมวัน กรุงเทพฯ 10330",
-  },
-  {
-    id: "7",
-    name: "อารี ยิ้มแย้ม",
-    level: "Platinum",
-    phone: "087-890-1234",
-    memberId: "PLA007",
-    emoji: "💎",
-    color: "from-cyan-400 to-blue-600",
-    age: 35,
-    citizenId: "6789012345678",
-    address: "987 ถนนสีลม แขวงสีลม เขตบางรัก กรุงเทพฯ 10500",
-  },
-];
-
+// ✅ KEY CHANGE: อัปเดต Props ให้รับ State และ Function จาก Parent
 interface CustomerModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectCustomer: (customer: Customer) => void;
+  customers: Customer[];
+  onAddNewCustomer: (customer: Customer) => void;
 }
 
-// Helper object to map level to emoji and color
 const levelDetails = {
   ทั่วไป: { emoji: "👤", color: "from-gray-400 to-gray-600" },
   Silver: { emoji: "🥈", color: "from-gray-300 to-slate-500" },
@@ -132,7 +37,7 @@ const levelDetails = {
 
 const ITEMS_PER_PAGE = 5;
 
-// --- Add New Customer Form Sub-component (No Changes) ---
+// --- Add New Customer Form Sub-component ---
 const AddNewCustomerForm = ({
   onBack,
   onSave,
@@ -144,10 +49,31 @@ const AddNewCustomerForm = ({
 }) => {
   const [newCustomerName, setNewCustomerName] = useState("");
   const [newCustomerPhone, setNewCustomerPhone] = useState("");
+  const [newCustomerCitizenId, setNewCustomerCitizenId] = useState("");
   const [newCustomerAge, setNewCustomerAge] = useState("");
   const [newCustomerLevel, setNewCustomerLevel] =
     useState<CustomerLevelType>("ทั่วไป");
+  const [newCustomerPoint, setNewCustomerPoint] = useState("");
   const [newCustomerNotes, setNewCustomerNotes] = useState("");
+
+  const [newCustomerStructuredAddress, setNewCustomerStructuredAddress] =
+    useState<StructuredAddress>({
+      addressDetails: "",
+      subdistrict: "",
+      district: "",
+      province: "",
+      postcode: "",
+    });
+
+  const handleAddressChange = useCallback(
+    (field: keyof StructuredAddress, value: string) => {
+      setNewCustomerStructuredAddress((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    },
+    [],
+  );
 
   const handleSave = () => {
     if (!newCustomerName.trim()) {
@@ -155,12 +81,29 @@ const AddNewCustomerForm = ({
       return;
     }
     const details = levelDetails[newCustomerLevel];
+
+    const { addressDetails, subdistrict, district, province, postcode } =
+      newCustomerStructuredAddress;
+    const formattedAddress = [
+      addressDetails,
+      subdistrict && `ต./แขวง ${subdistrict}`,
+      district && `อ./เขต ${district}`,
+      province && `จ.${province}`,
+      postcode,
+    ]
+      .filter(Boolean)
+      .join(" ");
+
     const newCustomer: Customer = {
       id: Date.now().toString(),
       name: newCustomerName.trim(),
       phone: newCustomerPhone.trim() || "-",
+      citizenId: newCustomerCitizenId.trim() || undefined,
+      address: formattedAddress.trim() || undefined,
       age: newCustomerAge ? parseInt(newCustomerAge, 10) : undefined,
       level: newCustomerLevel,
+      // ✅ KEY CHANGE: เพิ่มข้อมูลคะแนนเข้าไปใน Object
+      customerPoint: newCustomerPoint ? parseInt(newCustomerPoint, 10) : 0,
       notes: newCustomerNotes.trim(),
       memberId: `NEW${Date.now().toString().slice(-4)}`,
       emoji: details.emoji,
@@ -170,8 +113,8 @@ const AddNewCustomerForm = ({
   };
 
   return (
-    <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
-      <div className="mb-4 flex items-center gap-4">
+    <div className="space-y-6 rounded-lg bg-gray-50 p-4 dark:bg-gray-900/50">
+      <div className="flex items-center gap-4 border-b border-gray-200 pb-4 dark:border-gray-700">
         <Button variant="outline" size="sm" onClick={onBack} className="p-2">
           <FaArrowLeft />
         </Button>
@@ -179,45 +122,86 @@ const AddNewCustomerForm = ({
           เพิ่มลูกค้าใหม่
         </h4>
       </div>
-      <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
-        <div>
-          <label
-            htmlFor="customer-name"
-            className="block text-sm font-medium text-gray-600 dark:text-gray-400"
-          >
-            ชื่อ-นามสกุล<span className="text-red-500">*</span>
-          </label>
-          <input
-            id="customer-name"
-            type="text"
-            value={newCustomerName}
-            onChange={(e) => setNewCustomerName(e.target.value)}
-            placeholder="เช่น สมชาย ใจดี"
-            className="mt-1 w-full rounded-lg border-gray-300 bg-white p-3 text-base shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-800"
-          />
+
+      {/* === Section 1: Personal Info === */}
+      <div className="space-y-4">
+        <h5 className="flex items-center gap-3 text-lg font-semibold text-gray-700 dark:text-gray-300">
+          <FaUser className="text-purple-500" />
+          ข้อมูลส่วนตัว
+        </h5>
+        <div className="grid grid-cols-1 gap-x-6 gap-y-4 rounded-lg border border-gray-200 p-4 sm:grid-cols-2 dark:border-gray-700">
+          <div>
+            <label
+              htmlFor="customer-name"
+              className="block text-sm font-medium text-gray-600 dark:text-gray-400"
+            >
+              ชื่อ-นามสกุล<span className="text-red-500">*</span>
+            </label>
+            <input
+              id="customer-name"
+              type="text"
+              value={newCustomerName}
+              onChange={(e) => setNewCustomerName(e.target.value)}
+              placeholder="เช่น สมชาย ใจดี"
+              className="mt-1 w-full rounded-lg border-gray-300 bg-white p-3 text-base shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-800"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="customer-phone"
+              className="block text-sm font-medium text-gray-600 dark:text-gray-400"
+            >
+              เบอร์โทรศัพท์
+            </label>
+            <input
+              id="customer-phone"
+              type="text"
+              value={newCustomerPhone}
+              onChange={(e) => setNewCustomerPhone(e.target.value)}
+              placeholder="เช่น 0812345678"
+              className="mt-1 w-full rounded-lg border-gray-300 bg-white p-3 text-base shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-800"
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <label
+              htmlFor="customer-citizen-id"
+              className="block text-sm font-medium text-gray-600 dark:text-gray-400"
+            >
+              รหัสบัตรประชาชน
+            </label>
+            <input
+              id="customer-citizen-id"
+              type="text"
+              value={newCustomerCitizenId}
+              onChange={(e) => setNewCustomerCitizenId(e.target.value)}
+              placeholder="เลข 13 หลัก"
+              className="mt-1 w-full rounded-lg border-gray-300 bg-white p-3 text-base shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-800"
+            />
+          </div>
         </div>
-        <div>
-          <label
-            htmlFor="customer-phone"
-            className="block text-sm font-medium text-gray-600 dark:text-gray-400"
-          >
-            เบอร์โทรศัพท์
-          </label>
-          <input
-            id="customer-phone"
-            type="text"
-            value={newCustomerPhone}
-            onChange={(e) => setNewCustomerPhone(e.target.value)}
-            placeholder="เช่น 0812345678"
-            className="mt-1 w-full rounded-lg border-gray-300 bg-white p-3 text-base shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-800"
+      </div>
+
+      {/* === Section 2: Address === */}
+      <div className="space-y-4">
+        <h5 className="flex items-center gap-3 text-lg font-semibold text-gray-700 dark:text-gray-300">
+          <FaMapMarkerAlt className="text-blue-500" />
+          ที่อยู่
+        </h5>
+        <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+          <PosAddressForm
+            addressData={newCustomerStructuredAddress}
+            onAddressChange={handleAddressChange}
           />
         </div>
       </div>
-      <div className="mt-4 border-t border-gray-200 pt-4 dark:border-gray-700">
-        <h5 className="mb-2 text-base font-semibold text-gray-700 dark:text-gray-300">
-          รายละเอียดเพิ่มเติม
+
+      {/* === Section 3: Membership Details === */}
+      <div className="space-y-4">
+        <h5 className="flex items-center gap-3 text-lg font-semibold text-gray-700 dark:text-gray-300">
+          <FaStar className="text-amber-500" />
+          ข้อมูลสมาชิก
         </h5>
-        <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-4 rounded-lg border border-gray-200 p-4 sm:grid-cols-2 dark:border-gray-700">
           <div>
             <label
               htmlFor="customer-level"
@@ -256,6 +240,23 @@ const AddNewCustomerForm = ({
               className="mt-1 w-full rounded-lg border-gray-300 bg-white p-3 text-base shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-800"
             />
           </div>
+          {/* ✅ KEY CHANGE: เพิ่ม Input สำหรับคะแนนสะสม */}
+          <div className="sm:col-span-2">
+            <label
+              htmlFor="customer-point"
+              className="block text-sm font-medium text-gray-600 dark:text-gray-400"
+            >
+              คะแนนสะสม
+            </label>
+            <input
+              id="customer-point"
+              type="number"
+              value={newCustomerPoint}
+              onChange={(e) => setNewCustomerPoint(e.target.value)}
+              placeholder="เช่น 100"
+              className="mt-1 w-full rounded-lg border-gray-300 bg-white p-3 text-base shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-800"
+            />
+          </div>
           <div className="sm:col-span-2">
             <label
               htmlFor="customer-notes"
@@ -274,13 +275,16 @@ const AddNewCustomerForm = ({
           </div>
         </div>
       </div>
-      <Button
-        onClick={handleSave}
-        className="mt-4 w-full bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-3 font-semibold text-white shadow-md hover:from-green-600 hover:to-emerald-700 sm:w-auto"
-        variant="primary"
-      >
-        บันทึกและเพิ่มลูกค้า
-      </Button>
+
+      <div className="border-t border-gray-200 pt-4 dark:border-gray-700">
+        <Button
+          onClick={handleSave}
+          className="w-full bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-3 font-semibold text-white shadow-md hover:from-green-600 hover:to-emerald-700 sm:w-auto"
+          variant="primary"
+        >
+          บันทึกและเพิ่มลูกค้า
+        </Button>
+      </div>
     </div>
   );
 };
@@ -290,9 +294,11 @@ export default function CustomerModal({
   isOpen,
   onClose,
   onSelectCustomer,
+  customers, // ✅ KEY CHANGE: รับ customers จาก props
+  onAddNewCustomer, // ✅ KEY CHANGE: รับ onAddNewCustomer จาก props
 }: CustomerModalProps) {
   const [view, setView] = useState<"list" | "add">("list");
-  const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
+  // ✅ KEY CHANGE: ลบ State customers ออกไป
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>("5");
   const [searchQuery, setSearchQuery] = useState("");
   const [levelFilter, setLevelFilter] = useState("all");
@@ -300,16 +306,14 @@ export default function CustomerModal({
 
   const confirmation = useConfirmation();
 
-  // Memoized filtering logic
+  // ✅ KEY CHANGE: `filteredCustomers` ตอนนี้จะขึ้นอยู่กับ `customers` ที่เป็น prop
   const filteredCustomers = useMemo(() => {
     let filtered = [...customers];
 
-    // 1. Filter by level
     if (levelFilter !== "all") {
       filtered = filtered.filter((customer) => customer.level === levelFilter);
     }
 
-    // 2. Filter by search query
     const searchTerm = searchQuery.toLowerCase().trim();
     if (searchTerm) {
       filtered = filtered.filter(
@@ -323,7 +327,6 @@ export default function CustomerModal({
     return filtered;
   }, [customers, searchQuery, levelFilter]);
 
-  // Memoized pagination logic
   const { paginatedCustomers, totalPages } = useMemo(() => {
     const totalPages = Math.ceil(filteredCustomers.length / ITEMS_PER_PAGE);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -334,21 +337,14 @@ export default function CustomerModal({
     };
   }, [filteredCustomers, currentPage]);
 
-  const handleAddNewCustomer = (newCustomer: Customer) => {
-    setCustomers((prev) => [newCustomer, ...prev]);
-    setSelectedCustomerId(newCustomer.id);
-    setView("list");
-  };
-
+  // ✅ KEY CHANGE: ลบ handleAddNewCustomer ออกไป เพราะรับมาจาก props แล้ว
   const handleConfirmSelection = () => {
     const selectedCustomer = customers.find((c) => c.id === selectedCustomerId);
     if (selectedCustomer) {
       onSelectCustomer(selectedCustomer);
-      onClose();
     }
   };
 
-  // Reset page to 1 when filters change
   React.useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, levelFilter]);
@@ -362,15 +358,12 @@ export default function CustomerModal({
         className="no-scrollbar max-h-[80vh] min-h-[80vh] w-full max-w-5xl overflow-y-auto rounded-2xl p-6 shadow-2xl"
       >
         <div className="flex flex-col gap-6">
-          <h3 className="border-b border-gray-200 pb-4 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-white">
-            จัดการข้อมูลลูกค้า
-          </h3>
-
           {view === "list" && (
             <>
-              {/* === Customer Table View === */}
+              <h3 className="border-b border-gray-200 pb-4 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-white">
+                จัดการข้อมูลลูกค้า
+              </h3>
               <div className="mt-2">
-                {/* --- Filter & Search Controls --- */}
                 <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
                   <div className="relative md:col-span-2">
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -398,7 +391,6 @@ export default function CustomerModal({
                   </select>
                 </div>
 
-                {/* --- Customer Table (Desktop) --- */}
                 <div className="hidden overflow-x-auto rounded-lg border border-gray-200 md:block dark:border-gray-700">
                   <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead className="bg-gray-50 dark:bg-gray-800">
@@ -486,7 +478,6 @@ export default function CustomerModal({
                   </table>
                 </div>
 
-                {/* --- Customer Cards (Mobile) --- */}
                 <div className="block space-y-3 md:hidden">
                   {paginatedCustomers.length > 0 ? (
                     paginatedCustomers.map((customer) => (
@@ -553,7 +544,6 @@ export default function CustomerModal({
                   )}
                 </div>
 
-                {/* --- Pagination Controls --- */}
                 <div className="mt-4 flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
                   <Button
                     onClick={() => setView("add")}
@@ -586,7 +576,6 @@ export default function CustomerModal({
                 </div>
               </div>
 
-              {/* --- Action Buttons --- */}
               <div className="grid grid-cols-2 gap-4 border-t border-gray-200 pt-4 dark:border-gray-700">
                 <Button
                   variant="outline"
@@ -610,7 +599,7 @@ export default function CustomerModal({
           {view === "add" && (
             <AddNewCustomerForm
               onBack={() => setView("list")}
-              onSave={handleAddNewCustomer}
+              onSave={onAddNewCustomer} // ✅ KEY CHANGE: ส่ง onAddNewCustomer ที่รับมาจาก props ไป
               onShowError={(message) => {
                 confirmation.showConfirmation({
                   title: "ข้อมูลไม่ครบถ้วน",

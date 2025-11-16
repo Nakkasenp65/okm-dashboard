@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { FaWrench, FaHandSparkles } from "react-icons/fa6";
-import { Product } from "../dataTransformer";
+import { Product } from "../../types/Pos";
 import clsx from "clsx";
 
 // ✅ KEY CHANGE: ปรับปรุง Props Interface

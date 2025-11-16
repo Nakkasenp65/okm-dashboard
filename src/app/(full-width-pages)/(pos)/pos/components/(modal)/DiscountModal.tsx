@@ -3,17 +3,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/button/Button";
 import { FaBarcode } from "react-icons/fa";
+import { Discount } from "../../types/Pos";
 
-// Export Interface เพื่อให้ Component อื่นนำไปใช้ได้
-export interface Discount {
-  id: string; // ใช้ string เพื่อรองรับ cả custom และ promo
-  name: string;
-  type: "percentage" | "fixed";
-  value: number;
-  code?: string; // เพิ่ม property สำหรับโค้ดส่วนลด
-}
-
-// Mock discount data (เพิ่ม 'code' สำหรับการสแกน)
 const MOCK_PROMOTIONS: Discount[] = [
   {
     id: "promo-1",
@@ -72,11 +63,8 @@ export default function DiscountModal({
     new Set(),
   );
 
-  // State สำหรับ "กำหนดเอง"
   const [customAmount, setCustomAmount] = useState("");
   const [customType, setCustomType] = useState<"fixed" | "percentage">("fixed");
-
-  // State สำหรับ "สแกนโค้ด"
   const scanInputRef = useRef<HTMLInputElement>(null);
   const [scanInput, setScanInput] = useState("");
   const [scanStatus, setScanStatus] = useState<{

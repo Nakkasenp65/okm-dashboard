@@ -1,10 +1,5 @@
 "use client";
-import React, {
-  useState,
-  useEffect,
-  forwardRef,
-  useImperativeHandle,
-} from "react";
+import React, { useState, forwardRef, useImperativeHandle } from "react";
 import Button from "@/components/ui/button/Button";
 
 interface CashPaymentProps {
@@ -46,26 +41,13 @@ const CashPaymentComponent = forwardRef<CashPaymentHandle, CashPaymentProps>(
       setCashReceived(amount.toString());
     };
 
-    // --- Keyboard Event Listener ---
-    useEffect(() => {
-      const handleKeyDown = (event: KeyboardEvent) => {
-        if (/^[0-9.]$/.test(event.key)) {
-          setCashReceived((prev) => {
-            if (event.key === "." && prev.includes(".")) {
-              return prev;
-            }
-            return prev + event.key;
-          });
-        } else if (event.key === "Backspace") {
-          setCashReceived((prev) => prev.slice(0, -1));
-        }
-      };
-
-      window.addEventListener("keydown", handleKeyDown);
-      return () => {
-        window.removeEventListener("keydown", handleKeyDown);
-      };
-    }, []);
+    // === FIX: REMOVED useEffect for keydown listener ===
+    // The useEffect that listened for 'keydown' events has been removed.
+    // This was causing the double-input issue on mobile devices because
+    // both the `onChange` of the input and the `keydown` listener were
+    // trying to update the state simultaneously.
+    // The `onChange` on the input element is the correct and sufficient
+    // way to handle mobile keyboard input.
 
     // --- Expose functions to parent component ---
     useImperativeHandle(ref, () => ({
@@ -123,7 +105,13 @@ const CashPaymentComponent = forwardRef<CashPaymentHandle, CashPaymentProps>(
                 inputMode="decimal"
                 placeholder="0.00"
                 value={cashReceived}
-                onChange={(e) => setCashReceived(e.target.value)}
+                onChange={(e) => {
+                  // Basic validation to prevent non-numeric characters if needed
+                  const value = e.target.value;
+                  if (value === "" || /^[0-9]*\.?[0-9]*$/.test(value)) {
+                    setCashReceived(value);
+                  }
+                }}
                 className="block w-full rounded-lg border-2 border-blue-300 bg-white p-4 text-right text-2xl font-bold text-blue-600 transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 md:hidden dark:border-blue-600 dark:bg-gray-700 dark:text-blue-400"
               />
               {/* Desktop: readonly display */}

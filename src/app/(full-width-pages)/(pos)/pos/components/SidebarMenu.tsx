@@ -9,11 +9,11 @@ import {
   FaLock,
   FaBuilding,
 } from "react-icons/fa6";
-import { Customer } from "./(modal)/CustomerModal";
-import DiscountModal, { Discount } from "./(modal)/DiscountModal";
+import DiscountModal from "./(modal)/DiscountModal";
 import CashDrawerModal, { CashDrawerActivity } from "./(modal)/CashDrawerModal";
 import ConfirmationModal from "./(modal)/ConfirmationModal";
 import { useConfirmation } from "../hooks/useConfirmation";
+import { Customer, Discount } from "../types/Pos";
 
 interface SidebarMenuProps {
   onCustomerSelect: (customer: Customer | null) => void;
@@ -80,7 +80,7 @@ export default function SidebarMenu({
           className="flex h-20 w-full flex-col items-center justify-center rounded-md hover:bg-gray-700"
         >
           <FaCashRegister size={24} color="white" />
-          <span className="mt-1 text-xs text-white">สรุป</span>
+          <span className="mt-1 text-xs text-white">พิมพ์ใบเสร็จ</span>
         </button>
 
         <button

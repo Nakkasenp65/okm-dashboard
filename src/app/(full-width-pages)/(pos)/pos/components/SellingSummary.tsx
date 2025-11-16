@@ -2,12 +2,13 @@
 import React from "react";
 import Button from "@/components/ui/button/Button";
 import { FaTimes } from "react-icons/fa";
-import { Discount } from "./(modal)/DiscountModal";
+import { Discount } from "../types/Pos";
 
 interface SellingSummaryProps {
   subtotal: number;
   total: number;
-  appliedDiscounts: Discount[];
+  appliedDiscounts: Discount[]; // ส่วนลดท้ายบิล
+  priceAdjustmentDiscounts: Discount[]; // ส่วนลดปรับราคา
   onRemoveDiscount: (discountId: string) => void;
   onOpenPaymentModal: () => void;
   isActionDisabled: boolean;
@@ -17,22 +18,26 @@ export default function SellingSummary({
   subtotal,
   total,
   appliedDiscounts,
+  priceAdjustmentDiscounts,
   onRemoveDiscount,
   onOpenPaymentModal,
   isActionDisabled,
 }: SellingSummaryProps) {
+  // ✅ รวมส่วนลดทั้ง 2 ประเภทเพื่อแสดงผล
+  const allDiscountsToDisplay = [
+    ...priceAdjustmentDiscounts,
+    ...appliedDiscounts,
+  ];
+
   return (
     <div className="mt-4 border-t border-gray-200 pt-4 dark:border-gray-700">
       <div className="space-y-2 text-sm">
         <div className="flex justify-between text-base font-semibold text-gray-800 dark:text-gray-200">
-          <span>ยอดก่อนหักส่วนลด</span>
+          <span>ยอดรวม (ราคาตั้งต้น)</span>
           <span>{subtotal.toFixed(2)} ฿</span>
         </div>
-        {appliedDiscounts.map((discount) => {
-          const discountValue =
-            discount.type === "percentage"
-              ? subtotal * (discount.value / 100)
-              : discount.value;
+        {allDiscountsToDisplay.map((discount) => {
+          const isAdjustment = discount.id.startsWith("adj-");
           return (
             <div
               key={discount.id}
@@ -40,22 +45,27 @@ export default function SellingSummary({
             >
               <span className="flex items-center gap-2">
                 {discount.name}
-                <span className="font-mono text-xs">
-                  (
-                  {discount.type === "percentage"
-                    ? `${discount.value}%`
-                    : `${discount.value}฿`}
-                  )
-                </span>
+                {!isAdjustment && ( // แสดง % หรือ ฿ เฉพาะส่วนลดท้ายบิล
+                  <span className="font-mono text-xs">
+                    (
+                    {discount.type === "percentage"
+                      ? `${discount.value}%`
+                      : `${discount.value}฿`}
+                    )
+                  </span>
+                )}
               </span>
               <span className="flex items-center gap-2 font-medium">
-                -{discountValue.toFixed(2)} ฿
-                <button
-                  onClick={() => onRemoveDiscount(discount.id)}
-                  className="text-gray-400 transition-colors hover:text-red-500 dark:hover:text-red-300"
-                >
-                  <FaTimes size={12} />
-                </button>
+                -{discount.value.toFixed(2)} ฿
+                {/* ✅ อนุญาตให้ลบได้เฉพาะส่วนลดท้ายบิล */}
+                {!isAdjustment && (
+                  <button
+                    onClick={() => onRemoveDiscount(discount.id)}
+                    className="text-gray-400 transition-colors hover:text-red-500 dark:hover:text-red-300"
+                  >
+                    <FaTimes size={12} />
+                  </button>
+                )}
               </span>
             </div>
           );

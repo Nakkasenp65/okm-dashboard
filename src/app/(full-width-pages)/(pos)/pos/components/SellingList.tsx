@@ -1,18 +1,20 @@
 "use client";
 import React from "react";
 import { GroupedProduct, SubItem } from "../page";
-import SellingListItem from "./SellingListItem"; // New component
+import SellingListItem from "./SellingListItem";
+import { Product } from "../types/Pos";
 
 interface SellingListProps {
   selectedProductsMap: Map<number, GroupedProduct>;
   onUpdateCart: (productId: number, updatedItems: SubItem[]) => void;
+  productsMap: Map<number, Product>;
 }
 
 export default function SellingList({
   selectedProductsMap,
   onUpdateCart,
+  productsMap,
 }: SellingListProps) {
-  // Flatten the map into a single list of all items for rendering
   const allItems = Array.from(selectedProductsMap.values()).flatMap(
     (group) => group.items,
   );
@@ -41,30 +43,38 @@ export default function SellingList({
 
   return (
     <>
-      {/* Header */}
-      <div className="mb-2 flex border-b border-gray-200 pb-2 text-base font-semibold text-gray-500 uppercase dark:border-gray-700 dark:text-gray-400">
-        <span className="flex-1">รายการ</span>
-        <span className="w-24 text-center">ราคา</span>
-        <span className="w-12 text-center">ลบ</span>
+      {/* Header: แสดงเฉพาะบนจอ lg ขึ้นไป */}
+      <div className="xl:text-md hidden xl:grid xl:grid-cols-12 xl:items-center xl:gap-2 xl:border-b xl:border-gray-200 xl:pb-2 xl:font-semibold xl:text-black dark:xl:border-gray-700 dark:xl:text-gray-400">
+        {/* Header Column 1: Item name (6/12) */}
+        <span className="xl:col-span-6">รายการ</span>
+        {/* Header Column 2: Original Price (2/12) */}
+        <span className="xl:col-span-2 xl:text-center">ราคาปลีก</span>
+        {/* Header Column 3: Selling Price (3/12) */}
+        <span className="xl:col-span-3 xl:text-center">ราคาขาย</span>
+        {/* Header Column 4: Remove Item (1/12) */}
+        <span className="xl:col-span-1 xl:text-center">ลบ</span>
       </div>
 
-      {/* List Container */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Content: List of selling items */}
+      <div className="flex-1 overflow-y-auto pt-2 xl:pt-0">
         {allItems.length > 0 ? (
-          allItems.map((item) => (
-            <SellingListItem
-              key={item.uniqueId}
-              item={item}
-              onPriceChange={(newPrice) => handlePriceChange(item, newPrice)}
-              onRemove={() => handleRemoveItem(item)}
-            />
-          ))
+          allItems.map((item) => {
+            const originalPrice = productsMap.get(item.productId)?.price ?? 0;
+            return (
+              <SellingListItem
+                key={item.uniqueId}
+                item={item}
+                originalPrice={originalPrice}
+                onPriceChange={(newPrice) => handlePriceChange(item, newPrice)}
+                onRemove={() => handleRemoveItem(item)}
+              />
+            );
+          })
         ) : (
+          // Content: Empty state when no items are in the list
           <div className="flex h-full items-center justify-center text-center">
             <p className="text-gray-500 dark:text-gray-400">
               ยังไม่มีสินค้าในรายการ
-              <br />
-              เพิ่มสินค้าเพื่อเริ่มต้นการขาย
             </p>
           </div>
         )}

@@ -1,12 +1,12 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Button from "@/components/ui/button/Button";
-import { FaPrint, FaReceipt, FaShareAlt } from "react-icons/fa";
+import { FaPrint, FaShareAlt } from "react-icons/fa";
 
 interface SuccessScreenProps {
   changeAmount: number;
   onFinishTransaction: () => void;
-  onPrintShortReceipt: () => void;
+  onPrintShortReceipt: () => void; // Prop นี้ยังคงอยู่ แต่อิงตามโค้ดเดิมที่ไม่มีปุ่ม
   onPrintFullReceipt: () => void;
   onSendEReceipt: () => void;
 }
@@ -14,27 +14,11 @@ interface SuccessScreenProps {
 export default function SuccessScreen({
   changeAmount,
   onFinishTransaction,
-  onPrintShortReceipt,
   onPrintFullReceipt,
   onSendEReceipt,
 }: SuccessScreenProps) {
-  // State for auto-printing preference
-  const [autoPrintEnabled, setAutoPrintEnabled] = useState(false);
-
-  // Effect to trigger auto-print when the component mounts
-  useEffect(() => {
-    if (autoPrintEnabled) {
-      // Use a small timeout to allow the user to see the success screen
-      const timer = setTimeout(() => {
-        onPrintShortReceipt();
-      }, 500); // 0.5 second delay
-
-      return () => clearTimeout(timer);
-    }
-  }, [autoPrintEnabled, onPrintShortReceipt]);
-
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center">
+    <div className="flex h-full flex-col items-center justify-center gap-6 p-4 text-center md:p-8">
       <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/50">
         <span className="text-4xl text-green-500">✓</span>
       </div>
@@ -55,56 +39,38 @@ export default function SuccessScreen({
         </>
       )}
 
-      <div className="my-4 w-full max-w-sm border-t border-gray-200 dark:border-gray-700"></div>
+      <div className="my-4 w-full max-w-lg border-t border-gray-200 dark:border-gray-700"></div>
 
       {/* Action Buttons */}
-      <div className="w-full max-w-xs space-y-3">
+      <div className="w-full max-w-md space-y-4">
+        {/* Grid for Receipt Options */}
+        <div className="grid grid-cols-2 gap-4">
+          <Button
+            variant="outline"
+            onClick={onPrintFullReceipt}
+            className="flex h-32 flex-col items-center justify-center gap-2 rounded-lg p-4 text-base md:h-36 md:text-lg"
+          >
+            <FaPrint className="mb-1 text-3xl md:text-4xl" />
+            <span>พิมพ์ใบเสร็จ</span>
+          </Button>
+          <Button
+            variant="outline"
+            onClick={onSendEReceipt}
+            className="flex h-32 flex-col items-center justify-center gap-2 rounded-lg p-4 text-base md:h-36 md:text-lg"
+          >
+            <FaShareAlt className="mb-1 text-3xl md:text-4xl" />
+            <span>ส่ง E-Receipt</span>
+          </Button>
+        </div>
+
+        {/* Finish Button */}
         <Button
-          variant="outline"
-          onClick={onPrintFullReceipt}
-          className="flex w-full items-center justify-center gap-3 py-3 text-base"
+          onClick={onFinishTransaction}
+          className="w-full rounded-lg py-5 text-lg font-semibold md:py-6 md:text-xl"
         >
-          <FaPrint /> พิมพ์ใบเสร็จเต็ม
-        </Button>
-        <Button
-          variant="outline"
-          onClick={onPrintShortReceipt}
-          className="flex w-full items-center justify-center gap-3 py-3 text-base"
-        >
-          <FaReceipt /> พิมพ์ใบเสร็จย่อ
-        </Button>
-        <Button
-          variant="outline"
-          onClick={onSendEReceipt}
-          className="flex w-full items-center justify-center gap-3 py-3 text-base"
-        >
-          <FaShareAlt /> ส่ง E-Receipt
+          เสร็จสิ้นรายการ
         </Button>
       </div>
-
-      {/* Auto-print Toggle */}
-      <div className="mt-4 flex items-center justify-center gap-2">
-        <input
-          type="checkbox"
-          id="auto-print-checkbox"
-          checked={autoPrintEnabled}
-          onChange={(e) => setAutoPrintEnabled(e.target.checked)}
-          className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-        />
-        <label
-          htmlFor="auto-print-checkbox"
-          className="cursor-pointer text-sm text-gray-600 dark:text-gray-400"
-        >
-          พิมพ์ใบเสร็จย่ออัตโนมัติ
-        </label>
-      </div>
-
-      <Button
-        onClick={onFinishTransaction}
-        className="mt-4 w-full max-w-xs py-4 text-lg font-semibold"
-      >
-        เสร็จสิ้นรายการ
-      </Button>
     </div>
   );
 }

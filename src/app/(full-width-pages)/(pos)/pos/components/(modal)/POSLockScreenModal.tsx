@@ -111,7 +111,7 @@ export default function POSLockScreen({
                 inputMode="numeric"
                 value={pin}
                 onChange={(e) => handlePinInput(e.target.value)}
-                placeholder="••••••"
+                placeholder="••••"
                 maxLength={correctPin.length}
                 disabled={isSystemLocked}
                 className={`w-full rounded-xl border-2 bg-gray-700/50 px-6 py-4 text-center text-4xl font-bold tracking-widest text-white placeholder-gray-500 transition-all focus:outline-none ${

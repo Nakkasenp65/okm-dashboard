@@ -1,20 +1,7 @@
 // --- Types ---
 
-// The final, clean Product Type we want to use in our app
-export interface Product {
-  id: number;
-  name: string;
-  barcode: string;
-  price: number;
-  cost: number;
-  brand: string;
-  condition: "มือหนึ่ง" | "มือสอง" | "อุปกรณ์เสริม";
-  stock: number;
-  createdAt: Date;
-  categoryColor?: string; // ** <--- KEY CHANGE: เพิ่ม Property นี้ที่นี่ **
-}
+import { Product } from "../types/Pos";
 
-// Interface for the raw product data coming from the main API (mockData.json)
 interface ApiProductItem {
   id: number;
   name: string;

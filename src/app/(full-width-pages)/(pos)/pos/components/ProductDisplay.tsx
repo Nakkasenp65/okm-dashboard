@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { FaPlus } from "react-icons/fa";
-import { Product } from "./dataTransformer";
+import { Product } from "../types/Pos";
 import { DisplayOptions } from "./(modal)/DisplayOptionsModal";
 
 // Props ที่ Component นี้ต้องการ
@@ -98,6 +98,7 @@ export default function ProductDisplay({
         isOutOfStock ? "opacity-50 grayscale" : ""
       }`}
     >
+      {/* TODO: รูปสินค้า */}
       {/* ส่วนรูปภาพ */}
       {/* <div className="relative h-40 w-full overflow-hidden">
         <Image

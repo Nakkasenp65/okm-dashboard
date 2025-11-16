@@ -1,42 +1,9 @@
 import { useEffect, useState } from "react";
 // 1. Import ตัวแปลงข้อมูล และ Type ของ Product ที่แปลงแล้ว
-import {
-  transformApiDataToProducts,
-  Product as TransformedProduct,
-} from "../components/dataTransformer";
+import { transformApiDataToProducts } from "../components/dataTransformer";
+import { Product as TransformedProduct } from "../types/Pos";
 
 // --- Interfaces สำหรับ Raw API Data (ข้อมูลดิบ) ---
-interface User {
-  id: number;
-  fullname: string;
-}
-
-interface UserImport {
-  stock_id: number;
-  user_id: number;
-  user: User;
-}
-
-interface Unit {
-  id: number;
-  name: string;
-}
-
-interface Category {
-  id: number;
-  color: string;
-  name: string;
-}
-
-interface Prices {
-  stock_id: number;
-  cost: string;
-  repair: string;
-  level_1: string;
-  level_2: string;
-  level_3: string;
-  level_4: string;
-}
 
 // Interface สำหรับข้อมูลดิบของ Product แต่ละชิ้นใน tbody
 interface RawProduct {
@@ -51,10 +18,32 @@ interface RawProduct {
   unit_id: number | null;
   created_at: string;
   count_name_md5: number;
-  prices: Prices;
-  category: Category;
-  unit: Unit | null;
-  user_import: UserImport;
+  prices: {
+    stock_id: number;
+    cost: string;
+    repair: string;
+    level_1: string;
+    level_2: string;
+    level_3: string;
+    level_4: string;
+  };
+  category: {
+    id: number;
+    color: string;
+    name: string;
+  };
+  unit: {
+    id: number;
+    name: string;
+  } | null;
+  user_import: {
+    stock_id: number;
+    user_id: number;
+    user: {
+      id: number;
+      fullname: string;
+    };
+  };
 }
 
 // Interface สำหรับโครงสร้าง JSON ทั้งหมดที่ได้รับมา

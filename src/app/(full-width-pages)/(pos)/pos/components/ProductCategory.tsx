@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useMemo, useEffect } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import { Product } from "./dataTransformer";
+import { Product } from "../types/Pos";
 import DisplayOptionsModal, {
   DisplayOptions,
 } from "./(modal)/DisplayOptionsModal";

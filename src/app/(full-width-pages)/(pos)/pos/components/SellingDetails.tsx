@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import ProductCategory from "./ProductCategory";
-import { Product } from "./dataTransformer"; // Import Product type
+import { Product } from "../types/Pos"; // Import Product type
 
 // **KEY CHANGE: ปรับปรุง Props Interface ให้เรียบง่ายขึ้น**
 // รับเฉพาะฟังก์ชัน onAddProduct และข้อมูลสำหรับ Catalog

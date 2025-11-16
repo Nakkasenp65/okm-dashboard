@@ -19,7 +19,7 @@ export default function BankSelectionView({
   onAddNew,
 }: BankSelectionViewProps) {
   return (
-    <div className="flex h-full w-full flex-col p-4">
+    <div className="flex h-56 w-full flex-col p-4">
       <h3 className="mb-4 text-center text-xl font-semibold text-gray-800 dark:text-gray-100">
         กรุณาเลือกบัญชีธนาคารที่ต้องการรับเงิน
       </h3>

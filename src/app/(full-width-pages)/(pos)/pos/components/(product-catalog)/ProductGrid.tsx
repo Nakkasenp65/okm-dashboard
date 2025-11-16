@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Product } from "../dataTransformer";
+import { Product } from "../../types/Pos";
 import { DisplayOptions } from "../(modal)/DisplayOptionsModal";
 import ProductDisplay from "../ProductDisplay";
 

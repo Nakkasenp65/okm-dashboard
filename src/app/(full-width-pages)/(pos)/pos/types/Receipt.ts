@@ -1,10 +1,7 @@
-import { SelectedItem } from "../../page";
-import { Discount } from "../(modal)/DiscountModal";
+// src/app/(full-width-pages)/(pos)/pos/types/Receipt.ts
 
-export interface StaffMember {
-  id: number;
-  name: string;
-}
+import { SelectedItem } from "../page";
+import { Discount, StaffMember } from "./Pos";
 
 // TODO: เพิ่มรายละเอียดอื่น ๆ ของร้านค้าได้ตามต้องการ
 export const MOCK_SHOP_INFO = {
@@ -20,7 +17,6 @@ export const MOCK_SHOP_INFO = {
     "โอเคโมบาย ห้างเซ็นเตอร์วัน ชั้น 2 ห้องเลขที่ 2019 เลขที่ 1 แขวงถนนพญาไท เขตราชเทวี",
   phone: "062-776-6774",
   LINE: "@okmobile (มี@)",
-  // fax: "02-727-7777",
   taxId: "0115544990123",
   branch: "สาขาที่ออกใบกำกับภาษี สำนักงานใหญ่",
 };
@@ -31,7 +27,10 @@ export interface ReceiptData {
   shopTaxId: string;
   shopBranch: string;
   receiptNumber: string;
+  taxInvoiceNumber: string;
   customerName: string;
+  customerPhone: string;
+  printDate: string;
   customerTaxId: string;
   customerAddress: string;
   customerBranch: string;
@@ -39,7 +38,7 @@ export interface ReceiptData {
   bookNumber: string;
 }
 
-export type VatCalculationMode = "off" | "included" | "excluded";
+export type VatCalculationMode = "included" | "excluded" | "off";
 
 export interface PrintOptions {
   showDiscounts: boolean;
@@ -49,6 +48,8 @@ export interface PrintOptions {
   showCustomerBranch: boolean;
   vatMode: VatCalculationMode;
   withholdingTaxVatMode: "post-vat" | "pre-vat";
+  showCustomerAddress: boolean;
+  showTaxInvoiceNumber: boolean;
 }
 
 export interface ReceiptPreviewProps {

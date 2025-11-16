@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { StaffMember } from "./(receipt)/receiptTypes";
+import { StaffMember } from "../types/Pos";
 import { FaUser, FaCheck, FaTimes } from "react-icons/fa";
 
 interface SellerProfileProps {
