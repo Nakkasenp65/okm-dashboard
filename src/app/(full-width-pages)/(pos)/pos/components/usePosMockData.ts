@@ -8,6 +8,7 @@ import { Product as TransformedProduct } from "../types/Pos";
 // Interface สำหรับข้อมูลดิบของ Product แต่ละชิ้นใน tbody
 interface RawProduct {
   id: number;
+  _id?: string; // เพิ่ม _id เพื่อให้ตรงกับ ApiProductItem
   name: string;
   name_md5: string;
   barcode: string;
@@ -18,6 +19,10 @@ interface RawProduct {
   unit_id: number | null;
   created_at: string;
   count_name_md5: number;
+  details?: string; // เพิ่ม fields ที่จำเป็น
+  source?: string;
+  imageApi?: string;
+  image1?: string;
   prices: {
     stock_id: number;
     cost: string;
@@ -72,9 +77,7 @@ export interface UsePosMockDataResult {
 export function usePosMockData(): UsePosMockDataResult {
   const [products, setProducts] = useState<TransformedProduct[]>([]);
   // ✅ KEY CHANGE: เปลี่ยน State เป็นตัวแปรธรรมดา
-  const [initialStock, setInitialStock] = useState<Map<number, number>>(
-    new Map(),
-  );
+  const [initialStock, setInitialStock] = useState<Map<number, number>>(new Map());
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 

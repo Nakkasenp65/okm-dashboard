@@ -4,14 +4,19 @@ import { Product } from "../types/Pos";
 
 interface ApiProductItem {
   id: number;
+  _id?: string; // MongoDB ObjectId - ทำเป็น optional เพื่อรองรับข้อมูลจาก mock data
   name: string;
   barcode: string;
+  details?: string;
+  source?: string;
+  imageApi?: string;
+  image1?: string;
   prices?: {
     level_1?: string | number;
     cost?: string | number;
   };
   category?: {
-    id: number;
+    id: number | string;
     color: string;
     name: string;
   };
@@ -23,31 +28,21 @@ interface ApiProductItem {
 
 interface ExtractedInfo {
   brand: string;
-  condition: "มือหนึ่ง" | "มือสอง" | "อุปกรณ์เสริม";
+  condition: Product["condition"]; // ใช้ type จาก Product โดยตรง
 }
 
-const extractInfoFromCategory = (
-  categoryName: string = "",
-  productName: string = "",
-): ExtractedInfo => {
+const extractInfoFromCategory = (categoryName: string = "", productName: string = ""): ExtractedInfo => {
   const lowerCategoryName = categoryName.toLowerCase();
   const lowerProductName = productName.toLowerCase();
 
-  // Step 1: Determine the Condition
-  let condition: "มือหนึ่ง" | "มือสอง" | "อุปกรณ์เสริม" = "อุปกรณ์เสริม";
-  if (
-    lowerCategoryName.includes("เครื่องมือ1") ||
-    lowerCategoryName.includes("เครื่องมือ 1")
-  ) {
-    condition = "มือหนึ่ง";
-  } else if (
-    lowerCategoryName.includes("เครื่องมือ2") ||
-    lowerCategoryName.includes("เครื่องมือ 2")
-  ) {
-    condition = "มือสอง";
-  } else if (lowerCategoryName === "gadget" || lowerCategoryName === "ฟิล์ม") {
-    condition = "อุปกรณ์เสริม";
+  // Step 1: Determine the Condition (ใช้ "new" | "used" ตามที่ backend กำหนด)
+  let condition: Product["condition"] = "used"; // default เป็น used
+  if (lowerCategoryName.includes("เครื่องมือ1") || lowerCategoryName.includes("เครื่องมือ 1")) {
+    condition = "new";
+  } else if (lowerCategoryName.includes("เครื่องมือ2") || lowerCategoryName.includes("เครื่องมือ 2")) {
+    condition = "used";
   }
+  // ⚠️ ตัด logic "อุปกรณ์เสริม" ออก เพราะ backend รองรับเฉพาะ "new" | "used"
 
   // Step 2: Determine the Brand
   const categoryWords = categoryName.split(" ");
@@ -75,8 +70,7 @@ const extractInfoFromCategory = (
   for (const brand of knownBrands) {
     if (lastWord.includes(brand)) {
       const finalBrand = brand.charAt(0).toUpperCase() + brand.slice(1);
-      if (finalBrand === "Iphone" || finalBrand === "Ipad")
-        return { brand: "Apple", condition };
+      if (finalBrand === "Iphone" || finalBrand === "Ipad") return { brand: "Apple", condition };
       return { brand: finalBrand, condition };
     }
   }
@@ -84,8 +78,7 @@ const extractInfoFromCategory = (
   for (const brand of knownBrands) {
     if (lowerProductName.includes(brand)) {
       const finalBrand = brand.charAt(0).toUpperCase() + brand.slice(1);
-      if (finalBrand === "Iphone" || finalBrand === "Ipad")
-        return { brand: "Apple", condition };
+      if (finalBrand === "Iphone" || finalBrand === "Ipad") return { brand: "Apple", condition };
       return { brand: finalBrand, condition };
     }
   }
@@ -94,21 +87,17 @@ const extractInfoFromCategory = (
 };
 
 // --- Main Transformer Function (Updated) ---
-export const transformApiDataToProducts = (
-  apiData: ApiProductItem[],
-): Product[] => {
+export const transformApiDataToProducts = (apiData: ApiProductItem[]): Product[] => {
   if (!Array.isArray(apiData)) {
     console.error("API data is not an array:", apiData);
     return [];
   }
 
   return apiData.map((item) => {
-    const { brand, condition } = extractInfoFromCategory(
-      item.category?.name,
-      item.name,
-    );
+    const { brand, condition } = extractInfoFromCategory(item.category?.name, item.name);
 
     return {
+      // Original fields
       id: item.id,
       name: item.name,
       barcode: item.barcode,
@@ -118,7 +107,19 @@ export const transformApiDataToProducts = (
       condition: condition,
       stock: item.count_name_md5 || 1,
       createdAt: new Date(item.created_at),
-      categoryColor: item.category?.color, // ส่วน Logic ตรงนี้ถูกต้องอยู่แล้ว
+      categoryColor: item.category?.color,
+
+      // NEW fields from API
+      _id: item._id || String(item.id), // fallback ถ้าไม่มี _id
+      details: item.details || "",
+      source: item.source,
+      imageApi: item.imageApi,
+      image1: item.image1,
+      category: {
+        id: String(item.category?.id || ""),
+        color: item.category?.color || "",
+        name: item.category?.name || "",
+      },
     };
   });
 };

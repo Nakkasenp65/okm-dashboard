@@ -14,7 +14,7 @@ interface SellingActionProps {
   priceAdjustmentDiscounts: Discount[]; // ส่วนลดจากการปรับราคา (auto)
   onDiscountsChange: (discounts: Discount[]) => void;
   onOpenRetailPayment: () => void;
-  productsMap: Map<number, Product>; // ✅ รับ Map ของสินค้า
+  productsMap: Map<number, Product>;
 }
 
 export default function SellingAction({
@@ -33,23 +33,17 @@ export default function SellingAction({
   }, [appliedDiscounts, priceAdjustmentDiscounts]);
 
   const { subtotal, total } = useMemo(() => {
-    const allItems: SubItem[] = Array.from(
-      selectedProductsMap.values(),
-    ).flatMap((group) => group.items);
+    const allItems: SubItem[] = Array.from(selectedProductsMap.values()).flatMap((group) => group.items);
 
     // ยอดรวม 'ก่อน' ส่วนลดใดๆ จะคิดจากราคาตั้งต้นเสมอ
     const sub = allItems.reduce((sum, item) => {
-      const originalPrice =
-        productsMap.get(item.productId)?.price ?? item.unitPrice;
+      const originalPrice = productsMap.get(item.productId)?.price ?? item.unitPrice;
       return sum + originalPrice;
     }, 0);
 
     let totalDiscountAmount = 0;
     allDiscounts.forEach((discount) => {
-      totalDiscountAmount +=
-        discount.type === "percentage"
-          ? sub * (discount.value / 100)
-          : discount.value;
+      totalDiscountAmount += discount.type === "percentage" ? sub * (discount.value / 100) : discount.value;
     });
 
     return {
@@ -66,10 +60,7 @@ export default function SellingAction({
   return (
     <div className="flex h-full flex-col rounded-lg bg-white p-4 shadow-md dark:bg-gray-800">
       <div className="mb-4">
-        <label
-          htmlFor="imei-input"
-          className="mb-2 block text-xl font-medium text-gray-700 dark:text-gray-300"
-        >
+        <label htmlFor="imei-input" className="mb-2 block text-xl font-medium text-gray-700 dark:text-gray-300">
           กรอกรหัส IMEI หรือรหัสสินค้า
         </label>
         <div className="flex gap-2">
@@ -99,23 +90,15 @@ export default function SellingAction({
                 {currentCustomer.level}
               </span>
             </p>
-            <p className="font-semibold text-purple-900 dark:text-purple-100">
-              {currentCustomer.name}
-            </p>
+            <p className="font-semibold text-purple-900 dark:text-purple-100">{currentCustomer.name}</p>
             {currentCustomer.customerPoint !== undefined && (
-              <p className="text-xs text-purple-700 dark:text-purple-300">
-                คะแนนสะสม: {currentCustomer.customerPoint}
-              </p>
+              <p className="text-xs text-purple-700 dark:text-purple-300">คะแนนสะสม: {currentCustomer.customerPoint}</p>
             )}
           </div>
         </div>
       )}
 
-      <SellingList
-        selectedProductsMap={selectedProductsMap}
-        onUpdateCart={updateCart}
-        productsMap={productsMap} // ✅ ส่ง Map ลงไป
-      />
+      <SellingList selectedProductsMap={selectedProductsMap} onUpdateCart={updateCart} productsMap={productsMap} />
 
       <SellingSummary
         subtotal={subtotal}

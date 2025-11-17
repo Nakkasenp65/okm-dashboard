@@ -2,21 +2,11 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/button/Button";
-import {
-  FaArrowLeft,
-  FaSearch,
-  FaUser,
-  FaMapMarkerAlt,
-  FaStar,
-} from "react-icons/fa";
+import { FaArrowLeft, FaSearch, FaUser, FaMapMarkerAlt, FaStar } from "react-icons/fa";
 import ConfirmationModal from "./ConfirmationModal";
 import { useConfirmation } from "../../hooks/useConfirmation";
 import PosAddressForm from "./PosAddressForm";
-import {
-  Customer,
-  CustomerLevelType,
-  StructuredAddress,
-} from "../../types/Pos";
+import { Customer, CustomerLevelType, StructuredAddress } from "../../types/Pos";
 
 // ✅ KEY CHANGE: อัปเดต Props ให้รับ State และ Function จาก Parent
 interface CustomerModalProps {
@@ -51,29 +41,24 @@ const AddNewCustomerForm = ({
   const [newCustomerPhone, setNewCustomerPhone] = useState("");
   const [newCustomerCitizenId, setNewCustomerCitizenId] = useState("");
   const [newCustomerAge, setNewCustomerAge] = useState("");
-  const [newCustomerLevel, setNewCustomerLevel] =
-    useState<CustomerLevelType>("ทั่วไป");
+  const [newCustomerLevel, setNewCustomerLevel] = useState<CustomerLevelType>("ทั่วไป");
   const [newCustomerPoint, setNewCustomerPoint] = useState("");
   const [newCustomerNotes, setNewCustomerNotes] = useState("");
 
-  const [newCustomerStructuredAddress, setNewCustomerStructuredAddress] =
-    useState<StructuredAddress>({
-      addressDetails: "",
-      subdistrict: "",
-      district: "",
-      province: "",
-      postcode: "",
-    });
+  const [newCustomerStructuredAddress, setNewCustomerStructuredAddress] = useState<StructuredAddress>({
+    addressDetails: "",
+    subdistrict: "",
+    district: "",
+    province: "",
+    postcode: "",
+  });
 
-  const handleAddressChange = useCallback(
-    (field: keyof StructuredAddress, value: string) => {
-      setNewCustomerStructuredAddress((prev) => ({
-        ...prev,
-        [field]: value,
-      }));
-    },
-    [],
-  );
+  const handleAddressChange = useCallback((field: keyof StructuredAddress, value: string) => {
+    setNewCustomerStructuredAddress((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  }, []);
 
   const handleSave = () => {
     if (!newCustomerName.trim()) {
@@ -82,8 +67,7 @@ const AddNewCustomerForm = ({
     }
     const details = levelDetails[newCustomerLevel];
 
-    const { addressDetails, subdistrict, district, province, postcode } =
-      newCustomerStructuredAddress;
+    const { addressDetails, subdistrict, district, province, postcode } = newCustomerStructuredAddress;
     const formattedAddress = [
       addressDetails,
       subdistrict && `ต./แขวง ${subdistrict}`,
@@ -118,9 +102,7 @@ const AddNewCustomerForm = ({
         <Button variant="outline" size="sm" onClick={onBack} className="p-2">
           <FaArrowLeft />
         </Button>
-        <h4 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-          เพิ่มลูกค้าใหม่
-        </h4>
+        <h4 className="text-xl font-semibold text-gray-800 dark:text-gray-200">เพิ่มลูกค้าใหม่</h4>
       </div>
 
       {/* === Section 1: Personal Info === */}
@@ -131,10 +113,7 @@ const AddNewCustomerForm = ({
         </h5>
         <div className="grid grid-cols-1 gap-x-6 gap-y-4 rounded-lg border border-gray-200 p-4 sm:grid-cols-2 dark:border-gray-700">
           <div>
-            <label
-              htmlFor="customer-name"
-              className="block text-sm font-medium text-gray-600 dark:text-gray-400"
-            >
+            <label htmlFor="customer-name" className="block text-sm font-medium text-gray-600 dark:text-gray-400">
               ชื่อ-นามสกุล<span className="text-red-500">*</span>
             </label>
             <input
@@ -147,10 +126,7 @@ const AddNewCustomerForm = ({
             />
           </div>
           <div>
-            <label
-              htmlFor="customer-phone"
-              className="block text-sm font-medium text-gray-600 dark:text-gray-400"
-            >
+            <label htmlFor="customer-phone" className="block text-sm font-medium text-gray-600 dark:text-gray-400">
               เบอร์โทรศัพท์
             </label>
             <input
@@ -163,10 +139,7 @@ const AddNewCustomerForm = ({
             />
           </div>
           <div className="sm:col-span-2">
-            <label
-              htmlFor="customer-citizen-id"
-              className="block text-sm font-medium text-gray-600 dark:text-gray-400"
-            >
+            <label htmlFor="customer-citizen-id" className="block text-sm font-medium text-gray-600 dark:text-gray-400">
               รหัสบัตรประชาชน
             </label>
             <input
@@ -188,10 +161,7 @@ const AddNewCustomerForm = ({
           ที่อยู่
         </h5>
         <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
-          <PosAddressForm
-            addressData={newCustomerStructuredAddress}
-            onAddressChange={handleAddressChange}
-          />
+          <PosAddressForm addressData={newCustomerStructuredAddress} onAddressChange={handleAddressChange} />
         </div>
       </div>
 
@@ -203,18 +173,13 @@ const AddNewCustomerForm = ({
         </h5>
         <div className="grid grid-cols-1 gap-x-6 gap-y-4 rounded-lg border border-gray-200 p-4 sm:grid-cols-2 dark:border-gray-700">
           <div>
-            <label
-              htmlFor="customer-level"
-              className="block text-sm font-medium text-gray-600 dark:text-gray-400"
-            >
+            <label htmlFor="customer-level" className="block text-sm font-medium text-gray-600 dark:text-gray-400">
               ระดับสมาชิก
             </label>
             <select
               id="customer-level"
               value={newCustomerLevel}
-              onChange={(e) =>
-                setNewCustomerLevel(e.target.value as CustomerLevelType)
-              }
+              onChange={(e) => setNewCustomerLevel(e.target.value as CustomerLevelType)}
               className="mt-1 w-full rounded-lg border-gray-300 bg-white p-3 text-base shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-800"
             >
               <option value="ทั่วไป">ทั่วไป</option>
@@ -225,10 +190,7 @@ const AddNewCustomerForm = ({
             </select>
           </div>
           <div>
-            <label
-              htmlFor="customer-age"
-              className="block text-sm font-medium text-gray-600 dark:text-gray-400"
-            >
+            <label htmlFor="customer-age" className="block text-sm font-medium text-gray-600 dark:text-gray-400">
               อายุ
             </label>
             <input
@@ -242,10 +204,7 @@ const AddNewCustomerForm = ({
           </div>
           {/* ✅ KEY CHANGE: เพิ่ม Input สำหรับคะแนนสะสม */}
           <div className="sm:col-span-2">
-            <label
-              htmlFor="customer-point"
-              className="block text-sm font-medium text-gray-600 dark:text-gray-400"
-            >
+            <label htmlFor="customer-point" className="block text-sm font-medium text-gray-600 dark:text-gray-400">
               คะแนนสะสม
             </label>
             <input
@@ -258,10 +217,7 @@ const AddNewCustomerForm = ({
             />
           </div>
           <div className="sm:col-span-2">
-            <label
-              htmlFor="customer-notes"
-              className="block text-sm font-medium text-gray-600 dark:text-gray-400"
-            >
+            <label htmlFor="customer-notes" className="block text-sm font-medium text-gray-600 dark:text-gray-400">
               หมายเหตุ
             </label>
             <textarea
@@ -355,7 +311,7 @@ export default function CustomerModal({
         isOpen={isOpen}
         onClose={onClose}
         showCloseButton={true}
-        className="no-scrollbar max-h-[80vh] min-h-[80vh] w-full max-w-5xl overflow-y-auto rounded-2xl p-6 shadow-2xl"
+        className="no-scrollbar h-[60vh] w-full max-w-5xl overflow-y-auto rounded-2xl p-4 shadow-2xl"
       >
         <div className="flex flex-col gap-6">
           {view === "list" && (
@@ -363,7 +319,7 @@ export default function CustomerModal({
               <h3 className="border-b border-gray-200 pb-4 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-white">
                 จัดการข้อมูลลูกค้า
               </h3>
-              <div className="mt-2">
+              <div className="mt-2 flex flex-col">
                 <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
                   <div className="relative md:col-span-2">
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -391,7 +347,7 @@ export default function CustomerModal({
                   </select>
                 </div>
 
-                <div className="hidden overflow-x-auto rounded-lg border border-gray-200 md:block dark:border-gray-700">
+                <div className="hidden flex-1 overflow-x-auto rounded-lg border border-gray-200 md:block dark:border-gray-700">
                   <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead className="bg-gray-50 dark:bg-gray-800">
                       <tr>
@@ -428,9 +384,7 @@ export default function CustomerModal({
                                   {customer.emoji}
                                 </div>
                                 <div>
-                                  <div className="font-semibold text-gray-900 dark:text-white">
-                                    {customer.name}
-                                  </div>
+                                  <div className="font-semibold text-gray-900 dark:text-white">{customer.name}</div>
                                   <div className="font-mono text-sm text-gray-500 dark:text-gray-400">
                                     {customer.memberId}
                                   </div>
@@ -450,14 +404,8 @@ export default function CustomerModal({
                             <td className="px-6 py-4 text-center whitespace-nowrap">
                               <Button
                                 size="sm"
-                                variant={
-                                  selectedCustomerId === customer.id
-                                    ? "primary"
-                                    : "outline"
-                                }
-                                onClick={() =>
-                                  setSelectedCustomerId(customer.id)
-                                }
+                                variant={selectedCustomerId === customer.id ? "primary" : "outline"}
+                                onClick={() => setSelectedCustomerId(customer.id)}
                               >
                                 เลือก
                               </Button>
@@ -466,10 +414,7 @@ export default function CustomerModal({
                         ))
                       ) : (
                         <tr>
-                          <td
-                            colSpan={4}
-                            className="px-6 py-16 text-center text-gray-500 dark:text-gray-400"
-                          >
+                          <td colSpan={4} className="px-6 py-16 text-center text-gray-500 dark:text-gray-400">
                             ไม่พบข้อมูลลูกค้าที่ตรงกับเงื่อนไข
                           </td>
                         </tr>
@@ -499,9 +444,7 @@ export default function CustomerModal({
                           <div className="flex-1">
                             <div className="flex items-start justify-between gap-2">
                               <div>
-                                <h4 className="font-semibold text-gray-900 dark:text-white">
-                                  {customer.name}
-                                </h4>
+                                <h4 className="font-semibold text-gray-900 dark:text-white">{customer.name}</h4>
                                 <p className="font-mono text-xs text-gray-500 dark:text-gray-400">
                                   {customer.memberId}
                                 </p>
@@ -512,25 +455,15 @@ export default function CustomerModal({
                                 {customer.level}
                               </span>
                             </div>
-                            <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                              📞 {customer.phone}
-                            </div>
+                            <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">📞 {customer.phone}</div>
                             <div className="mt-3">
                               <Button
                                 size="sm"
-                                variant={
-                                  selectedCustomerId === customer.id
-                                    ? "primary"
-                                    : "outline"
-                                }
-                                onClick={() =>
-                                  setSelectedCustomerId(customer.id)
-                                }
+                                variant={selectedCustomerId === customer.id ? "primary" : "outline"}
+                                onClick={() => setSelectedCustomerId(customer.id)}
                                 className="w-full py-2.5 text-sm font-medium"
                               >
-                                {selectedCustomerId === customer.id
-                                  ? "✓ เลือกแล้ว"
-                                  : "เลือก"}
+                                {selectedCustomerId === customer.id ? "✓ เลือกแล้ว" : "เลือก"}
                               </Button>
                             </div>
                           </div>
@@ -577,11 +510,7 @@ export default function CustomerModal({
               </div>
 
               <div className="grid grid-cols-2 gap-4 border-t border-gray-200 pt-4 dark:border-gray-700">
-                <Button
-                  variant="outline"
-                  onClick={onClose}
-                  className="py-3 text-sm font-medium md:text-base"
-                >
+                <Button variant="outline" onClick={onClose} className="py-3 text-sm font-medium md:text-base">
                   ยกเลิก
                 </Button>
                 <Button

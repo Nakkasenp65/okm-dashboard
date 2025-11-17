@@ -2,9 +2,8 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { Product } from "../types/Pos";
-import DisplayOptionsModal, {
-  DisplayOptions,
-} from "./(modal)/DisplayOptionsModal";
+import DisplayOptionsModal, { DisplayOptions } from "./(modal)/DisplayOptionsModal";
+import { useProducts } from "../hooks/useProduct";
 
 import CatalogControls from "./(product-catalog)/CatalogControls";
 import BrandSelection from "./(product-catalog)/BrandSelection";
@@ -13,7 +12,6 @@ import ProductGrid from "./(product-catalog)/ProductGrid";
 
 interface ProductCatalogProps {
   onAddProduct: (product: Product) => void;
-  products: Product[];
   availableStock: Map<number, number>;
 }
 
@@ -52,31 +50,55 @@ const saveDisplayOptionsToStorage = (options: DisplayOptions): void => {
   }
 };
 
-export default function ProductCategory({
-  onAddProduct,
-  products,
-  availableStock,
-}: ProductCatalogProps) {
+export default function ProductCategory({ onAddProduct, availableStock }: ProductCatalogProps) {
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
-  const [selectedCondition, setSelectedCondition] = useState<
-    Product["condition"] | null
-  >(null);
+  const [selectedCondition, setSelectedCondition] = useState<Product["condition"] | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("date-desc");
-  const [displayOptions, setDisplayOptions] = useState<DisplayOptions>(
-    DEFAULT_DISPLAY_OPTIONS,
-  );
+  const [displayOptions, setDisplayOptions] = useState<DisplayOptions>(DEFAULT_DISPLAY_OPTIONS);
   const [isOptionsModalOpen, setOptionsModalOpen] = useState(false);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(20);
+
+  // Parse sort option for API
+  const [sortField, sortDirection] = sortOption.split("-") as [string, "asc" | "desc"];
+
+  // Map frontend sort field to API field
+  const apiSortBy = sortField === "date" ? "created_at" : sortField === "price" ? "prices.level_1" : sortField;
+
+  // Fetch products from API
+  const {
+    data: apiResponse,
+    isLoading,
+    error,
+  } = useProducts({
+    page: currentPage,
+    limit: itemsPerPage,
+    searchTerm: searchQuery,
+    sortBy: apiSortBy,
+    sortOrder: sortDirection,
+  });
+
+  // Memoize products to prevent unnecessary re-renders
+  const products = useMemo(() => apiResponse?.products || [], [apiResponse?.products]);
+  const pagination = apiResponse?.pagination;
 
   useEffect(() => {
     const storedOptions = getDisplayOptionsFromStorage();
     setDisplayOptions(storedOptions);
   }, []);
 
+  // Reset to page 1 when search or sort changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, sortOption]);
+
+  // Filter products for brand selection (client-side filtering by condition)
   const brandsWithInfo = useMemo(() => {
-    const relevantProducts = products.filter(
-      (p) => p.condition === "มือหนึ่ง" || p.condition === "มือสอง",
-    );
+    // กรองเฉพาะสินค้าที่เป็น new หรือ used (ไม่รวมอุปกรณ์เสริม ถ้ามี)
+    const relevantProducts = products.filter((p) => p.condition === "new" || p.condition === "used");
     const brandsMap = new Map<string, { color?: string }>();
     relevantProducts.forEach((product) => {
       if (!brandsMap.has(product.brand)) {
@@ -98,8 +120,8 @@ export default function ProductCategory({
     products
       .filter((p) => p.brand === selectedBrand) // กรองสินค้าตามแบรนด์ที่เลือก
       .forEach((p) => {
-        // เพิ่มเฉพาะสภาพที่เกี่ยวข้อง (ไม่เอา อุปกรณ์เสริม)
-        if (p.condition === "มือหนึ่ง" || p.condition === "มือสอง") {
+        // เพิ่มเฉพาะสภาพ new และ used
+        if (p.condition === "new" || p.condition === "used") {
           conditions.add(p.condition);
         }
       });
@@ -108,6 +130,7 @@ export default function ProductCategory({
     return Array.from(conditions);
   }, [products, selectedBrand]);
 
+  // Client-side filtering for brand and condition (after API search/sort)
   const processedProducts = useMemo(() => {
     let filtered = products;
 
@@ -118,37 +141,8 @@ export default function ProductCategory({
       filtered = filtered.filter((p) => p.condition === selectedCondition);
     }
 
-    if (searchQuery) {
-      const lowerCaseQuery = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (p) =>
-          p.name.toLowerCase().includes(lowerCaseQuery) ||
-          p.barcode.toLowerCase().includes(lowerCaseQuery),
-      );
-    }
-
-    const [field, direction] = sortOption.split("-");
-    const sorted = [...filtered].sort((a, b) => {
-      let compare = 0;
-      switch (field) {
-        case "price":
-          compare = a.price - b.price;
-          break;
-        case "date":
-          compare = a.createdAt.getTime() - b.createdAt.getTime();
-          break;
-        case "name":
-          compare = a.name.localeCompare(b.name);
-          break;
-        default:
-          compare = a.barcode.localeCompare(b.barcode);
-          break;
-      }
-      return direction === "asc" ? compare : -compare;
-    });
-
-    return sorted;
-  }, [products, selectedBrand, selectedCondition, searchQuery, sortOption]);
+    return filtered;
+  }, [products, selectedBrand, selectedCondition]);
 
   const handleBack = () => {
     if (selectedCondition) setSelectedCondition(null);
@@ -197,34 +191,63 @@ export default function ProductCategory({
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 pb-4">
-        {!selectedBrand ? (
-          <BrandSelection
-            brands={brandsWithInfo}
-            onSelectBrand={setSelectedBrand}
-          />
-        ) : !selectedCondition ? (
-          // ✅ KEY CHANGE: ส่ง prop `availableConditions` ไปให้ Component
-          <ConditionSelection
-            onSelectCondition={setSelectedCondition}
-            availableConditions={availableConditionsForBrand}
-          />
-        ) : (
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex h-full items-center justify-center">
+            <div className="text-center">
+              <div className="mb-4 text-4xl">⏳</div>
+              <p className="text-lg text-gray-600 dark:text-gray-400">กำลังโหลดสินค้า...</p>
+            </div>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="flex h-full items-center justify-center">
+            <div className="rounded-lg bg-red-50 p-6 text-center dark:bg-red-950/30">
+              <div className="mb-2 text-4xl">❌</div>
+              <p className="text-lg text-red-600 dark:text-red-400">
+                เกิดข้อผิดพลาด: {error instanceof Error ? error.message : "ไม่สามารถโหลดข้อมูลได้"}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Content */}
+        {!isLoading && !error && (
           <>
-            <CatalogControls
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              sortOption={sortOption}
-              setSortOption={setSortOption}
-              displayMode={displayOptions.displayMode}
-              onChangeDisplayMode={handleChangeDisplayMode}
-              onOpenOptionsModal={() => setOptionsModalOpen(true)}
-            />
-            <ProductGrid
-              products={processedProducts}
-              displayOptions={displayOptions}
-              onAddProduct={onAddProduct}
-              availableStock={availableStock}
-            />
+            {!selectedBrand ? (
+              <BrandSelection brands={brandsWithInfo} onSelectBrand={setSelectedBrand} />
+            ) : !selectedCondition ? (
+              // ✅ KEY CHANGE: ส่ง prop `availableConditions` ไปให้ Component
+              <ConditionSelection
+                onSelectCondition={setSelectedCondition}
+                availableConditions={availableConditionsForBrand}
+              />
+            ) : (
+              <>
+                <CatalogControls
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  sortOption={sortOption}
+                  setSortOption={setSortOption}
+                  displayMode={displayOptions.displayMode}
+                  onChangeDisplayMode={handleChangeDisplayMode}
+                  onOpenOptionsModal={() => setOptionsModalOpen(true)}
+                />
+                <ProductGrid
+                  products={processedProducts}
+                  displayOptions={displayOptions}
+                  onAddProduct={onAddProduct}
+                  availableStock={availableStock}
+                  // Pagination props
+                  currentPage={currentPage}
+                  totalPages={pagination?.totalPages || 1}
+                  totalItems={pagination?.totalProducts || 0}
+                  onPageChange={setCurrentPage}
+                />
+              </>
+            )}
           </>
         )}
       </div>

@@ -2,18 +2,8 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/button/Button";
-import {
-  FaMoneyBillWave,
-  FaQrcode,
-  FaCreditCard,
-  FaTruck,
-  FaMix,
-  FaUniversity,
-  FaPencilAlt,
-} from "react-icons/fa";
-import CashPaymentComponent, {
-  CashPaymentHandle,
-} from "./(payment)/CashPaymentComponent";
+import { FaMoneyBillWave, FaQrcode, FaCreditCard, FaTruck, FaMix, FaUniversity, FaPencilAlt } from "react-icons/fa";
+import CashPaymentComponent, { CashPaymentHandle } from "./(payment)/CashPaymentComponent";
 import TransferPaymentComponent from "./(payment)/(transfer)/TransferPaymentComponent";
 import OnlinePaymentComponent from "./(payment)/OnlinePaymentComponent";
 import CardPaymentComponent from "./(payment)/CardPaymentComponent";
@@ -27,15 +17,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { VatCalculationMode } from "../../types/Receipt";
 
 // --- Types & Interfaces ---
-export type PaymentMethod =
-  | "cash"
-  | "transfer"
-  | "online"
-  | "card"
-  | "credit"
-  | "app"
-  | "mixed"
-  | "promptpay";
+export type PaymentMethod = "cash" | "transfer" | "online" | "card" | "credit" | "app" | "mixed" | "promptpay";
 
 export interface Payment {
   method: string;
@@ -84,10 +66,7 @@ interface NoteInputSectionProps {
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
-const NoteInputSection: React.FC<NoteInputSectionProps> = ({
-  value,
-  onChange,
-}) => {
+const NoteInputSection: React.FC<NoteInputSectionProps> = ({ value, onChange }) => {
   return (
     <div className="mb-3 md:mb-5">
       <label
@@ -113,7 +92,7 @@ const retailTabs = [
   { id: "cash", label: "เงินสด", icon: FaMoneyBillWave },
   { id: "transfer", label: "ธนาคาร", icon: FaUniversity },
   { id: "promptpay", label: "พร้อมเพย์", icon: FaQrcode },
-  { id: "online", label: "ออนไลน์", icon: FaQrcode },
+  { id: "online", label: "E-wallet", icon: FaQrcode },
   { id: "card", label: "บัตร", icon: FaCreditCard },
   { id: "app", label: "แอป", icon: FaTruck },
   { id: "mixed", label: "ผสม", icon: FaMix },
@@ -154,9 +133,7 @@ export default function PaymentModal({
   setIsTaxInvoice,
 }: PaymentModalProps) {
   const tabsToDisplay = mode === "retail" ? retailTabs : companyTabs;
-  const [paymentStep, setPaymentStep] = useState<"paying" | "success">(
-    "paying",
-  );
+  const [paymentStep, setPaymentStep] = useState<"paying" | "success">("paying");
   const [note, setNote] = useState("");
 
   const cashPaymentRef = useRef<CashPaymentHandle>(null);
@@ -211,24 +188,14 @@ export default function PaymentModal({
     if (!isTaxInvoice || withholdingTaxPercent <= 0) {
       return { withholdingTaxAmount: 0 };
     }
-    const baseForWHT =
-      withholdingTaxVatMode === "pre-vat" ? subTotalBeforeVat : grandTotal;
+    const baseForWHT = withholdingTaxVatMode === "pre-vat" ? subTotalBeforeVat : grandTotal;
     const amount = baseForWHT * (withholdingTaxPercent / 100);
     return { withholdingTaxAmount: amount };
-  }, [
-    isTaxInvoice,
-    withholdingTaxPercent,
-    withholdingTaxVatMode,
-    subTotalBeforeVat,
-    grandTotal,
-  ]);
+  }, [isTaxInvoice, withholdingTaxPercent, withholdingTaxVatMode, subTotalBeforeVat, grandTotal]);
 
   const finalPaymentAmount = grandTotal - withholdingTaxAmount;
 
-  const totalPaidInMix = useMemo(
-    () => mixedPayments.reduce((sum, p) => sum + p.amount, 0),
-    [mixedPayments],
-  );
+  const totalPaidInMix = useMemo(() => mixedPayments.reduce((sum, p) => sum + p.amount, 0), [mixedPayments]);
 
   const remainingInMix = finalPaymentAmount - totalPaidInMix;
 
@@ -277,9 +244,7 @@ export default function PaymentModal({
           });
           return;
         }
-        finalPayments.push(
-          createPaymentObject(PAYMENT_METHOD_LABELS.cash, amountToPay),
-        );
+        finalPayments.push(createPaymentObject(PAYMENT_METHOD_LABELS.cash, amountToPay));
         finalChange = change;
         break;
       case "transfer":
@@ -287,20 +252,13 @@ export default function PaymentModal({
       case "credit":
       case "app":
       case "promptpay":
-        finalPayments.push(
-          createPaymentObject(
-            PAYMENT_METHOD_LABELS[paymentMethod],
-            amountToPay,
-          ),
-        );
+        finalPayments.push(createPaymentObject(PAYMENT_METHOD_LABELS[paymentMethod], amountToPay));
         break;
       case "mixed":
         if (remainingInMix > 0.001) {
           confirmation.showConfirmation({
             title: "ยังชำระไม่ครบจำนวน",
-            message: `คงเหลือจำนวนเงินที่ต้องชำระอีก ${remainingInMix.toFixed(
-              2,
-            )} บาท`,
+            message: `คงเหลือจำนวนเงินที่ต้องชำระอีก ${remainingInMix.toFixed(2)} บาท`,
             type: "warning",
             confirmText: "ตกลง",
             showCancel: false,
@@ -354,49 +312,28 @@ export default function PaymentModal({
                     {tabsToDisplay.map((tab) => (
                       <button
                         key={tab.id}
-                        onClick={() =>
-                          setPaymentMethod(tab.id as PaymentMethod)
-                        }
+                        onClick={() => setPaymentMethod(tab.id as PaymentMethod)}
                         className={`flex w-20 flex-col items-center justify-center gap-1.5 rounded-xl p-2.5 font-semibold transition-all duration-200 md:w-auto ${
                           paymentMethod === tab.id
                             ? "scale-105 bg-blue-500 text-white shadow-lg"
                             : "bg-gray-200/50 text-gray-700 hover:bg-gray-200 dark:bg-gray-800/60 dark:text-gray-300 dark:hover:bg-gray-700"
                         }`}
                       >
-                        <tab.icon
-                          size={18}
-                          className="md:h-[22px] md:w-[22px]"
-                        />
-                        <span className="text-xs leading-tight">
-                          {tab.label}
-                        </span>
+                        <tab.icon size={18} className="md:h-[22px] md:w-[22px]" />
+                        <span className="text-xs leading-tight">{tab.label}</span>
                       </button>
                     ))}
                   </div>
                 </div>
                 <div className="flex-1 overflow-y-auto bg-gray-100/30 dark:bg-black/20">
                   {paymentMethod === "cash" && (
-                    <CashPaymentComponent
-                      ref={cashPaymentRef}
-                      totalToPay={finalPaymentAmount}
-                    />
+                    <CashPaymentComponent ref={cashPaymentRef} totalToPay={finalPaymentAmount} />
                   )}
-                  {paymentMethod === "transfer" && (
-                    <TransferPaymentComponent totalToPay={finalPaymentAmount} />
-                  )}
-                  {paymentMethod === "promptpay" && (
-                    <PromptPayPaymentComponent
-                      totalToPay={finalPaymentAmount}
-                    />
-                  )}
-                  {paymentMethod === "online" && (
-                    <OnlinePaymentComponent totalToPay={finalPaymentAmount} />
-                  )}
+                  {paymentMethod === "transfer" && <TransferPaymentComponent totalToPay={finalPaymentAmount} />}
+                  {paymentMethod === "promptpay" && <PromptPayPaymentComponent totalToPay={finalPaymentAmount} />}
+                  {paymentMethod === "online" && <OnlinePaymentComponent totalToPay={finalPaymentAmount} />}
                   {paymentMethod === "card" && (
-                    <CardPaymentComponent
-                      totalToPay={finalPaymentAmount}
-                      onPaymentSuccess={onPaymentSuccess}
-                    />
+                    <CardPaymentComponent totalToPay={finalPaymentAmount} onPaymentSuccess={onPaymentSuccess} />
                   )}
                   {paymentMethod === "mixed" && (
                     <MixedPaymentComponent
@@ -407,9 +344,7 @@ export default function PaymentModal({
                   )}
                   {["credit", "app"].includes(paymentMethod) && (
                     <div className="flex h-full flex-col items-center justify-center gap-4 p-4 text-center md:p-8">
-                      <span className="text-4xl md:text-6xl">
-                        {paymentMethod === "credit" ? "📝" : "📱"}
-                      </span>
+                      <span className="text-4xl md:text-6xl">{paymentMethod === "credit" ? "📝" : "📱"}</span>
                       <h3 className="text-xl font-bold text-gray-700 md:text-2xl dark:text-gray-300">
                         {PAYMENT_METHOD_LABELS[paymentMethod]}
                       </h3>
@@ -431,9 +366,7 @@ export default function PaymentModal({
 
                   <div className="mb-3 rounded-lg border border-gray-200 bg-white p-3 shadow-sm md:mb-5 dark:border-gray-700 dark:bg-gray-800">
                     <label className="flex cursor-pointer items-center justify-between">
-                      <span className="text-base font-semibold text-gray-800 dark:text-gray-200">
-                        ออกใบกำกับภาษี
-                      </span>
+                      <span className="text-base font-semibold text-gray-800 dark:text-gray-200">ออกใบกำกับภาษี</span>
                       <input
                         type="checkbox"
                         checked={isTaxInvoice}
@@ -460,15 +393,11 @@ export default function PaymentModal({
                             {vatModes.map(({ mode, label, short }) => (
                               <Button
                                 key={mode}
-                                variant={
-                                  vatMode === mode ? "primary" : "outline"
-                                }
+                                variant={vatMode === mode ? "primary" : "outline"}
                                 onClick={() => setVatMode(mode)}
                                 className="flex-1 py-1.5 text-[10px] font-semibold transition-all md:py-2 md:text-base"
                               >
-                                <span className="hidden sm:inline">
-                                  {label}
-                                </span>
+                                <span className="hidden sm:inline">{label}</span>
                                 <span className="sm:hidden">{short}</span>
                               </Button>
                             ))}
@@ -483,11 +412,7 @@ export default function PaymentModal({
                             <input
                               type="checkbox"
                               checked={withholdingTaxPercent > 0}
-                              onChange={(e) =>
-                                setWithholdingTaxPercent(
-                                  e.target.checked ? 3 : 0,
-                                )
-                              }
+                              onChange={(e) => setWithholdingTaxPercent(e.target.checked ? 3 : 0)}
                               className="h-4 w-4 rounded border-gray-300 bg-white text-blue-600 focus:ring-blue-500"
                             />
                           </label>
@@ -500,11 +425,7 @@ export default function PaymentModal({
                                 <input
                                   type="number"
                                   value={withholdingTaxPercent}
-                                  onChange={(e) =>
-                                    setWithholdingTaxPercent(
-                                      Number(e.target.value),
-                                    )
-                                  }
+                                  onChange={(e) => setWithholdingTaxPercent(Number(e.target.value))}
                                   min="0"
                                   max="100"
                                   step="0.5"
@@ -517,27 +438,15 @@ export default function PaymentModal({
                                 </label>
                                 <div className="flex gap-1 md:gap-1.5">
                                   <Button
-                                    variant={
-                                      withholdingTaxVatMode === "pre-vat"
-                                        ? "primary"
-                                        : "outline"
-                                    }
-                                    onClick={() =>
-                                      setWithholdingTaxVatMode("pre-vat")
-                                    }
+                                    variant={withholdingTaxVatMode === "pre-vat" ? "primary" : "outline"}
+                                    onClick={() => setWithholdingTaxVatMode("pre-vat")}
                                     className="flex-1 py-1.5 text-[10px] font-semibold md:text-xs"
                                   >
                                     ยอดก่อน VAT
                                   </Button>
                                   <Button
-                                    variant={
-                                      withholdingTaxVatMode === "post-vat"
-                                        ? "primary"
-                                        : "outline"
-                                    }
-                                    onClick={() =>
-                                      setWithholdingTaxVatMode("post-vat")
-                                    }
+                                    variant={withholdingTaxVatMode === "post-vat" ? "primary" : "outline"}
+                                    onClick={() => setWithholdingTaxVatMode("post-vat")}
                                     className="flex-1 py-1.5 text-[10px] font-semibold md:text-xs"
                                   >
                                     ยอดรวม VAT
@@ -551,57 +460,38 @@ export default function PaymentModal({
                     )}
                   </AnimatePresence>
 
-                  <NoteInputSection
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                  />
+                  <NoteInputSection value={note} onChange={(e) => setNote(e.target.value)} />
 
                   <div className="space-y-2 rounded-xl border border-gray-200 bg-gradient-to-br from-white/80 to-gray-50/50 p-3 shadow-sm backdrop-blur-sm md:space-y-3 md:p-5 dark:border-gray-700/50 dark:from-gray-700/30 dark:to-gray-800/30">
                     {isTaxInvoice && (
                       <>
                         <div className="flex justify-between text-xs md:text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">
-                            มูลค่าก่อนภาษี
-                          </span>
+                          <span className="text-gray-600 dark:text-gray-400">มูลค่าก่อนภาษี</span>
                           <span className="font-semibold text-gray-800 dark:text-white">
                             ฿{subTotalBeforeVat.toFixed(2)}
                           </span>
                         </div>
                         <div className="flex justify-between text-xs md:text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">
-                            ภาษี (7%)
-                          </span>
-                          <span className="font-semibold text-gray-800 dark:text-white">
-                            ฿{vatAmount.toFixed(2)}
-                          </span>
+                          <span className="text-gray-600 dark:text-gray-400">ภาษี (7%)</span>
+                          <span className="font-semibold text-gray-800 dark:text-white">฿{vatAmount.toFixed(2)}</span>
                         </div>
                         <div className="border-t border-gray-200 pt-2 dark:border-gray-600" />
                         <div className="flex justify-between text-sm font-semibold">
-                          <span className="text-gray-700 dark:text-gray-300">
-                            ยอดรวม
-                          </span>
-                          <span className="text-gray-800 dark:text-white">
-                            ฿{grandTotal.toFixed(2)}
-                          </span>
+                          <span className="text-gray-700 dark:text-gray-300">ยอดรวม</span>
+                          <span className="text-gray-800 dark:text-white">฿{grandTotal.toFixed(2)}</span>
                         </div>
                       </>
                     )}
 
                     {isTaxInvoice && withholdingTaxPercent > 0 && (
                       <div className="flex justify-between text-xs text-red-600 md:text-sm dark:text-red-400">
-                        <span className="">
-                          ภาษีหัก ณ ที่จ่าย {withholdingTaxPercent}%
-                        </span>
-                        <span className="font-semibold">
-                          (-{withholdingTaxAmount.toFixed(2)})
-                        </span>
+                        <span className="">ภาษีหัก ณ ที่จ่าย {withholdingTaxPercent}%</span>
+                        <span className="font-semibold">(-{withholdingTaxAmount.toFixed(2)})</span>
                       </div>
                     )}
 
                     <div className="flex items-center justify-between border-t border-gray-300 pt-2 dark:border-gray-600">
-                      <span className="text-sm font-bold text-gray-800 md:text-base dark:text-white">
-                        ยอดชำระสุทธิ
-                      </span>
+                      <span className="text-sm font-bold text-gray-800 md:text-base dark:text-white">ยอดชำระสุทธิ</span>
                       <span className="text-2xl font-bold text-blue-600 md:text-3xl dark:text-blue-400">
                         ฿{finalPaymentAmount.toFixed(2)}
                       </span>
@@ -610,9 +500,7 @@ export default function PaymentModal({
                     {paymentMethod === "mixed" && (
                       <div className="border-t border-gray-200 pt-2 md:pt-3 dark:border-gray-600">
                         <div className="flex justify-between py-1 text-xs md:text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">
-                            ชำระแล้ว
-                          </span>
+                          <span className="text-gray-600 dark:text-gray-400">ชำระแล้ว</span>
                           <span className="font-semibold text-green-600 dark:text-green-400">
                             ฿{totalPaidInMix.toFixed(2)}
                           </span>
@@ -623,9 +511,7 @@ export default function PaymentModal({
                           </span>
                           <span
                             className={`text-base font-bold md:text-lg ${
-                              remainingInMix > 0.001
-                                ? "text-red-500"
-                                : "text-green-600 dark:text-green-400"
+                              remainingInMix > 0.001 ? "text-red-500" : "text-green-600 dark:text-green-400"
                             }`}
                           >
                             ฿{remainingInMix.toFixed(2)}
@@ -648,13 +534,9 @@ export default function PaymentModal({
               </Button>
               <Button
                 onClick={handleConfirmPayment}
-                disabled={
-                  (paymentMethod === "mixed" && remainingInMix > 0.001) ||
-                  paymentMethod === "card"
-                }
+                disabled={(paymentMethod === "mixed" && remainingInMix > 0.001) || paymentMethod === "card"}
                 className={`w-auto px-8 py-3 text-sm font-bold transition-all duration-300 md:py-3.5 md:text-base ${
-                  (paymentMethod === "mixed" && remainingInMix > 0.001) ||
-                  paymentMethod === "card"
+                  (paymentMethod === "mixed" && remainingInMix > 0.001) || paymentMethod === "card"
                     ? "cursor-not-allowed bg-gray-400 opacity-50 dark:bg-gray-600"
                     : "bg-green-500 text-white shadow-lg hover:bg-green-600 hover:shadow-xl"
                 }`}

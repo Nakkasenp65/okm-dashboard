@@ -10,23 +10,15 @@ interface SellingListProps {
   productsMap: Map<number, Product>;
 }
 
-export default function SellingList({
-  selectedProductsMap,
-  onUpdateCart,
-  productsMap,
-}: SellingListProps) {
-  const allItems = Array.from(selectedProductsMap.values()).flatMap(
-    (group) => group.items,
-  );
+export default function SellingList({ selectedProductsMap, onUpdateCart, productsMap }: SellingListProps) {
+  const allItems = Array.from(selectedProductsMap.values()).flatMap((group) => group.items);
 
   const handlePriceChange = (itemToUpdate: SubItem, newPrice: number) => {
     const group = selectedProductsMap.get(itemToUpdate.productId);
     if (!group) return;
 
     const updatedItems = group.items.map((item) =>
-      item.uniqueId === itemToUpdate.uniqueId
-        ? { ...item, unitPrice: newPrice }
-        : item,
+      item.uniqueId === itemToUpdate.uniqueId ? { ...item, unitPrice: newPrice } : item,
     );
     onUpdateCart(itemToUpdate.productId, updatedItems);
   };
@@ -35,9 +27,7 @@ export default function SellingList({
     const group = selectedProductsMap.get(itemToRemove.productId);
     if (!group) return;
 
-    const updatedItems = group.items.filter(
-      (item) => item.uniqueId !== itemToRemove.uniqueId,
-    );
+    const updatedItems = group.items.filter((item) => item.uniqueId !== itemToRemove.uniqueId);
     onUpdateCart(itemToRemove.productId, updatedItems);
   };
 
@@ -73,9 +63,7 @@ export default function SellingList({
         ) : (
           // Content: Empty state when no items are in the list
           <div className="flex h-full items-center justify-center text-center">
-            <p className="text-gray-500 dark:text-gray-400">
-              ยังไม่มีสินค้าในรายการ
-            </p>
+            <p className="text-gray-500 dark:text-gray-400">ยังไม่มีสินค้าในรายการ</p>
           </div>
         )}
       </div>

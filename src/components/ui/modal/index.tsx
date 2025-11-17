@@ -1,6 +1,7 @@
 "use client";
 import React, { useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import clsx from "clsx";
 
 interface ModalProps {
   isOpen: boolean;
@@ -49,9 +50,7 @@ export const Modal: React.FC<ModalProps> = ({
     };
   }, [isOpen]);
 
-  const contentClasses = isFullscreen
-    ? "w-full h-full"
-    : "relative w-full rounded-3xl bg-white  dark:bg-gray-900";
+  const contentClasses = isFullscreen ? "w-full h-full" : "relative w-full rounded-3xl bg-white  dark:bg-gray-900";
 
   return (
     <AnimatePresence>
@@ -73,7 +72,7 @@ export const Modal: React.FC<ModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className={`${contentClasses} ${className}`}
+            className={clsx(contentClasses, className)}
             onClick={(e) => e.stopPropagation()}
           >
             {showCloseButton && (
@@ -81,13 +80,7 @@ export const Modal: React.FC<ModalProps> = ({
                 onClick={onClose}
                 className="absolute top-3 right-3 z-999 flex h-9.5 w-9.5 items-center justify-center rounded-full bg-gray-100 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-700 sm:top-6 sm:right-6 sm:h-11 sm:w-11 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
               >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     fillRule="evenodd"
                     clipRule="evenodd"
@@ -97,7 +90,7 @@ export const Modal: React.FC<ModalProps> = ({
                 </svg>
               </button>
             )}
-            <div>{children}</div>
+            <div className="h-full w-full">{children}</div>
           </motion.div>
         </div>
       )}
