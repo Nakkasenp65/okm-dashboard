@@ -76,15 +76,17 @@ export interface OrderPayload {
     customerAddress?: string; // ที่อยู่ลูกค้า
     customerPhone?: string; // เบอร์โทรศัพท์ลูกค้า
   };
-  product: {
-    productId: string; // product เลขระบุด้วย mongoId (objectId)
-    name_md5: string;
-    barcode: string; // เลข IMEI/SN
-    barcode_md5: string;
-    stockPrice: number; // ราคาปลีก
-    soldPrice: number; // ราคาขาย
-    discountAmount: number; // ส่วนลด
-  };
+  product: [
+    {
+      productId: string; // product เลขระบุด้วย mongoId (objectId)
+      name_md5: string;
+      barcode: string; // เลข IMEI/SN
+      barcode_md5: string;
+      stockPrice: number; // ราคาปลีก
+      soldPrice: number; // ราคาขาย
+      discountAmount: number; // ส่วนลด
+    },
+  ];
   note?: string; // โน้ตตอนขาย หรือ เป็นยอดบริษัท
   discountId?: string; // ส่วนลด เลขระบุด้วย mongoId (objectId)
   documentId?: string; // เลขที่เอกสาร ถ้าเป็นการซื้อทั่วไป (generate เองมี pattern)

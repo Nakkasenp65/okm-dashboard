@@ -1,14 +1,27 @@
 "use client";
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/button/Button";
-import { FaArrowLeft, FaSearch, FaUser, FaMapMarkerAlt, FaStar } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaSearch,
+  FaUser,
+  FaMapMarkerAlt,
+  FaStar,
+  FaLine,
+  FaQrcode,
+  FaMobileAlt,
+  FaEnvelope,
+  FaIdCard,
+  FaImage,
+  FaSync,
+} from "react-icons/fa";
 import ConfirmationModal from "./ConfirmationModal";
 import { useConfirmation } from "../../hooks/useConfirmation";
 import PosAddressForm from "./PosAddressForm";
 import { Customer, CustomerLevelType, StructuredAddress } from "../../types/Pos";
 
-// ✅ KEY CHANGE: อัปเดต Props ให้รับ State และ Function จาก Parent
+// --- Type Definitions ---
 interface CustomerModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -37,6 +50,10 @@ const AddNewCustomerForm = ({
   onSave: (newCustomer: Customer) => void;
   onShowError: (message: string) => void;
 }) => {
+  // State: Registration Mode ('manual' | 'line')
+  const [registrationMode, setRegistrationMode] = useState<"manual" | "line">("manual");
+
+  // State: Standard Form Data
   const [newCustomerName, setNewCustomerName] = useState("");
   const [newCustomerPhone, setNewCustomerPhone] = useState("");
   const [newCustomerCitizenId, setNewCustomerCitizenId] = useState("");
@@ -44,7 +61,6 @@ const AddNewCustomerForm = ({
   const [newCustomerLevel, setNewCustomerLevel] = useState<CustomerLevelType>("ทั่วไป");
   const [newCustomerPoint, setNewCustomerPoint] = useState("");
   const [newCustomerNotes, setNewCustomerNotes] = useState("");
-
   const [newCustomerStructuredAddress, setNewCustomerStructuredAddress] = useState<StructuredAddress>({
     addressDetails: "",
     subdistrict: "",
@@ -53,6 +69,16 @@ const AddNewCustomerForm = ({
     postcode: "",
   });
 
+  // State: LINE Specific Data (เพิ่มเข้ามาใหม่)
+  const [lineDisplayName, setLineDisplayName] = useState("");
+  const [lineUserId, setLineUserId] = useState("");
+  const [lineEmail, setLineEmail] = useState("");
+  const [linePictureUrl, setLinePictureUrl] = useState(""); // URL รูปโปรไฟล์
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const unusedSetter = { setLineDisplayName, setLineUserId, setLinePictureUrl };
+
+  // Logic: Address Handler
   const handleAddressChange = useCallback((field: keyof StructuredAddress, value: string) => {
     setNewCustomerStructuredAddress((prev) => ({
       ...prev,
@@ -60,6 +86,7 @@ const AddNewCustomerForm = ({
     }));
   }, []);
 
+  // Logic: Save Handler
   const handleSave = () => {
     if (!newCustomerName.trim()) {
       onShowError("กรุณากรอกชื่อลูกค้า");
@@ -78,6 +105,16 @@ const AddNewCustomerForm = ({
       .filter(Boolean)
       .join(" ");
 
+    // รวมข้อมูล Line เข้าไปใน notes หรือ field พิเศษ (ขึ้นอยู่กับ Data Structure จริง)
+    // ในที่นี้ผมจะรวมไว้ใน notes เพื่อให้เห็นภาพว่ามีการบันทึก
+    const finalNotes = [
+      newCustomerNotes,
+      lineUserId ? `[LINE ID: ${lineUserId}]` : "",
+      lineEmail ? `[LINE Email: ${lineEmail}]` : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
     const newCustomer: Customer = {
       id: Date.now().toString(),
       name: newCustomerName.trim(),
@@ -86,26 +123,160 @@ const AddNewCustomerForm = ({
       address: formattedAddress.trim() || undefined,
       age: newCustomerAge ? parseInt(newCustomerAge, 10) : undefined,
       level: newCustomerLevel,
-      // ✅ KEY CHANGE: เพิ่มข้อมูลคะแนนเข้าไปใน Object
       customerPoint: newCustomerPoint ? parseInt(newCustomerPoint, 10) : 0,
-      notes: newCustomerNotes.trim(),
+      notes: finalNotes,
       memberId: `NEW${Date.now().toString().slice(-4)}`,
       emoji: details.emoji,
       color: details.color,
+      // image: linePictureUrl // ถ้า Type Customer รองรับ image ก็ใส่ตรงนี้ได้เลย
     };
     onSave(newCustomer);
   };
 
+  // Effect: จำลองการรับข้อมูลเมื่อเปิดโหมด LINE (Demo Purpose)
+  // ในการใช้งานจริง ส่วนนี้จะถูกแทนที่ด้วยการ Fetch Data จาก API หรือ WebSocket
+  useEffect(() => {
+    if (registrationMode === "line") {
+      // Example: Reset fields or prepare for incoming data
+      // console.log("Waiting for LINE webhook data...");
+    }
+  }, [registrationMode]);
+
   return (
-    <div className="space-y-6 rounded-lg bg-gray-50 p-4 dark:bg-gray-900/50">
-      <div className="flex items-center gap-4 border-b border-gray-200 pb-4 dark:border-gray-700">
-        <Button variant="outline" size="sm" onClick={onBack} className="p-2">
-          <FaArrowLeft />
-        </Button>
-        <h4 className="text-xl font-semibold text-gray-800 dark:text-gray-200">เพิ่มลูกค้าใหม่</h4>
+    <div className="space-y-6 rounded-lg p-4 dark:bg-gray-900/50">
+      {/* === Top Bar === */}
+      <div className="flex flex-col gap-4 border-b border-gray-200 pb-4 sm:flex-row sm:items-center sm:justify-between dark:border-gray-700">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" size="sm" onClick={onBack} className="p-2">
+            <FaArrowLeft />
+          </Button>
+          <h4 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+            {registrationMode === "line" ? "เพิ่มลูกค้าใหม่ (สมัครผ่าน LINE)" : "เพิ่มลูกค้าใหม่ (กรอกเอง)"}
+          </h4>
+        </div>
+
+        {/* Toggle Button */}
+        <div className="flex items-center">
+          {registrationMode === "manual" ? (
+            <Button
+              variant="outline"
+              onClick={() => setRegistrationMode("line")}
+              className="flex items-center gap-2 border-green-500 text-green-600 hover:bg-green-50 dark:border-green-400 dark:text-green-400 dark:hover:bg-green-900/20"
+            >
+              <FaLine className="text-lg" />
+              สมัครด้วย LINE
+            </Button>
+          ) : (
+            <Button variant="outline" onClick={() => setRegistrationMode("manual")} className="flex items-center gap-2">
+              <FaUser className="text-lg" />
+              กรอกข้อมูลเอง
+            </Button>
+          )}
+        </div>
       </div>
 
-      {/* === Section 1: Personal Info === */}
+      {/* === LINE QR Section (แสดงเฉพาะโหมด LINE) === */}
+      {registrationMode === "line" && (
+        <div className="animate-in fade-in slide-in-from-top-4 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-green-300 bg-green-50 p-6 dark:border-green-800 dark:bg-green-900/20">
+          <div className="mb-4 flex h-40 w-40 items-center justify-center rounded-lg bg-white shadow-sm dark:bg-gray-800">
+            <FaQrcode className="text-7xl text-gray-800 dark:text-white" />
+          </div>
+          <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
+            <FaSync className="animate-spin" />
+            <span className="font-medium">กำลังรอข้อมูลจากลูกค้า...</span>
+          </div>
+          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+            ให้ลูกค้าสแกน QR Code เพื่อกรอกข้อมูลผ่าน LINE LIFF <br />
+            ข้อมูลจะปรากฏในแบบฟอร์มด้านล่างโดยอัตโนมัติเมื่อลูกค้ากดยืนยัน
+          </p>
+          <div className="mt-3 flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs text-gray-400 shadow-sm dark:bg-gray-800">
+            <FaMobileAlt />
+            <span>กำลังส่งสัญญาณภาพไปยังจอ POS Extra...</span>
+          </div>
+        </div>
+      )}
+
+      {/* === LINE Information Fields (แสดงเฉพาะโหมด LINE) === */}
+      {registrationMode === "line" && (
+        <div className="animate-in fade-in space-y-4 duration-500">
+          <h5 className="flex items-center gap-3 text-lg font-semibold text-green-600 dark:text-green-400">
+            <FaLine />
+            ข้อมูลบัญชี LINE
+          </h5>
+          <div className="grid grid-cols-1 gap-x-6 gap-y-4 rounded-lg border border-green-200 bg-white p-4 sm:grid-cols-2 dark:border-green-900 dark:bg-gray-800">
+            {/* Profile Picture Display */}
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">รูปโปรไฟล์</label>
+              <div className="mt-2 flex items-center gap-4">
+                <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-gray-100 ring-2 ring-green-100 dark:bg-gray-700 dark:ring-green-900">
+                  {linePictureUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={linePictureUrl} alt="Line Profile" className="h-full w-full object-cover" />
+                  ) : (
+                    <FaImage className="text-gray-400" />
+                  )}
+                </div>
+                <div className="text-xs text-gray-500">
+                  {linePictureUrl ? "ได้รับรูปโปรไฟล์แล้ว" : "รอรูปโปรไฟล์..."}
+                </div>
+              </div>
+            </div>
+
+            {/* Line User ID */}
+            <div>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">LINE Display Name</label>
+              <div className="relative mt-1">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <FaIdCard className="text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  value={lineDisplayName}
+                  readOnly
+                  placeholder="รอข้อมูล..."
+                  className="w-full rounded-lg border-gray-300 bg-gray-50 p-3 pl-10 text-base text-gray-500 shadow-sm focus:border-green-500 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400"
+                />
+              </div>
+            </div>
+
+            {/* Line User ID */}
+            <div>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">LINE User ID</label>
+              <div className="relative mt-1">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <FaIdCard className="text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  value={lineUserId}
+                  readOnly
+                  placeholder="รอข้อมูล..."
+                  className="w-full rounded-lg border-gray-300 bg-gray-50 p-3 pl-10 text-base text-gray-500 shadow-sm focus:border-green-500 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400"
+                />
+              </div>
+            </div>
+
+            {/* Line Email */}
+            <div>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">LINE Email Address</label>
+              <div className="relative mt-1">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <FaEnvelope className="text-gray-400" />
+                </div>
+                <input
+                  type="email"
+                  value={lineEmail}
+                  onChange={(e) => setLineEmail(e.target.value)}
+                  placeholder="รอข้อมูล..."
+                  className="w-full rounded-lg border-gray-300 bg-white p-3 pl-10 text-base shadow-sm focus:border-green-500 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-800"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* === Section 1: Personal Info (Standard Form - Always Visible) === */}
       <div className="space-y-4">
         <h5 className="flex items-center gap-3 text-lg font-semibold text-gray-700 dark:text-gray-300">
           <FaUser className="text-purple-500" />
@@ -202,7 +373,6 @@ const AddNewCustomerForm = ({
               className="mt-1 w-full rounded-lg border-gray-300 bg-white p-3 text-base shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-800"
             />
           </div>
-          {/* ✅ KEY CHANGE: เพิ่ม Input สำหรับคะแนนสะสม */}
           <div className="sm:col-span-2">
             <label htmlFor="customer-point" className="block text-sm font-medium text-gray-600 dark:text-gray-400">
               คะแนนสะสม
@@ -250,11 +420,10 @@ export default function CustomerModal({
   isOpen,
   onClose,
   onSelectCustomer,
-  customers, // ✅ KEY CHANGE: รับ customers จาก props
-  onAddNewCustomer, // ✅ KEY CHANGE: รับ onAddNewCustomer จาก props
+  customers,
+  onAddNewCustomer,
 }: CustomerModalProps) {
   const [view, setView] = useState<"list" | "add">("list");
-  // ✅ KEY CHANGE: ลบ State customers ออกไป
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>("5");
   const [searchQuery, setSearchQuery] = useState("");
   const [levelFilter, setLevelFilter] = useState("all");
@@ -262,7 +431,6 @@ export default function CustomerModal({
 
   const confirmation = useConfirmation();
 
-  // ✅ KEY CHANGE: `filteredCustomers` ตอนนี้จะขึ้นอยู่กับ `customers` ที่เป็น prop
   const filteredCustomers = useMemo(() => {
     let filtered = [...customers];
 
@@ -293,7 +461,6 @@ export default function CustomerModal({
     };
   }, [filteredCustomers, currentPage]);
 
-  // ✅ KEY CHANGE: ลบ handleAddNewCustomer ออกไป เพราะรับมาจาก props แล้ว
   const handleConfirmSelection = () => {
     const selectedCustomer = customers.find((c) => c.id === selectedCustomerId);
     if (selectedCustomer) {
@@ -310,17 +477,17 @@ export default function CustomerModal({
       <Modal
         isOpen={isOpen}
         onClose={onClose}
-        showCloseButton={true}
-        className="no-scrollbar h-[60vh] w-full max-w-5xl overflow-y-auto rounded-2xl p-4 shadow-2xl"
+        showCloseButton={false}
+        className="no-scrollbar flex h-[85vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl p-4 shadow-2xl"
       >
-        <div className="flex flex-col gap-6">
+        <div className="flex h-full flex-col gap-4">
           {view === "list" && (
             <>
               <h3 className="border-b border-gray-200 pb-4 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-white">
                 จัดการข้อมูลลูกค้า
               </h3>
-              <div className="mt-2 flex flex-col">
-                <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+              <div className="mt-2 flex flex-1 flex-col overflow-hidden">
+                <div className="mb-4 grid shrink-0 grid-cols-1 gap-4 md:grid-cols-3">
                   <div className="relative md:col-span-2">
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                       <FaSearch className="text-gray-400" />
@@ -347,7 +514,7 @@ export default function CustomerModal({
                   </select>
                 </div>
 
-                <div className="hidden flex-1 overflow-x-auto rounded-lg border border-gray-200 md:block dark:border-gray-700">
+                <div className="hidden flex-1 overflow-auto rounded-lg border border-gray-200 md:block dark:border-gray-700">
                   <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead className="bg-gray-50 dark:bg-gray-800">
                       <tr>
@@ -423,7 +590,7 @@ export default function CustomerModal({
                   </table>
                 </div>
 
-                <div className="block space-y-3 md:hidden">
+                <div className="block flex-1 space-y-3 overflow-y-auto md:hidden">
                   {paginatedCustomers.length > 0 ? (
                     paginatedCustomers.map((customer) => (
                       <div
@@ -526,19 +693,21 @@ export default function CustomerModal({
           )}
 
           {view === "add" && (
-            <AddNewCustomerForm
-              onBack={() => setView("list")}
-              onSave={onAddNewCustomer} // ✅ KEY CHANGE: ส่ง onAddNewCustomer ที่รับมาจาก props ไป
-              onShowError={(message) => {
-                confirmation.showConfirmation({
-                  title: "ข้อมูลไม่ครบถ้วน",
-                  message,
-                  type: "warning",
-                  confirmText: "ตกลง",
-                  showCancel: false,
-                });
-              }}
-            />
+            <div className="flex-1 overflow-y-auto pr-2">
+              <AddNewCustomerForm
+                onBack={() => setView("list")}
+                onSave={onAddNewCustomer}
+                onShowError={(message) => {
+                  confirmation.showConfirmation({
+                    title: "ข้อมูลไม่ครบถ้วน",
+                    message,
+                    type: "warning",
+                    confirmText: "ตกลง",
+                    showCancel: false,
+                  });
+                }}
+              />
+            </div>
           )}
         </div>
       </Modal>

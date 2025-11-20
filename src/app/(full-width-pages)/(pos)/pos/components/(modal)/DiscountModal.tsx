@@ -145,7 +145,7 @@ export default function DiscountModal({ isOpen, onClose, initialDiscounts, onApp
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      showCloseButton={true}
+      showCloseButton={false}
       className="h-[60vh] w-full max-w-2xl rounded-2xl shadow-2xl"
     >
       <div className="flex h-full flex-1 flex-col">

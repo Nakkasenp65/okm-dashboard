@@ -141,38 +141,26 @@ export default function PaymentModal({
 
   const confirmation = useConfirmation();
 
-  useEffect(() => {
-    if (!isTaxInvoice) {
-      setWithholdingTaxPercent(0);
-    }
-  }, [isTaxInvoice, setWithholdingTaxPercent]);
-
+  // คำนวณ VAT และ Base Price (เงินต้น)
   const { subTotalBeforeVat, vatAmount, grandTotal } = useMemo(() => {
-    if (!isTaxInvoice) {
-      return {
-        subTotalBeforeVat: totalToPay,
-        vatAmount: 0,
-        grandTotal: totalToPay,
-      };
-    }
     switch (vatMode) {
       case "included":
-        const includedGrandTotal = totalToPay;
+        // ราคารวม VAT: ถอด VAT ออกหาเงินต้น (Base)
+        // สูตร: เงินต้น = ราคาเต็ม / 1.07
         const includedSubTotal = totalToPay / (1 + VAT_RATE);
-        const includedVatAmount = includedGrandTotal - includedSubTotal;
+        const includedVatAmount = totalToPay - includedSubTotal;
         return {
           subTotalBeforeVat: includedSubTotal,
           vatAmount: includedVatAmount,
-          grandTotal: includedGrandTotal,
+          grandTotal: totalToPay, // ยอดที่ต้องจ่ายจริงคือยอดเดิม
         };
       case "excluded":
-        const excludedSubTotal = totalToPay;
+        // ราคาไม่รวม VAT: เงินต้นคือราคาเต็ม, VAT คิดเพิ่ม
         const excludedVatAmount = totalToPay * VAT_RATE;
-        const excludedGrandTotal = excludedSubTotal + excludedVatAmount;
         return {
-          subTotalBeforeVat: excludedSubTotal,
+          subTotalBeforeVat: totalToPay,
           vatAmount: excludedVatAmount,
-          grandTotal: excludedGrandTotal,
+          grandTotal: totalToPay + excludedVatAmount, // ยอดที่ต้องจ่ายจริงเพิ่มขึ้น
         };
       case "off":
       default:
@@ -182,21 +170,24 @@ export default function PaymentModal({
           grandTotal: totalToPay,
         };
     }
-  }, [totalToPay, vatMode, isTaxInvoice]);
+  }, [totalToPay, vatMode]);
 
+  // คำนวณภาษีหัก ณ ที่จ่าย (WHT) - ใช้ Logic ตามที่คุณแก้ไขมา
   const { withholdingTaxAmount } = useMemo(() => {
-    if (!isTaxInvoice || withholdingTaxPercent <= 0) {
+    if (withholdingTaxPercent <= 0) {
       return { withholdingTaxAmount: 0 };
     }
-    const baseForWHT = withholdingTaxVatMode === "pre-vat" ? subTotalBeforeVat : grandTotal;
-    const amount = baseForWHT * (withholdingTaxPercent / 100);
-    return { withholdingTaxAmount: amount };
-  }, [isTaxInvoice, withholdingTaxPercent, withholdingTaxVatMode, subTotalBeforeVat, grandTotal]);
 
-  const finalPaymentAmount = grandTotal - withholdingTaxAmount;
+    // ใช้ Logic ตามที่คุณส่งมา: คิดจาก subTotalBeforeVat เสมอ
+    const amount = subTotalBeforeVat * (withholdingTaxPercent / 100);
+    return { withholdingTaxAmount: amount };
+  }, [withholdingTaxPercent, subTotalBeforeVat]);
+
+  // ยอดชำระสุทธิ - ใช้ Logic ตามที่คุณส่งมา (+ หรือ - ตาม mode)
+  const finalPaymentAmount =
+    withholdingTaxVatMode === "pre-vat" ? grandTotal - withholdingTaxAmount : grandTotal + withholdingTaxAmount;
 
   const totalPaidInMix = useMemo(() => mixedPayments.reduce((sum, p) => sum + p.amount, 0), [mixedPayments]);
-
   const remainingInMix = finalPaymentAmount - totalPaidInMix;
 
   useEffect(() => {
@@ -206,6 +197,7 @@ export default function PaymentModal({
       setPaymentMethod(currentTabs[0].id as PaymentMethod);
       setMixedPayments([]);
       setNote("");
+      // Reset ค่าเริ่มต้น
       setIsTaxInvoice(false);
       setVatMode("included");
       cashPaymentRef.current?.reset();
@@ -300,22 +292,21 @@ export default function PaymentModal({
             onSendEReceipt={onSendEReceipt}
           />
         ) : (
-          <div className="flex h-screen flex-col bg-gray-50 md:h-[820px] md:rounded-2xl dark:bg-gray-900">
+          <div className="flex h-screen flex-col md:h-[820px] md:rounded-2xl dark:bg-gray-900">
             <div className="flex flex-1 flex-col overflow-hidden md:flex-row">
               <div className="flex w-full flex-col border-b border-gray-200 md:w-3/5 md:border-r md:border-b-0 dark:border-gray-700/50">
                 <div className="border-b border-gray-200 p-3 md:p-5 dark:border-gray-700/50">
                   <h2 className="mb-2 text-lg font-bold text-gray-800 md:mb-3 md:text-xl dark:text-white">
                     เลือกวิธีการชำระเงิน
                   </h2>
-                  {/* === KEY CHANGE HERE for Mobile View === */}
-                  <div className="no-scrollbar grid auto-cols-max grid-flow-col gap-2 overflow-x-auto pb-2 md:grid-cols-7">
+                  <div className="no-scrollbar grid auto-cols-max grid-flow-col gap-2 overflow-x-auto p-1 md:grid-cols-7">
                     {tabsToDisplay.map((tab) => (
                       <button
                         key={tab.id}
                         onClick={() => setPaymentMethod(tab.id as PaymentMethod)}
                         className={`flex w-20 flex-col items-center justify-center gap-1.5 rounded-xl p-2.5 font-semibold transition-all duration-200 md:w-auto ${
                           paymentMethod === tab.id
-                            ? "scale-105 bg-blue-500 text-white shadow-lg"
+                            ? "scale-105 bg-blue-500 text-white"
                             : "bg-gray-200/50 text-gray-700 hover:bg-gray-200 dark:bg-gray-800/60 dark:text-gray-300 dark:hover:bg-gray-700"
                         }`}
                       >
@@ -359,7 +350,7 @@ export default function PaymentModal({
               </div>
 
               <div className="flex w-full flex-col md:w-2/5 dark:bg-gray-800/50">
-                <div className="flex-1 overflow-y-auto p-3 md:p-6">
+                <div className="no-scrollbar flex-1 overflow-y-auto p-3 md:p-6">
                   <h3 className="mb-3 text-lg font-bold text-gray-800 md:mb-5 md:text-2xl dark:text-white">
                     สรุปยอดชำระ
                   </h3>
@@ -385,6 +376,7 @@ export default function PaymentModal({
                         transition={{ duration: 0.3 }}
                         style={{ overflow: "hidden" }}
                       >
+                        {/* ส่วนคำนวณ VAT */}
                         <div className="mb-3 md:mb-5">
                           <h4 className="mb-2 text-base font-semibold text-gray-700 md:mb-3 md:text-base dark:text-gray-300">
                             การคำนวณภาษีมูลค่าเพิ่ม (VAT)
@@ -404,6 +396,7 @@ export default function PaymentModal({
                           </div>
                         </div>
 
+                        {/* ย้ายส่วน "ภาษีหัก ณ ที่จ่าย" เข้ามาใน Block นี้ ตามความต้องการ */}
                         <div className="mb-3 md:mb-5">
                           <label className="mb-2 flex cursor-pointer items-center justify-between md:mb-3">
                             <span className="text-base font-semibold text-gray-700 md:text-base dark:text-gray-300">
@@ -416,45 +409,54 @@ export default function PaymentModal({
                               className="h-4 w-4 rounded border-gray-300 bg-white text-blue-600 focus:ring-blue-500"
                             />
                           </label>
-                          {withholdingTaxPercent > 0 && (
-                            <div className="space-y-2 rounded-lg border border-gray-200 bg-gray-50/50 bg-white p-2 md:space-y-3 md:p-3 dark:border-gray-700/50 dark:bg-gray-800/30">
-                              <div>
-                                <label className="mb-1 block text-[10px] font-medium text-gray-600 md:mb-1.5 md:text-xs dark:text-gray-400">
-                                  เปอร์เซ็นต์ (%)
-                                </label>
-                                <input
-                                  type="number"
-                                  value={withholdingTaxPercent}
-                                  onChange={(e) => setWithholdingTaxPercent(Number(e.target.value))}
-                                  min="0"
-                                  max="100"
-                                  step="0.5"
-                                  className="w-full rounded-md border-gray-300 p-2 text-right text-xs shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 md:text-sm dark:border-gray-600 dark:bg-gray-700"
-                                />
-                              </div>
-                              <div>
-                                <label className="mb-1 block text-[10px] font-medium text-gray-600 md:mb-1.5 md:text-xs dark:text-gray-400">
-                                  คำนวณจาก
-                                </label>
-                                <div className="flex gap-1 md:gap-1.5">
-                                  <Button
-                                    variant={withholdingTaxVatMode === "pre-vat" ? "primary" : "outline"}
-                                    onClick={() => setWithholdingTaxVatMode("pre-vat")}
-                                    className="flex-1 py-1.5 text-[10px] font-semibold md:text-xs"
-                                  >
-                                    ยอดก่อน VAT
-                                  </Button>
-                                  <Button
-                                    variant={withholdingTaxVatMode === "post-vat" ? "primary" : "outline"}
-                                    onClick={() => setWithholdingTaxVatMode("post-vat")}
-                                    className="flex-1 py-1.5 text-[10px] font-semibold md:text-xs"
-                                  >
-                                    ยอดรวม VAT
-                                  </Button>
+                          <AnimatePresence>
+                            {withholdingTaxPercent > 0 && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0, y: -10 }}
+                                animate={{ opacity: 1, height: "auto", y: 0 }}
+                                exit={{ opacity: 0, height: 0, y: -10 }}
+                                transition={{ duration: 0.2 }}
+                                style={{ overflow: "hidden" }}
+                                className="space-y-2 rounded-lg border border-gray-200 bg-gray-50/50 bg-white p-2 md:space-y-3 md:p-3 dark:border-gray-700/50 dark:bg-gray-800/30"
+                              >
+                                <div>
+                                  <label className="mb-1 block text-[10px] font-medium text-gray-600 md:mb-1.5 md:text-xs dark:text-gray-400">
+                                    เปอร์เซ็นต์ (%)
+                                  </label>
+                                  <input
+                                    type="number"
+                                    value={withholdingTaxPercent}
+                                    onChange={(e) => setWithholdingTaxPercent(Number(e.target.value))}
+                                    min="0"
+                                    max="100"
+                                    step="0.5"
+                                    className="w-full rounded-md border-gray-300 p-2 text-right text-xs shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 md:text-sm dark:border-gray-600 dark:bg-gray-700"
+                                  />
                                 </div>
-                              </div>
-                            </div>
-                          )}
+                                <div>
+                                  <label className="mb-1 block text-[10px] font-medium text-gray-600 md:mb-1.5 md:text-xs dark:text-gray-400">
+                                    คำนวณจาก
+                                  </label>
+                                  <div className="flex gap-1 md:gap-1.5">
+                                    <Button
+                                      variant={withholdingTaxVatMode === "pre-vat" ? "primary" : "outline"}
+                                      onClick={() => setWithholdingTaxVatMode("pre-vat")}
+                                      className="flex-1 py-1.5 text-[10px] font-semibold md:text-xs"
+                                    >
+                                      ยอดก่อน VAT
+                                    </Button>
+                                    <Button
+                                      variant={withholdingTaxVatMode === "post-vat" ? "primary" : "outline"}
+                                      onClick={() => setWithholdingTaxVatMode("post-vat")}
+                                      className="flex-1 py-1.5 text-[10px] font-semibold md:text-xs"
+                                    >
+                                      ยอดรวม VAT
+                                    </Button>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </div>
                       </motion.div>
                     )}
@@ -483,7 +485,7 @@ export default function PaymentModal({
                       </>
                     )}
 
-                    {isTaxInvoice && withholdingTaxPercent > 0 && (
+                    {withholdingTaxPercent > 0 && (
                       <div className="flex justify-between text-xs text-red-600 md:text-sm dark:text-red-400">
                         <span className="">ภาษีหัก ณ ที่จ่าย {withholdingTaxPercent}%</span>
                         <span className="font-semibold">(-{withholdingTaxAmount.toFixed(2)})</span>

@@ -23,8 +23,7 @@ const StandardReceipt = ({
   paymentMethod: PaymentMethod;
   customer: Customer | null;
 }) => {
-  const { isTaxInvoice, vatMode, withholdingTaxVatMode, applyWithholdingTax } =
-    options;
+  const { isTaxInvoice, vatMode, withholdingTaxVatMode, applyWithholdingTax } = options;
 
   const { subTotalBeforeVat, vatAmount, grandTotal } = useMemo(() => {
     switch (vatMode) {
@@ -62,21 +61,12 @@ const StandardReceipt = ({
 
     const amount = subTotalBeforeVat * (withholdingTaxPercent / 100);
     return { withholdingTaxAmount: amount };
-  }, [
-    applyWithholdingTax,
-    withholdingTaxPercent,
-    withholdingTaxVatMode,
-    subTotalBeforeVat,
-    grandTotal,
-  ]);
+  }, [applyWithholdingTax, withholdingTaxPercent, subTotalBeforeVat]);
 
   const netPayment =
-    withholdingTaxVatMode === "pre-vat"
-      ? grandTotal + withholdingTaxAmount
-      : grandTotal - withholdingTaxAmount;
+    withholdingTaxVatMode === "pre-vat" ? grandTotal + withholdingTaxAmount : grandTotal - withholdingTaxAmount;
 
-  const showCustomerInfo =
-    receiptData.customerName && receiptData.customerName !== "ลูกค้าทั่วไป";
+  const showCustomerInfo = receiptData.customerName && receiptData.customerName !== "ลูกค้าทั่วไป";
 
   const showCustomerPoints = customer && customer.memberId !== "N/A";
 
@@ -85,11 +75,7 @@ const StandardReceipt = ({
       {/* ส่วนหัวใบเสร็จ */}
       <div className="text-center">
         <div className="flex w-full items-center justify-center rounded-md border-2 border-dashed border-black p-2 text-center font-bold">
-          <p>
-            {isTaxInvoice
-              ? "ใบกำกับภาษี / ใบเสร็จรับเงิน"
-              : "ใบเสร็จรับเงิน / บิลเงินสด"}
-          </p>
+          <p>{isTaxInvoice ? "ใบกำกับภาษี / ใบเสร็จรับเงิน" : "ใบเสร็จรับเงิน / บิลเงินสด"}</p>
         </div>
         <div className="flex w-full items-center justify-center">
           <Image
@@ -101,15 +87,9 @@ const StandardReceipt = ({
             className="my-2 max-h-[80px] object-contain"
           />
         </div>
-        <div className="flex w-full items-center justify-center">
-          OK Mobile สาขา Center One
-        </div>
-        <div className="flex w-full items-center justify-center">
-          โอเคโมบาย ห้างเซนเตอร์วัน ชั้น 2 ห้องเลขที่ 2019
-        </div>
-        <div className="flex w-full items-center justify-center">
-          เลขที่ 1 แขวงถนนพญาไท เขตราชเทวี กรุงเทพฯ 10400
-        </div>
+        <div className="flex w-full items-center justify-center">OK Mobile สาขา Center One</div>
+        <div className="flex w-full items-center justify-center">โอเคโมบาย ห้างเซนเตอร์วัน ชั้น 2 ห้องเลขที่ 2019</div>
+        <div className="flex w-full items-center justify-center">เลขที่ 1 แขวงถนนพญาไท เขตราชเทวี กรุงเทพฯ 10400</div>
         <div className="flex w-full items-center justify-center">
           <div className="flex items-center justify-center">
             <p>LINE: @okmobile (มี@)</p>
@@ -134,18 +114,14 @@ const StandardReceipt = ({
 
       <section className="flex flex-col items-start justify-start">
         <p>เลขที่เอกสาร: {receiptData.receiptNumber}</p>
-        {isTaxInvoice && options.showTaxInvoiceNumber && (
-          <p>เลขที่ใบกำกับภาษี: {receiptData.taxInvoiceNumber}</p>
-        )}
+        {isTaxInvoice && options.showTaxInvoiceNumber && <p>เลขที่ใบกำกับภาษี: {receiptData.taxInvoiceNumber}</p>}
         <p>วันที่: {receiptData.printDate}</p>
 
         {/* ✅ KEY CHANGE: Show Name/Phone on ALL receipts if customer is selected */}
         {showCustomerInfo && (
           <>
             <p>ชื่อลูกค้า: {receiptData.customerName}</p>
-            {receiptData.customerPhone && (
-              <p>เบอร์โทร: {receiptData.customerPhone}</p>
-            )}
+            {receiptData.customerPhone && <p>เบอร์โทร: {receiptData.customerPhone}</p>}
           </>
         )}
 
@@ -153,20 +129,15 @@ const StandardReceipt = ({
         {isTaxInvoice && showCustomerInfo && (
           <>
             <p>
-              {receiptData.customerType === "company"
-                ? "เลขประจำตัวผู้เสียภาษี"
-                : "เลขประจำตัวประชาชน"}
-              : {receiptData.customerTaxId}
+              {receiptData.customerType === "company" ? "เลขประจำตัวผู้เสียภาษี" : "เลขประจำตัวประชาชน"}:{" "}
+              {receiptData.customerTaxId}
             </p>
             {options.showCustomerAddress && (
-              <p className="break-words whitespace-pre-wrap">
-                ที่อยู่: {receiptData.customerAddress}
-              </p>
+              <p className="break-words whitespace-pre-wrap">ที่อยู่: {receiptData.customerAddress}</p>
             )}
-            {receiptData.customerType === "company" &&
-              options.showCustomerBranch && (
-                <p>สาขา: {receiptData.customerBranch}</p>
-              )}
+            {receiptData.customerType === "company" && options.showCustomerBranch && (
+              <p>สาขา: {receiptData.customerBranch}</p>
+            )}
           </>
         )}
 
@@ -207,10 +178,7 @@ const StandardReceipt = ({
           <>
             {options.showDiscountNames
               ? discounts.map((d) => {
-                  const discountValue =
-                    d.type === "percentage"
-                      ? subtotal * (d.value / 100)
-                      : d.value;
+                  const discountValue = d.type === "percentage" ? subtotal * (d.value / 100) : d.value;
                   if (discountValue === 0) return null;
                   return (
                     <div key={d.id} className="flex justify-between">
@@ -276,8 +244,7 @@ const StandardReceipt = ({
 
         {applyWithholdingTax && withholdingTaxAmount > 0 && (
           <div className="text-center">
-            (กรุณาหักภาษี ณ ที่จ่าย {withholdingTaxPercent}%
-            และโปรดส่งหนังสือรับรองที่ร้าน OK Mobile ภายใน 7 วัน)
+            (กรุณาหักภาษี ณ ที่จ่าย {withholdingTaxPercent}% และโปรดส่งหนังสือรับรองที่ร้าน OK Mobile ภายใน 7 วัน)
           </div>
         )}
 
