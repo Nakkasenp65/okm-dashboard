@@ -44,7 +44,7 @@ function DebugPageContent() {
 
   const handleOpenEditModal = (product: Product) => {
     setEditingProduct(product);
-    setEditForm({ name: product.name, price: product.price.toFixed(2) });
+    setEditForm({ name: product.name, price: Number(product.prices?.level_1 || 0).toFixed(2) });
   };
 
   const handleUpdateSubmit = (e: React.FormEvent) => {
@@ -55,7 +55,7 @@ function DebugPageContent() {
     if (editForm.name !== editingProduct.name) {
       payload.name = editForm.name;
     }
-    if (editForm.price !== editingProduct.price.toFixed(2)) {
+    if (editForm.price !== Number(editingProduct.prices?.level_1 || 0).toFixed(2)) {
       payload.prices = { level_1: editForm.price };
     }
 
@@ -150,7 +150,7 @@ function DebugPageContent() {
                           <tr key={product.id}>
                             <td className="px-4 py-2">{product.id}</td>
                             <td className="px-4 py-2 font-medium">{product.name}</td>
-                            <td className="px-4 py-2">฿{product.price.toFixed(2)}</td>
+                            <td className="px-4 py-2">฿{Number(product.prices?.level_1 || 0).toFixed(2)}</td>
                             <td className="px-4 py-2">
                               <div className="flex items-center gap-2">
                                 <button

@@ -21,26 +21,53 @@ export interface Customer {
 
 // MARK: - REVISED Product Interface
 export interface Product {
+  _id: string;
   id: number;
-  _id: string; // MongoDB ObjectId
   name: string;
+  name_md5?: string;
   barcode: string;
-  price: number;
-  cost: number;
+  barcode_md5?: string;
+  merchant_id?: number;
+  reminder_limit?: number;
+  category_id?: string;
+  unit_id?: string;
   brand: string;
-  condition: "new" | "used";
-  stock: number;
-  createdAt: Date;
-  categoryColor?: string;
+  created_at: string;
   details: string;
   source?: string;
+  condition: "new" | "used";
   imageApi?: string;
   image1?: string;
+  quantity: number;
+  availablequantity: number;
+  prices: {
+    stock_id: number;
+    cost: string;
+    repair: string;
+    level_1: string;
+    level_2: string;
+    level_3: string;
+    level_4: string;
+    [key: string]: string | number;
+  };
   category: {
     id: string;
     color: string;
     name: string;
   };
+  unit?: {
+    id: string;
+    name: string;
+  };
+  user_import?: {
+    stock_id: number;
+    user_id: string;
+    user: {
+      id: string;
+      fullname: string;
+    };
+  };
+  [key: string]: unknown;
 }
 
 export interface StructuredAddress {
@@ -52,8 +79,12 @@ export interface StructuredAddress {
 }
 
 export interface StaffMember {
-  id: number;
-  name: string;
+  adminId: string;
+  username: string;
+  fullName: string;
+  staffId: string;
+  roles: string[];
+  profile_image: string;
 }
 
 export interface Discount {

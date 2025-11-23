@@ -136,7 +136,7 @@ const CashPaymentComponent = forwardRef<CashPaymentHandle, CashPaymentProps>(
         </div>
 
         {/* Right side: Input Area - ซ่อนใน mobile */}
-        <div className="hidden w-full flex-col gap-4 md:flex md:w-1/2 md:gap-6">
+        <div className="hidden w-full flex-col gap-4 md:flex md:w-1/2 md:gap-4">
           {/* Quick Pay Buttons */}
           <div className="grid grid-cols-2 gap-3">
             {quickPayButtons.map(({ label, amount }) => (
@@ -168,7 +168,7 @@ const CashPaymentComponent = forwardRef<CashPaymentHandle, CashPaymentProps>(
             className="h-16 rounded-xl text-lg font-bold text-red-600 shadow-sm transition-all hover:bg-red-50 hover:shadow-md dark:text-red-400 dark:hover:bg-red-900/20"
             onClick={() => handleInput("clear")}
           >
-            ล้าง (Clear)
+            CLEAR
           </Button>
         </div>
       </div>

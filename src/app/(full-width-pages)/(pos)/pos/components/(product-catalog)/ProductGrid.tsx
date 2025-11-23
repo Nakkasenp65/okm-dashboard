@@ -2,13 +2,15 @@
 import React from "react";
 import { Product } from "../../types/Pos";
 import { DisplayOptions } from "../(modal)/DisplayOptionsModal";
-import ProductDisplay from "../ProductDisplay";
+import ProductDisplay from "./ProductDisplay";
 
 interface ProductGridProps {
   products: Product[];
   displayOptions: DisplayOptions;
   onAddProduct: (product: Product) => void;
   availableStock: Map<number, number>;
+  isAdding?: boolean;
+  addingProductId?: string;
   // Pagination props
   currentPage?: number;
   totalPages?: number;
@@ -21,6 +23,8 @@ export default function ProductGrid({
   displayOptions,
   onAddProduct,
   availableStock,
+  isAdding,
+  addingProductId,
   currentPage = 1,
   totalPages = 1,
   totalItems = 0,
@@ -73,11 +77,10 @@ export default function ProductGrid({
             <button
               key={page}
               onClick={() => onPageChange(page)}
-              className={`rounded-md px-3 py-1 text-sm ${
-                page === currentPage
-                  ? "bg-blue-600 text-white dark:bg-blue-500"
-                  : "bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
-              }`}
+              className={`rounded-md px-3 py-1 text-sm ${page === currentPage
+                ? "bg-blue-600 text-white dark:bg-blue-500"
+                : "bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
+                }`}
             >
               {page}
             </button>
@@ -119,6 +122,8 @@ export default function ProductGrid({
                 onAddProduct={onAddProduct}
                 isListMode={true}
                 availableStock={availableStock.get(product.id) || 0}
+                isAdding={isAdding}
+                addingProductId={addingProductId}
               />
             ))}
             <PaginationControls />
@@ -145,6 +150,8 @@ export default function ProductGrid({
               onAddProduct={onAddProduct}
               isListMode={false}
               availableStock={availableStock.get(product.id) || 0}
+              isAdding={isAdding}
+              addingProductId={addingProductId}
             />
           ))
         ) : (

@@ -29,7 +29,7 @@ import {
   StructuredAddress,
   Discount,
 } from "../../types/Pos";
-import { PaymentMethod } from "./PaymentModal";
+import { PaymentMethod } from "./(payment)/PaymentModal";
 
 const PAPER_SIZES_CSS = {
   "80mm": "w-[80mm] text-[11px] leading-normal",
@@ -116,8 +116,8 @@ export default function SummaryModal({
     },
   );
 
-  const [selectedIssuerId, setSelectedIssuerId] = useState<number>(
-    currentIssuer.id,
+  const [selectedIssuerId, setSelectedIssuerId] = useState<string>(
+    currentIssuer.adminId,
   );
   const [printOptions, setPrintOptions] = useState<PrintOptions>({
     showDiscounts: true,
@@ -127,6 +127,8 @@ export default function SummaryModal({
     showTaxInvoiceNumber: true,
     showCustomerBranch: true,
     showCustomerAddress: true,
+    showCustomerPhone: false,
+    showCustomerTaxId: false,
     vatMode: "off",
     withholdingTaxVatMode: "pre-vat",
   });
@@ -213,7 +215,7 @@ export default function SummaryModal({
         postcode: "",
       });
 
-      setSelectedIssuerId(currentIssuer.id);
+      setSelectedIssuerId(currentIssuer.adminId);
       setPrintOptions((prev) => ({
         ...prev,
         isTaxInvoice, // Sync with prop on open
@@ -316,9 +318,8 @@ export default function SummaryModal({
       console.error("Error printing receipt:", error);
       confirmation.showConfirmation({
         title: "เกิดข้อผิดพลาด",
-        message: `เกิดข้อผิดพลาดในการพิมพ์: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`,
+        message: `เกิดข้อผิดพลาดในการพิมพ์: ${error instanceof Error ? error.message : "Unknown error"
+          }`,
         type: "error",
         confirmText: "ตกลง",
         showCancel: false,
@@ -327,7 +328,7 @@ export default function SummaryModal({
   };
 
   const selectedIssuer =
-    billIssuers.find((s) => s.id === selectedIssuerId) || currentIssuer;
+    billIssuers.find((s) => s.adminId === selectedIssuerId) || currentIssuer;
 
   const receiptProps: ReceiptPreviewProps & { customer: Customer | null } = {
     receiptData,
@@ -456,24 +457,80 @@ export default function SummaryModal({
                     handleDataChange("customerName", e.target.value)
                   }
                 />
-                <InputField
-                  label="เบอร์โทรศัพท์"
-                  value={receiptData.customerPhone}
-                  onChange={(e) =>
-                    handleDataChange("customerPhone", e.target.value)
-                  }
-                />
-                <InputField
-                  label={
-                    receiptData.customerType === "company"
-                      ? "เลขประจำตัวผู้เสียภาษี"
-                      : "เลขประจำตัวประชาชน / ผู้เสียภาษี"
-                  }
-                  value={receiptData.customerTaxId}
-                  onChange={(e) =>
-                    handleDataChange("customerTaxId", e.target.value)
-                  }
-                />
+                {/* ✅ เบอร์โทรศัพท์ พร้อม checkbox (แสดงเมื่อกรอกชื่อแล้ว) */}
+                <div>
+                  <div className="mb-2 flex items-center justify-between">
+                    <label
+                      htmlFor="customerPhone"
+                      className="block text-xs font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-400"
+                    >
+                      เบอร์โทรศัพท์
+                    </label>
+                    {receiptData.customerName && receiptData.customerName !== "ลูกค้าทั่วไป" && (
+                      <label className="flex cursor-pointer items-center gap-1.5">
+                        <input
+                          type="checkbox"
+                          checked={printOptions.showCustomerPhone}
+                          onChange={(e) =>
+                            setPrintOptions((p) => ({
+                              ...p,
+                              showCustomerPhone: e.target.checked,
+                            }))
+                          }
+                          className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                          พิมพ์
+                        </span>
+                      </label>
+                    )}
+                  </div>
+                  <InputField
+                    label=""
+                    value={receiptData.customerPhone}
+                    onChange={(e) =>
+                      handleDataChange("customerPhone", e.target.value)
+                    }
+                  />
+                </div>
+                {/* ✅ รหัสประจำตัวประชาชน พร้อม checkbox (แสดงเมื่อกรอกชื่อแล้ว) */}
+                <div>
+                  <div className="mb-2 flex items-center justify-between">
+                    <label
+                      htmlFor="customerTaxId"
+                      className="block text-xs font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-400"
+                    >
+                      {receiptData.customerType === "company"
+                        ? "เลขประจำตัวผู้เสียภาษี"
+                        : "เลขประจำตัวประชาชน / ผู้เสียภาษี"}
+                    </label>
+                    {receiptData.customerName && receiptData.customerName !== "ลูกค้าทั่วไป" && (
+                      <label className="flex cursor-pointer items-center gap-1.5">
+                        <input
+                          type="checkbox"
+                          checked={printOptions.showCustomerTaxId}
+                          onChange={(e) =>
+                            setPrintOptions((p) => ({
+                              ...p,
+                              showCustomerTaxId: e.target.checked,
+                            }))
+                          }
+                          className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                          พิมพ์
+                        </span>
+                      </label>
+                    )}
+                  </div>
+                  <InputField
+                    label=""
+                    value={receiptData.customerTaxId}
+                    onChange={(e) =>
+                      handleDataChange("customerTaxId", e.target.value)
+                    }
+                  />
+                </div>
                 <div>
                   <div className="mb-2 flex items-center justify-between">
                     <label
@@ -584,13 +641,13 @@ export default function SummaryModal({
                   <select
                     value={selectedIssuerId}
                     onChange={(e) =>
-                      setSelectedIssuerId(Number(e.target.value))
+                      setSelectedIssuerId(e.target.value)
                     }
                     className="mt-2 w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                   >
                     {billIssuers.map((staff) => (
-                      <option key={staff.id} value={staff.id}>
-                        {staff.name}
+                      <option key={staff.adminId} value={staff.adminId}>
+                        {staff.fullName}
                       </option>
                     ))}
                   </select>
@@ -851,9 +908,8 @@ export default function SummaryModal({
             <div className="flex min-h-full items-start justify-center pt-4">
               <div
                 ref={receiptPreviewRef}
-                className={`font-lineseed bg-white text-black shadow-2xl ${
-                  PAPER_SIZES_CSS[paperSize]
-                }`}
+                className={`font-lineseed bg-white text-black shadow-2xl ${PAPER_SIZES_CSS[paperSize]
+                  }`}
                 style={{
                   padding:
                     paperSize === "58mm"

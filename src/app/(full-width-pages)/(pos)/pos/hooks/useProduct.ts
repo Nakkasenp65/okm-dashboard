@@ -4,7 +4,7 @@ import axios from "axios";
 import { Product } from "../types/Pos";
 
 // MARK: - API Configuration
-const API_ENDPOINT = "https://stock-entry-service.vercel.app/api/products";
+const API_ENDPOINT = process.env.NEXT_PUBLIC_STOCK_API_ROUTE;
 
 // MARK: - Type Definitions for API Response
 
@@ -16,51 +16,24 @@ interface ApiPagination {
   limit: number;
 }
 
-/** รูปแบบของข้อมูล Product หนึ่งชิ้นที่ได้จาก API โดยตรง */
-interface ApiProduct {
-  _id: string;
-  id: number;
-  name: string;
-  barcode: string;
-  details: string;
-  quantity: number;
-  created_at: string;
-  source?: string;
-  imageApi?: string;
-  image1?: string;
-  brand: string;
-  condition: "new" | "used";
-  prices: {
-    cost: string;
-    level_1: string;
-    [key: string]: string; // แก้จาก any
-  };
-  category: {
-    id: string;
-    color: string;
-    name: string;
-  };
-  [key: string]: unknown; // แก้จาก any
-}
-
 /** รูปแบบของ Response ทั้งหมดเมื่อดึงรายการสินค้า (หลายชิ้น) */
 interface ProductsListApiResponse {
   success: boolean;
   pagination: ApiPagination;
-  data: ApiProduct[];
+  data: Product[];
 }
 
 /** รูปแบบของ Response ทั้งหมดเมื่อดึงสินค้าชิ้นเดียว */
 interface SingleProductApiResponse {
   success: boolean;
-  data: ApiProduct;
+  data: Product;
 }
 
 /** รูปแบบของ Response ทั้งหมดเมื่ออัปเดตสินค้าสำเร็จ */
 interface UpdateProductApiResponse {
   success: boolean;
   message: string;
-  data: ApiProduct;
+  data: Product;
 }
 
 // MARK: - Type Definition for Mutation Payload
@@ -89,37 +62,6 @@ export interface UpdateProductPayload {
   quantity?: number;
 }
 
-// MARK: - Data Transformation Helper (REVISED)
-/**
- * ฟังก์ชันกลางสำหรับแปลงข้อมูลจาก ApiProduct ไปเป็น Product ที่แอปพลิเคชันต้องการ
- * เวอร์ชันนี้จะส่งผ่านข้อมูลส่วนใหญ่มาโดยตรง และเพิ่ม Logic การแปลงข้อมูลที่จำเป็นเท่านั้น
- */
-const transformApiProduct = (apiProduct: ApiProduct): Product => {
-  return {
-    // --- Core Fields ---
-    id: apiProduct.id,
-    name: apiProduct.name,
-    barcode: apiProduct.barcode,
-    price: parseFloat(apiProduct.prices.level_1) || 0,
-    cost: parseFloat(apiProduct.prices.cost) || 0,
-    stock: apiProduct.quantity,
-    createdAt: new Date(apiProduct.created_at),
-
-    // --- Derived & Transformed Fields ---
-    brand: apiProduct.brand || "ไม่ระบุ",
-    condition: apiProduct.condition, // ใช้ค่าจาก API โดยตรง
-    categoryColor: apiProduct.category.color,
-
-    // --- Pass-through Fields from API ---
-    _id: apiProduct._id,
-    details: apiProduct.details,
-    source: apiProduct.source,
-    imageApi: apiProduct.imageApi,
-    image1: apiProduct.image1,
-    category: apiProduct.category,
-  };
-};
-
 // MARK: - Hook 1: useProducts (For fetching a list of products)
 interface UseProductsParams {
   page?: number;
@@ -130,7 +72,7 @@ interface UseProductsParams {
 }
 
 const fetchProductsList = async (params: UseProductsParams): Promise<ProductsListApiResponse> => {
-  const response = await axios.get(API_ENDPOINT, { params });
+  const response = await axios.get(`${API_ENDPOINT}/`, { params });
   return response.data;
 };
 
@@ -151,7 +93,7 @@ export const useProducts = ({
     placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
     select: (apiData) => ({
-      products: apiData.data.map(transformApiProduct),
+      products: apiData.data,
       pagination: apiData.pagination,
     }),
   });
@@ -163,7 +105,7 @@ interface UseProductParams {
 }
 
 const fetchProductById = async (id: number | string): Promise<SingleProductApiResponse> => {
-  const response = await axios.get(API_ENDPOINT, { params: { id } });
+  const response = await axios.get(`${API_ENDPOINT}/${id}`);
   return response.data;
 };
 
@@ -176,7 +118,6 @@ export const useProduct = ({ id }: UseProductParams) => {
     gcTime: 1000 * 60 * 30, // 30 minutes
     refetchOnWindowFocus: false,
     retry: 1,
-    select: (apiData) => transformApiProduct(apiData.data),
   });
 };
 

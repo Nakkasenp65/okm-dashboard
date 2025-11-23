@@ -16,7 +16,7 @@ interface ConfirmationModalProps {
   onClose: () => void;
   onConfirm?: () => void;
   title: string;
-  message: string;
+  message: string | React.ReactNode;
   type?: ConfirmationType;
   confirmText?: string;
   cancelText?: string;
@@ -91,9 +91,9 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         </h2>
 
         {/* Message */}
-        <p className="mb-8 text-center text-base leading-relaxed text-gray-600 dark:text-gray-300">
+        <div className="mb-8 text-left text-base leading-relaxed text-gray-600 whitespace-pre-line dark:text-gray-300">
           {message}
-        </p>
+        </div>
 
         {/* Buttons */}
         <div className="flex gap-3">
@@ -107,15 +107,14 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           )}
           <Button
             onClick={handleConfirm}
-            className={`flex-1 rounded-xl py-3 font-semibold text-white ${
-              type === "warning"
-                ? "bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
-                : type === "success"
-                  ? "bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
-                  : type === "error"
-                    ? "bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600"
-                    : "bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
-            }`}
+            className={`flex-1 rounded-xl py-3 font-semibold text-white ${type === "warning"
+              ? "bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+              : type === "success"
+                ? "bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                : type === "error"
+                  ? "bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600"
+                  : "bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
+              }`}
           >
             {confirmText}
           </Button>

@@ -1,17 +1,19 @@
 "use client";
 import React from "react";
 import Button from "@/components/ui/button/Button";
-import { FaTimes } from "react-icons/fa";
-import { Discount } from "../types/Pos";
+import { FaTimes, FaSpinner } from "react-icons/fa"; // ADD: Import icon spinner
+import { Discount } from "../../types/Pos";
 
 interface SellingSummaryProps {
   subtotal: number;
   total: number;
-  appliedDiscounts: Discount[]; // ส่วนลดท้ายบิล
-  priceAdjustmentDiscounts: Discount[]; // ส่วนลดปรับราคา
+  appliedDiscounts: Discount[];
+  priceAdjustmentDiscounts: Discount[];
   onRemoveDiscount: (discountId: string) => void;
   onOpenPaymentModal: () => void;
   isActionDisabled: boolean;
+  hasActiveSession?: boolean;
+  isLoading?: boolean; // ADD: รับ prop isLoading
 }
 
 export default function SellingSummary({
@@ -22,8 +24,10 @@ export default function SellingSummary({
   onRemoveDiscount,
   onOpenPaymentModal,
   isActionDisabled,
+  hasActiveSession = false,
+  isLoading = false, // ADD: Default value
 }: SellingSummaryProps) {
-  // ✅ รวมส่วนลดทั้ง 2 ประเภทเพื่อแสดงผล
+  
   const allDiscountsToDisplay = [
     ...priceAdjustmentDiscounts,
     ...appliedDiscounts,
@@ -45,7 +49,7 @@ export default function SellingSummary({
             >
               <span className="flex items-center gap-2">
                 {discount.name}
-                {!isAdjustment && ( // แสดง % หรือ ฿ เฉพาะส่วนลดท้ายบิล
+                {!isAdjustment && (
                   <span className="font-mono text-xs">
                     (
                     {discount.type === "percentage"
@@ -57,11 +61,11 @@ export default function SellingSummary({
               </span>
               <span className="flex items-center gap-2 font-medium">
                 -{discount.value.toFixed(2)} ฿
-                {/* ✅ อนุญาตให้ลบได้เฉพาะส่วนลดท้ายบิล */}
                 {!isAdjustment && (
                   <button
-                    onClick={() => onRemoveDiscount(discount.id)}
-                    className="text-gray-400 transition-colors hover:text-red-500 dark:hover:text-red-300"
+                    onClick={() => !isLoading && onRemoveDiscount(discount.id)} // Prevent remove while loading
+                    disabled={isLoading}
+                    className="text-gray-400 transition-colors hover:text-red-500 disabled:opacity-50 dark:hover:text-red-300"
                   >
                     <FaTimes size={12} />
                   </button>
@@ -79,13 +83,26 @@ export default function SellingSummary({
         </span>
       </div>
 
+      {/* UPDATE: Button with Loading State */}
       <Button
         variant="primary"
-        className="mt-4 w-full bg-gradient-to-r from-green-500 to-emerald-600 py-3 text-lg font-semibold shadow-lg transition-all hover:from-green-600 hover:to-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+        className={`mt-4 w-full py-3 text-lg font-semibold shadow-lg transition-all 
+          ${isLoading 
+            ? "cursor-wait opacity-80 bg-gray-500" 
+            : "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+          }
+          disabled:cursor-not-allowed disabled:opacity-50`}
         onClick={onOpenPaymentModal}
-        disabled={isActionDisabled}
+        disabled={isActionDisabled || isLoading}
       >
-        ชำระเงิน
+        {isLoading ? (
+          <div className="flex items-center justify-center gap-2">
+            <FaSpinner className="animate-spin" />
+            <span>กำลังประมวลผล...</span>
+          </div>
+        ) : (
+          hasActiveSession ? "ดำเนินการชำระเงินต่อ" : "ชำระเงิน"
+        )}
       </Button>
     </div>
   );

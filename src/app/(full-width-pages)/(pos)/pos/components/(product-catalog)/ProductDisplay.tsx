@@ -5,9 +5,9 @@ import React, { useMemo, useState } from "react"; // เพิ่ม useState
 import Image from "next/image";
 import { FaPlus } from "react-icons/fa";
 import clsx from "clsx";
-import { Product } from "../types/Pos";
-import { DisplayOptions } from "./(modal)/DisplayOptionsModal";
-import ImageZoomModal from "./(modal)/ImageZoomModal"; // Import Modal ที่สร้างขึ้นใหม่
+import { Product } from "../../types/Pos";
+import { DisplayOptions } from "../(modal)/DisplayOptionsModal";
+import ImageZoomModal from "../(modal)/ImageZoomModal"; // Import Modal ที่สร้างขึ้นใหม่
 
 // MARK: - Props Interface
 interface ProductDisplayProps {
@@ -16,6 +16,8 @@ interface ProductDisplayProps {
   onAddProduct: (product: Product) => void;
   isListMode?: boolean;
   availableStock: number;
+  isAdding?: boolean;
+  addingProductId?: string;
 }
 
 // MARK: - Main Component
@@ -25,6 +27,8 @@ export default function ProductDisplay({
   onAddProduct,
   isListMode = false,
   availableStock,
+  isAdding = false,
+  addingProductId,
 }: ProductDisplayProps) {
   // Section: State Management
   // State สำหรับควบคุมการเปิด/ปิด Modal รูปภาพ
@@ -33,6 +37,9 @@ export default function ProductDisplay({
   // Section: Memoized Values
   const imageUrl = useMemo(() => product.image1 ?? product.imageApi, [product.image1, product.imageApi]);
   const isOutOfStock = availableStock <= 0;
+
+  // Check if this specific product is being added
+  const isThisProductAdding = isAdding && addingProductId === product._id;
 
   // Section: Event Handlers
   const handleAddToCart = () => {
@@ -55,6 +62,8 @@ export default function ProductDisplay({
 
   // Section: Render Logic
   // Render based on display mode
+
+
   if (isListMode) {
     return (
       <>
@@ -90,6 +99,15 @@ export default function ProductDisplay({
                   IMEI: {product.barcode}
                 </p>
               )}
+              <div className="mt-1 flex items-center justify-between">
+                <span className="text-sm text-gray-500 dark:text-gray-400">{product.brand}</span>
+                <span
+                  className={`text-sm font-medium ${(product.availablequantity || 0) > 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
+                    }`}
+                >
+                  {(product.availablequantity || 0) > 0 ? `มีสินค้า ${product.availablequantity}` : "สินค้าหมด"}
+                </span>
+              </div>
               {displayOptions.showStock && (
                 <p className={clsx("mt-1 text-xs font-semibold", isOutOfStock ? "text-red-500" : "text-blue-500")}>
                   คงเหลือ: {availableStock} ชิ้น
@@ -98,7 +116,7 @@ export default function ProductDisplay({
             </div>
             {displayOptions.showPrice && (
               <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-                ฿{product.price.toLocaleString()}
+                ฿{Number(product.prices?.level_1 || 0).toLocaleString()}
               </p>
             )}
           </div>
@@ -106,17 +124,19 @@ export default function ProductDisplay({
           {/* Part: Add to Cart Button */}
           <button
             onClick={handleAddToCart}
-            disabled={isOutOfStock}
+            disabled={isOutOfStock || isThisProductAdding}
             className={clsx(
               "flex flex-shrink-0 flex-col items-center justify-center gap-1 px-4 py-3 text-white transition-colors",
-              isOutOfStock
+              isOutOfStock || isThisProductAdding
                 ? "cursor-not-allowed bg-gray-400 dark:bg-gray-600"
                 : "bg-blue-500 hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none",
             )}
             aria-label={`เพิ่ม ${product.name} ลงในตะกร้า`}
           >
             <FaPlus size={16} />
-            <span className="text-xs font-medium">{isOutOfStock ? "หมด" : "เพิ่ม"}</span>
+            <span className="text-xs font-medium">
+              {isOutOfStock ? "หมด" : isThisProductAdding ? "..." : "เพิ่ม"}
+            </span>
           </button>
         </div>
         {/* Render Modal: แสดง Modal เมื่อ isModalOpen เป็น true */}
@@ -167,11 +187,11 @@ export default function ProductDisplay({
           <div className="mt-2 flex items-baseline justify-between">
             {displayOptions.showPrice && (
               <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
-                ฿{product.price.toLocaleString()}
+                ฿{Number(product.prices?.level_1 || 0).toLocaleString()}
               </p>
             )}
             {displayOptions.showStock && (
-              <p className={clsx("text-xs font-semibold", isOutOfStock ? "text-red-500" : "text-blue-500")}>
+              <p className={clsx("text-base font-semibold", isOutOfStock ? "text-red-500" : "text-blue-500")}>
                 {availableStock} ชิ้น
               </p>
             )}
@@ -181,16 +201,16 @@ export default function ProductDisplay({
         {/* Part: Add to Cart Button */}
         <button
           onClick={handleAddToCart}
-          disabled={isOutOfStock}
+          disabled={isOutOfStock || isThisProductAdding}
           className={clsx(
             "flex w-full items-center justify-center gap-2 p-3 font-semibold text-white transition-colors",
-            isOutOfStock
+            isOutOfStock || isThisProductAdding
               ? "cursor-not-allowed bg-gray-400 dark:bg-gray-600"
               : "bg-blue-500 hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none",
           )}
           aria-label={`เพิ่ม ${product.name} ลงในตะกร้า`}
         >
-          <FaPlus /> <span>{isOutOfStock ? "สินค้าหมด" : "เพิ่มลงตะกร้า"}</span>
+          <FaPlus /> <span>{isOutOfStock ? "สินค้าหมด" : isThisProductAdding ? "กำลังเพิ่ม..." : "เพิ่มลงตะกร้า"}</span>
         </button>
       </div>
 

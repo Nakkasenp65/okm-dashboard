@@ -1,0 +1,22 @@
+{
+    "_id": "mock_payment_id_1",
+    "summary": {
+        "subtotal": 7980,
+        "discount": 0,
+        "grandTotal": 7980,
+        "totalPaid": 5000,
+        "remaining": 2980
+    },
+    "transactions": [
+        {
+            "_id": "trans_uuid_1",
+            "method": "CASH",
+            "amount": 5000,
+            "tendered": 5000,
+            "change": 0,
+            "status": "SUCCESS",
+            "timestamp": "2025-11-21T10:05:00Z"
+        }
+    ],
+    "updatedAt": "2025-11-21T10:05:00Z"
+}

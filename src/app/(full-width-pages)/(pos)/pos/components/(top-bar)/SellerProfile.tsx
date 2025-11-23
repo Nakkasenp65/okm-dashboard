@@ -1,6 +1,7 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 import React, { useState, useRef, useEffect } from "react";
-import { StaffMember } from "../types/Pos";
+import { StaffMember } from "../../types/Pos";
 import { FaUser, FaCheck, FaTimes } from "react-icons/fa";
 
 interface SellerProfileProps {
@@ -21,10 +22,10 @@ export default function SellerProfile({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Mock passwords for demo - ในการใช้งานจริงควรเชื่อมกับระบบ authentication
-  const STAFF_PASSWORDS: Record<number, string> = {
-    1: "1234", // Noppadol
-    2: "5678", // Weerapong
-    3: "admin", // Admin
+  const STAFF_PASSWORDS: Record<string, string> = {
+    "682dbb68048a75e4ab7f0129": "1234", // rachen
+    "mock_admin_2": "5678", // Noppadol
+    "mock_admin_3": "admin", // Weerapong
   };
 
   // Close dropdown when clicking outside
@@ -51,7 +52,7 @@ export default function SellerProfile({
   }, [isOpen]);
 
   const handleStaffSelect = (staff: StaffMember) => {
-    if (staff.id === currentSeller.id) {
+    if (staff.adminId === currentSeller.adminId) {
       // ถ้าเลือกคนเดิมก็ปิด dropdown
       setIsOpen(false);
       return;
@@ -64,7 +65,7 @@ export default function SellerProfile({
   const handlePasswordSubmit = () => {
     if (!selectedStaff) return;
 
-    const correctPassword = STAFF_PASSWORDS[selectedStaff.id];
+    const correctPassword = STAFF_PASSWORDS[selectedStaff.adminId];
     if (password === correctPassword) {
       onSellerChange(selectedStaff);
       setIsOpen(false);
@@ -85,16 +86,21 @@ export default function SellerProfile({
   return (
     <div className="relative" ref={dropdownRef}>
       {/* Profile Button */}
+      {/* Profile Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 rounded-lg bg-gray-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-700"
       >
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500">
-          <FaUser className="text-sm" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 overflow-hidden">
+          {currentSeller.profile_image ? (
+            <img src={currentSeller.profile_image} alt={currentSeller.fullName} className="h-full w-full object-cover" />
+          ) : (
+            <FaUser className="text-sm" />
+          )}
         </div>
         <div className="text-left">
           <div className="text-xs text-gray-400">ผู้ขาย</div>
-          <div className="font-semibold">{currentSeller.name}</div>
+          <div className="font-semibold">{currentSeller.fullName}</div>
         </div>
       </button>
 
@@ -110,30 +116,32 @@ export default function SellerProfile({
               <div className="space-y-1">
                 {allStaff.map((staff) => (
                   <button
-                    key={staff.id}
+                    key={staff.adminId}
                     onClick={() => handleStaffSelect(staff)}
-                    className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-left transition-colors ${
-                      staff.id === currentSeller.id
-                        ? "bg-blue-500/20 text-blue-400"
-                        : "text-gray-300 hover:bg-gray-700"
-                    }`}
+                    className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-left transition-colors ${staff.adminId === currentSeller.adminId
+                      ? "bg-blue-500/20 text-blue-400"
+                      : "text-gray-300 hover:bg-gray-700"
+                      }`}
                   >
                     <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                        staff.id === currentSeller.id
-                          ? "bg-blue-500"
-                          : "bg-gray-700"
-                      }`}
+                      className={`flex h-10 w-10 items-center justify-center rounded-full overflow-hidden ${staff.adminId === currentSeller.adminId
+                        ? "bg-blue-500"
+                        : "bg-gray-700"
+                        }`}
                     >
-                      <FaUser className="text-sm" />
+                      {staff.profile_image ? (
+                        <img src={staff.profile_image} alt={staff.fullName} className="h-full w-full object-cover" />
+                      ) : (
+                        <FaUser className="text-sm" />
+                      )}
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium">{staff.name}</div>
+                      <div className="font-medium">{staff.fullName}</div>
                       <div className="text-xs text-gray-500">
-                        รหัส: {staff.id}
+                        รหัส: {staff.staffId || staff.adminId}
                       </div>
                     </div>
-                    {staff.id === currentSeller.id && (
+                    {staff.adminId === currentSeller.adminId && (
                       <FaCheck className="text-blue-400" />
                     )}
                   </button>
@@ -144,13 +152,17 @@ export default function SellerProfile({
             // Password Input
             <div className="p-4">
               <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500">
-                  <FaUser />
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500 overflow-hidden">
+                  {selectedStaff.profile_image ? (
+                    <img src={selectedStaff.profile_image} alt={selectedStaff.fullName} className="h-full w-full object-cover" />
+                  ) : (
+                    <FaUser />
+                  )}
                 </div>
                 <div>
                   <div className="text-sm text-gray-400">เปลี่ยนเป็น</div>
                   <div className="font-semibold text-white">
-                    {selectedStaff.name}
+                    {selectedStaff.fullName}
                   </div>
                 </div>
               </div>
@@ -179,8 +191,8 @@ export default function SellerProfile({
                 />
                 {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
                 <p className="mt-2 text-xs text-gray-500">
-                  Demo: รหัสของ {selectedStaff.name} คือ &quot;
-                  {STAFF_PASSWORDS[selectedStaff.id]}&quot;
+                  Demo: รหัสของ {selectedStaff.fullName} คือ &quot;
+                  {STAFF_PASSWORDS[selectedStaff.adminId]}&quot;
                 </p>
               </div>
 

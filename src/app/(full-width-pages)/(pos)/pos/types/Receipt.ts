@@ -50,6 +50,8 @@ export interface PrintOptions {
   withholdingTaxVatMode: "post-vat" | "pre-vat";
   showCustomerAddress: boolean;
   showTaxInvoiceNumber: boolean;
+  showCustomerPhone: boolean;
+  showCustomerTaxId: boolean;
 }
 
 export interface ReceiptPreviewProps {

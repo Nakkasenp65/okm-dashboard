@@ -137,20 +137,20 @@ export default function PosAddressForm({
                   onAddressChange(
                     "subdistrict",
                     (selectedZip.tambon_name_th as string) ??
-                      (selectedZip.tambon_name_en as string) ??
-                      "",
+                    (selectedZip.tambon_name_en as string) ??
+                    "",
                   );
                   onAddressChange(
                     "district",
                     (selectedZip.amphoe_name_th as string) ??
-                      (selectedZip.amphoe_name_en as string) ??
-                      "",
+                    (selectedZip.amphoe_name_en as string) ??
+                    "",
                   );
                   onAddressChange(
                     "province",
                     (selectedZip.province_name_th as string) ??
-                      (selectedZip.province_name_en as string) ??
-                      "",
+                    (selectedZip.province_name_en as string) ??
+                    "",
                   );
                   setProvinceId(selectedZip.province_id as number);
                   setAmphoeId(selectedZip.amphoe_id as number);
@@ -232,6 +232,15 @@ export default function PosAddressForm({
               value={addressData.subdistrict}
               onChange={(e) => {
                 handleChange(e);
+
+                // ✅ เมื่อเลือกตำบล ให้เติมรหัสไปรษณีย์อัตโนมัติ
+                const selectedTambon = tambonQ.data?.find(
+                  (t) => (t.tambon_name_th ?? t.tambon_name_en) === e.target.value
+                );
+
+                if (selectedTambon && selectedTambon.zip_code) {
+                  onAddressChange("postcode", selectedTambon.zip_code);
+                }
               }}
               className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:disabled:bg-gray-700"
               disabled={!amphoeId}

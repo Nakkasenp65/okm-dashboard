@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 import { ReceiptPreviewProps } from "../../types/Receipt";
 import Image from "next/image";
-import { PaymentMethod, PAYMENT_METHOD_LABELS } from "../(modal)/PaymentModal";
+import { PaymentMethod, PAYMENT_METHOD_LABELS } from "../(modal)/(payment)/PaymentModal";
 import { Customer } from "../../types/Pos";
 
 const VAT_RATE = 0.07; // 7%
@@ -117,31 +117,36 @@ const StandardReceipt = ({
         {isTaxInvoice && options.showTaxInvoiceNumber && <p>เลขที่ใบกำกับภาษี: {receiptData.taxInvoiceNumber}</p>}
         <p>วันที่: {receiptData.printDate}</p>
 
-        {/* ✅ KEY CHANGE: Show Name/Phone on ALL receipts if customer is selected */}
+        {/* ✅ แสดงชื่อลูกค้าและเบอร์โทร (ถ้ามี checkbox เลือก) */}
         {showCustomerInfo && (
           <>
             <p>ชื่อลูกค้า: {receiptData.customerName}</p>
-            {receiptData.customerPhone && <p>เบอร์โทร: {receiptData.customerPhone}</p>}
+            {options.showCustomerPhone && receiptData.customerPhone && <p>เบอร์โทร: {receiptData.customerPhone}</p>}
           </>
         )}
 
-        {/* ✅ KEY CHANGE: Show Tax ID, Address, Branch ONLY on Tax Invoices */}
-        {isTaxInvoice && showCustomerInfo && (
+        {/* ✅ แสดงรหัสประจำตัว ที่อยู่ สาขา */}
+        {showCustomerInfo && (
           <>
-            <p>
-              {receiptData.customerType === "company" ? "เลขประจำตัวผู้เสียภาษี" : "เลขประจำตัวประชาชน"}:{" "}
-              {receiptData.customerTaxId}
-            </p>
-            {options.showCustomerAddress && (
+            {/* รหัสประจำตัว: แสดงเสมอในใบกำกับภาษี, แสดงตาม checkbox ในใบเสร็จ */}
+            {(isTaxInvoice || options.showCustomerTaxId) && receiptData.customerTaxId && (
+              <p>
+                {receiptData.customerType === "company" ? "เลขประจำตัวผู้เสียภาษี" : "เลขประจำตัวประชาชน"}:{" "}
+                {receiptData.customerTaxId}
+              </p>
+            )}
+            {/* ที่อยู่: แสดงตาม checkbox ในทั้งใบเสร็จและใบกำกับภาษี */}
+            {options.showCustomerAddress && receiptData.customerAddress && (
               <p className="break-words whitespace-pre-wrap">ที่อยู่: {receiptData.customerAddress}</p>
             )}
-            {receiptData.customerType === "company" && options.showCustomerBranch && (
+            {/* สาขา: แสดงเฉพาะใบกำกับภาษีและประเภทนิติบุคคล */}
+            {isTaxInvoice && receiptData.customerType === "company" && options.showCustomerBranch && (
               <p>สาขา: {receiptData.customerBranch}</p>
             )}
           </>
         )}
 
-        <p>ผู้ขายสินค้า: {issuer.name}</p>
+        <p>ผู้ขายสินค้า: {issuer.fullName}</p>
       </section>
 
       <hr className="my-2 border-dashed border-black" />
@@ -178,21 +183,21 @@ const StandardReceipt = ({
           <>
             {options.showDiscountNames
               ? discounts.map((d) => {
-                  const discountValue = d.type === "percentage" ? subtotal * (d.value / 100) : d.value;
-                  if (discountValue === 0) return null;
-                  return (
-                    <div key={d.id} className="flex justify-between">
-                      <span>ส่วนลด: {d.name}</span>
-                      <span>-{discountValue.toFixed(2)}</span>
-                    </div>
-                  );
-                })
-              : subtotal - total > 0 && (
-                  <div className="flex justify-between">
-                    <span>ส่วนลดรวม:</span>
-                    <span>-{(subtotal - total).toFixed(2)}</span>
+                const discountValue = d.type === "percentage" ? subtotal * (d.value / 100) : d.value;
+                if (discountValue === 0) return null;
+                return (
+                  <div key={d.id} className="flex justify-between">
+                    <span>ส่วนลด: {d.name}</span>
+                    <span>-{discountValue.toFixed(2)}</span>
                   </div>
-                )}
+                );
+              })
+              : subtotal - total > 0 && (
+                <div className="flex justify-between">
+                  <span>ส่วนลดรวม:</span>
+                  <span>-{(subtotal - total).toFixed(2)}</span>
+                </div>
+              )}
           </>
         )}
 

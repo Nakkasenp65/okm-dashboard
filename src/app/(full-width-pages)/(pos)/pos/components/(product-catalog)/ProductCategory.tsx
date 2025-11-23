@@ -1,18 +1,19 @@
 "use client";
 import React, { useState, useMemo, useEffect } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import { Product } from "../types/Pos";
-import DisplayOptionsModal, { DisplayOptions } from "./(modal)/DisplayOptionsModal";
-import { useProducts } from "../hooks/useProduct";
-
-import CatalogControls from "./(product-catalog)/CatalogControls";
-import BrandSelection from "./(product-catalog)/BrandSelection";
-import ConditionSelection from "./(product-catalog)/ConditionSelection";
-import ProductGrid from "./(product-catalog)/ProductGrid";
+import { Product } from "../../types/Pos";
+import DisplayOptionsModal, { DisplayOptions } from "../(modal)/DisplayOptionsModal";
+import { useProducts } from "../../hooks/useProduct";
+import BrandSelection from "./BrandSelection";
+import ConditionSelection from "./ConditionSelection";
+import CatalogControls from "./CatalogControls";
+import ProductGrid from "./ProductGrid";
 
 interface ProductCatalogProps {
   onAddProduct: (product: Product) => void;
   availableStock: Map<number, number>;
+  isAdding?: boolean;
+  addingProductId?: string;
 }
 
 // Constants for localStorage
@@ -20,7 +21,7 @@ const DISPLAY_OPTIONS_STORAGE_KEY = "pos_display_options";
 const DEFAULT_DISPLAY_OPTIONS: DisplayOptions = {
   showImei: true,
   showPrice: true,
-  showStock: false,
+  showStock: true,
   displayMode: "grid",
 };
 
@@ -50,7 +51,7 @@ const saveDisplayOptionsToStorage = (options: DisplayOptions): void => {
   }
 };
 
-export default function ProductCategory({ onAddProduct, availableStock }: ProductCatalogProps) {
+export default function ProductCategory({ onAddProduct, availableStock, isAdding, addingProductId }: ProductCatalogProps) {
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [selectedCondition, setSelectedCondition] = useState<Product["condition"] | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -102,7 +103,7 @@ export default function ProductCategory({ onAddProduct, availableStock }: Produc
     const brandsMap = new Map<string, { color?: string }>();
     relevantProducts.forEach((product) => {
       if (!brandsMap.has(product.brand)) {
-        brandsMap.set(product.brand, { color: product.categoryColor });
+        brandsMap.set(product.brand, { color: product.categoryColor as string | undefined });
       }
     });
     return Array.from(brandsMap.entries()).map(([brand, data]) => ({
@@ -240,7 +241,8 @@ export default function ProductCategory({ onAddProduct, availableStock }: Produc
                   displayOptions={displayOptions}
                   onAddProduct={onAddProduct}
                   availableStock={availableStock}
-                  // Pagination props
+                  isAdding={isAdding}
+                  addingProductId={addingProductId}
                   currentPage={currentPage}
                   totalPages={pagination?.totalPages || 1}
                   totalItems={pagination?.totalProducts || 0}

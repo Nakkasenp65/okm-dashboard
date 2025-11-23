@@ -96,7 +96,7 @@ export function usePosMockData(): UsePosMockDataResult {
         const transformedProducts = transformApiDataToProducts(rawProducts);
         const stockMap = new Map<number, number>();
         transformedProducts.forEach((product) => {
-          stockMap.set(product.id, product.stock);
+          stockMap.set(product.id, product.quantity);
         });
 
         setProducts(transformedProducts);

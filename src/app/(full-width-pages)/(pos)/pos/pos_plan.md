@@ -13,11 +13,32 @@
 - pos_cart : nosql_table : structure {เก็บสินค้าที่กำลังจะขาย ซิงค์กับสินค้าที่ add บนหน้า frontend กันไฟดับ 100%}
   {
     _id: objectId
-    barcode: {IMEI/SN}
     unique_id: {สร้างไว้ดูสินค้า barcode ซ้ำ}
     createdAt: {เวลาที่เพิ่มไป cart}
     expiredAt: {สร้างใหม่เป็นเวลาที่นับ +15 นาที}
     status: "holding" | "pending" {เพิ่มสินค้าที่กำลังจะขาย}
+    data: {
+      // ให้เก็บข้อมูลสินค้าที่เพิ่มไปใน cart จะได้ไม่ต้อง query ข้อมูลสินค้าอีกรอบหลักเรียก pos_cart
+      barcode: {IMEI/SN}
+      productId: {สร้างใหม่เป็น ObjectId}
+      stockPrice: {ราคาปลีก}
+      soldPrice: {ราคาขาย}
+      discountAmount: {ส่วนลด}
+      brand: string;
+      condition: "new" | "used";
+      stock: number;
+      createdAt: Date;
+      categoryColor?: string;
+      details: string;
+      source?: string;
+      imageApi?: string;
+      image1?: string;
+      category: {
+        id: string;
+        color: string;
+        name: string;
+      };
+    }
   }
 
 - pos_history : nosql_table : structure {เก็บสินค้าที่ขายไปแล้ว สำหรับดูใบเสร็จย้อนหลัง}

@@ -101,12 +101,20 @@ export const transformApiDataToProducts = (apiData: ApiProductItem[]): Product[]
       id: item.id,
       name: item.name,
       barcode: item.barcode,
-      price: parseFloat(String(item.prices?.level_1 || 0)),
-      cost: parseFloat(String(item.prices?.cost || 0)),
+      prices: {
+        stock_id: item.id,
+        cost: String(item.prices?.cost || "0"),
+        repair: "0", // Default
+        level_1: String(item.prices?.level_1 || "0"),
+        level_2: "0", // Default
+        level_3: "0", // Default
+        level_4: "0", // Default
+      },
       brand: brand,
       condition: condition,
-      stock: item.count_name_md5 || 1,
-      createdAt: new Date(item.created_at),
+      quantity: item.count_name_md5 || 1,
+      availablequantity: item.count_name_md5 || 1,
+      created_at: item.created_at,
       categoryColor: item.category?.color,
 
       // NEW fields from API

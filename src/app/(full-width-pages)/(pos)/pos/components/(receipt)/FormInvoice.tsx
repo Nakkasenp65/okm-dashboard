@@ -2,24 +2,24 @@
 import React, { useMemo } from "react";
 import { MOCK_SHOP_INFO, ReceiptPreviewProps } from "../../types/Receipt";
 // ✅ KEY CHANGE: Import PaymentMethod and its labels
-import { PaymentMethod, PAYMENT_METHOD_LABELS } from "../(modal)/PaymentModal";
+import { PaymentMethod, PAYMENT_METHOD_LABELS } from "../(modal)/(payment)/PaymentModal";
 
 const VAT_RATE = 0.07; // 7%
 
 // Helper function to convert number to Thai Baht text
 function toThaiBahtText(num: number): string {
   const numbers = [
-      "ศูนย์",
-      "หนึ่ง",
-      "สอง",
-      "สาม",
-      "สี่",
-      "ห้า",
-      "หก",
-      "เจ็ด",
-      "แปด",
-      "เก้า",
-    ],
+    "ศูนย์",
+    "หนึ่ง",
+    "สอง",
+    "สาม",
+    "สี่",
+    "ห้า",
+    "หก",
+    "เจ็ด",
+    "แปด",
+    "เก้า",
+  ],
     units = ["", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน"],
     parts = num.toFixed(2).split("."),
     integerPart = parts[0];
@@ -293,7 +293,7 @@ const FormInvoice = (
           </div>
           <div className="w-1/3 text-center">
             <p className="pt-8">.................................</p>
-            <p>({issuer.name})</p>
+            <p>({issuer.fullName})</p>
             <p>ผู้ส่งของ/ผู้รับเงิน</p>
           </div>
         </div>

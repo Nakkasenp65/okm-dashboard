@@ -1,0 +1,54 @@
+[
+    {
+        "_id": "mock_cart_id_1",
+        "barcode": "SK4H77Y7QJN",
+        "unique_id": "cart_item_unique_1",
+        "createdAt": "2025-11-21T10:00:00Z",
+        "expiredAt": "2025-11-21T10:15:00Z",
+        "status": "holding",
+        "data": {
+            "id": 1,
+            "_id": "mock_product_id_1",
+            "name": "AirPods 4",
+            "barcode": "SK4H77Y7QJN",
+            "price": 6790,
+            "cost": 5500,
+            "brand": "Apple",
+            "condition": "new",
+            "stock": 50,
+            "createdAt": "2024-01-15T00:00:00.000Z",
+            "details": "Active Noise Cancellation",
+            "category": {
+                "id": "cat_1",
+                "name": "Accessories",
+                "color": "blue"
+            }
+        }
+    },
+    {
+        "_id": "mock_cart_id_2",
+        "barcode": "SK4H77Y7QJN",
+        "unique_id": "cart_item_unique_2",
+        "createdAt": "2025-11-21T10:01:00Z",
+        "expiredAt": "2025-11-21T10:16:00Z",
+        "status": "holding",
+        "data": {
+            "id": 1,
+            "_id": "mock_product_id_1",
+            "name": "AirPods 4",
+            "barcode": "SK4H77Y7QJN",
+            "price": 6790,
+            "cost": 5500,
+            "brand": "Apple",
+            "condition": "new",
+            "stock": 50,
+            "createdAt": "2024-01-15T00:00:00.000Z",
+            "details": "Active Noise Cancellation",
+            "category": {
+                "id": "cat_1",
+                "name": "Accessories",
+                "color": "blue"
+            }
+        }
+    }
+]

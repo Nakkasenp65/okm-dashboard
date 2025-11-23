@@ -1,26 +1,26 @@
 "use client";
-import { FaArrowLeftLong } from "react-icons/fa6";
-import React, { useState, useMemo, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import Button from "../../../../components/ui/button/Button";
-import SellingDetails from "./components/SellingDetails";
-import SellingAction from "./components/SellingAction";
-import SidebarMenu from "./components/SidebarMenu";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
+import ProductCategory from "./components/(product-catalog)/ProductCategory";
+import SellingAction from "./components/(cart-action)/SellingAction";
+import SidebarMenu from "./components/(sidebar)/SidebarMenu";
+import FooterComponent from "./components/(footer)/FooterComponent";
 import POSLockScreen from "./components/(modal)/POSLockScreenModal";
 import CustomerModal from "./components/(modal)/CustomerModal";
-import PaymentModal, { Payment, PaymentMethod } from "./components/(modal)/PaymentModal";
+import PaymentModal, { Payment, PaymentMethod } from "./components/(modal)/(payment)/PaymentModal";
 import CashDrawerModal, { CashDrawerActivity } from "./components/(modal)/CashDrawerModal";
 import SummaryModal from "./components/(modal)/SummaryModal";
 import DiscountModal from "./components/(modal)/DiscountModal";
 import ConfirmationModal from "./components/(modal)/ConfirmationModal";
 import { useConfirmation } from "./hooks/useConfirmation";
-import SellerProfile from "./components/SellerProfile";
-import { FaUser, FaTag, FaCashRegister, FaBoxArchive, FaPrint } from "react-icons/fa6";
 import { Customer, Product, StaffMember, Discount } from "./types/Pos";
 import { VatCalculationMode } from "./types/Receipt";
-import { useProducts, useUpdateProduct, UpdateProductPayload } from "./hooks/useProduct";
+import { useProducts, useUpdateProduct } from "./hooks/useProduct";
+import { useCart } from "./hooks/useCart";
+import TopBarComponent from "./components/(top-bar)/TopBarComponent";
+import { usePayment, PaymentMethodType } from "./hooks/usePayment";
+import { useConfirmPayment, ConfirmPaymentPayload } from "./hooks/useConfirmPayment";
 
-// MARK: - Interfaces and Mock Data
+// MARK: - MOCK & Interfaces
 export interface CashDrawerTransaction extends CashDrawerActivity {
   id: string;
   timestamp: Date;
@@ -32,6 +32,8 @@ export interface SubItem {
   name: string;
   unitPrice: number;
   imei?: string;
+  productData: Product; // Store full product data
+  expiredAt?: string;
 }
 
 export interface GroupedProduct {
@@ -52,9 +54,30 @@ export type PosMode = "retail" | "company" | "record-income";
 type PosOperationMode = "sell" | "consignment" | "repair";
 
 const MOCK_STAFF: StaffMember[] = [
-  { id: 1, name: "Noppadol Lerptakool" },
-  { id: 2, name: "Weerapong Ponsena" },
-  { id: 3, name: "Admin (ผู้ดูแลระบบ)" },
+  {
+    adminId: "682dbb68048a75e4ab7f0129",
+    username: "rachen",
+    fullName: "ราเชน สินสันเทียะ",
+    staffId: "EMP001",
+    roles: ["superultra_admin", "ENGINEER"],
+    profile_image: "https://lh3.googleusercontent.com/d/1_sU6tJ_zpigSZGFSlGxyTkxacdT_tOWw",
+  },
+  {
+    adminId: "mock_admin_2",
+    username: "noppadol",
+    fullName: "Noppadol Lerptakool",
+    staffId: "OKM001",
+    roles: ["admin", "SALES"],
+    profile_image: "",
+  },
+  {
+    adminId: "mock_admin_3",
+    username: "weerapong",
+    fullName: "Weerapong Ponsena",
+    staffId: "OKM002",
+    roles: ["admin", "SALES"],
+    profile_image: "",
+  },
 ];
 
 const MOCK_CUSTOMERS: Customer[] = [
@@ -86,27 +109,16 @@ const MOCK_CUSTOMERS: Customer[] = [
   },
 ];
 
-const operationModes = [
-  { id: "sell", label: "ขายซื้อ" },
-  { id: "consignment", label: "ขายฝาก" },
-  { id: "repair", label: "ซ่อม" },
-];
-
-// MARK: - STABLE QUERY OPTIONS
-// การประกาศ Object นี้ไว้นอก Component ทำให้มันถูกสร้างแค่ครั้งเดียว
-// และเป็นค่าที่ "เสถียร" (Stable) ป้องกันการ re-fetch ซ้ำซ้อนใน `useProducts`
 const productQueryOptions = { limit: 100 };
 
 export default function Page() {
   // Section: Data Fetching & Mutations
-  // NOTE: ยังต้องดึงข้อมูลสินค้าทั้งหมดสำหรับคำนวณ stock และ productsMap
   const { data: productsData } = useProducts(productQueryOptions);
+  
   const updateProductMutation = useUpdateProduct();
 
   // Section: Memoized Data Transformation
-  // `allProducts` คือ "แหล่งข้อมูลความจริง" (Single Source of Truth) สำหรับข้อมูลสินค้าและสต็อกตั้งต้น
   const allProducts = useMemo(() => productsData?.products || [], [productsData]);
-
   const productsMap = useMemo(() => {
     const map = new Map<number, Product>();
     allProducts.forEach((product) => {
@@ -116,16 +128,84 @@ export default function Page() {
   }, [allProducts]);
 
   // Section: POS State Management
-  // State หลักที่ขับเคลื่อน UI คือ `selectedProducts` (ตะกร้าสินค้า)
-  const [selectedProducts, setSelectedProducts] = useState<Map<number, GroupedProduct>>(new Map());
-
-  // States อื่นๆ สำหรับจัดการ UI
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
   const [currentCustomer, setCurrentCustomer] = useState<Customer | null>(null);
   const [appliedDiscounts, setAppliedDiscounts] = useState<Discount[]>([]);
   const [, setCashDrawerTransactions] = useState<CashDrawerTransaction[]>([]);
   const [currentIssuer, setCurrentIssuer] = useState<StaffMember>(MOCK_STAFF[0]);
   const [activePosOperationMode, setActivePosOperationMode] = useState<PosOperationMode>("sell");
+
+  // MARK: - Hooks (Payment & Cart)
+  const { 
+    paymentSession, 
+    isLoadingSession: isSessionLoading,
+    addPaymentAsync, // API Call to save payment methods
+    isAddingPayment, // Loading state
+  } = usePayment(currentIssuer.staffId);
+  
+  const {
+    cartItems,
+    addToCart,
+    removeFromCart,
+    isLoading: isCartLoading,
+    isAdding,
+    addingProductId,
+    isRemoving,
+    renewCartItem,
+    isRenewing,
+    isUpdating,
+    addToCartByBarcode,
+    isAddingByBarcode,
+    checkout,
+    cancelCheckout, // API Call to cancel checkout
+    isCheckingOut,
+    isCancelingCheckout,
+  } = useCart(currentIssuer.staffId);
+
+  // Local price overrides (not persisted to backend until checkout)
+  const [priceOverrides, setPriceOverrides] = useState<Map<string, number>>(new Map());
+
+  // MARK: - Selected Products Mapping
+  const selectedProducts = useMemo(() => {
+    const map = new Map<number, GroupedProduct>();
+    
+    cartItems.forEach((item) => {
+      const product = allProducts.find(p => p._id === item.data.productId || p._id === item.data._id);
+      let productId = product?.id ?? 0;
+
+      if (productId === 0) {
+
+        if (item.data.id) productId = item.data.id;
+      }
+
+      if (!map.has(productId)) {
+        const productInMap = productsMap.get(productId);
+        const fallbackName = productInMap?.name || item.data.name || `${item.data.category?.name || ""} ${item.data.details || ""}`.trim() || "Unknown Product";
+
+        map.set(productId, {
+          productId: productId,
+          name: fallbackName,
+          items: [],
+        });
+      }
+
+      const group = map.get(productId)!;
+      // Apply price override if exists, otherwise use soldPrice from cart
+      const overriddenPrice = priceOverrides.get(item.unique_id) ?? item.data.soldPrice;
+      
+      group.items.push({
+        uniqueId: item.unique_id,
+        productId: productId,
+        name: item.data.name || group.name,
+        unitPrice: overriddenPrice,
+        imei: item.data.barcode,
+        productData: item.data,
+        expiredAt: item.expiredAt,
+      });
+    });
+
+    return map;
+  }, [cartItems, allProducts, productsMap, priceOverrides]);
 
   // Section: Payment and Tax State
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");
@@ -143,28 +223,64 @@ export default function Page() {
     isOpen: false,
     mode: "retail",
   });
+  
+  // State for session restoration
+  const [restoredPayments, setRestoredPayments] = useState<Payment[]>([]);
+  
   const [isLockedScreen, setIsLockedScreen] = useState(true);
   const confirmation = useConfirmation();
-  const router = useRouter();
   const POS_PIN = "1234";
 
-  // MARK: - NEW DERIVED STATE FOR STOCK (NO MORE useEffect, NO MORE useState for currentStock)
-  // คำนวณสต็อกที่พร้อมขายได้แบบ Real-time โดยไม่ต้องใช้ State แยก
-  // นี่คือการ "Derive State" ซึ่งเป็น Pattern ที่ดีและป้องกัน Loop ได้อย่างถาวร
+  // MARK: - Stock Logic
   const availableStock = useMemo(() => {
     const stockMap = new Map<number, number>();
-    // 1. เริ่มต้นด้วยสต็อกจริงจาก Server
-    allProducts.forEach((p) => stockMap.set(p.id, p.stock));
+    allProducts.forEach((p) => stockMap.set(p.id, p.quantity));
 
-    // 2. วนลูปในตะกร้าเพื่อหักลบจำนวนสินค้าที่ถูกเลือกไปแล้ว
     for (const group of selectedProducts.values()) {
       const currentServerStock = stockMap.get(group.productId) || 0;
       stockMap.set(group.productId, currentServerStock - group.items.length);
     }
     return stockMap;
-  }, [allProducts, selectedProducts]); // จะคำนวณใหม่ต่อเมื่อข้อมูลจาก Server หรือตะกร้าเปลี่ยนแปลง
+  }, [allProducts, selectedProducts]);
 
-  // Section: Handlers and Callbacks
+  // MARK: - Session Restoration & Sync
+  useEffect(() => {
+    if (isLockedScreen || isSessionLoading || !productsData) {
+      return;
+    }
+
+    // UPDATE: Safely check if paymentSession exists AND has transactions
+    if (paymentSession && paymentSession.transactions && paymentSession.transactions.length > 0) {
+      console.log("[POS Session] Active session found, mapping payments:", paymentSession);
+      
+      const mappedPayments: Payment[] = paymentSession.transactions.map((t) => {
+         const methodKey = t.method.toLowerCase() as PaymentMethod;
+         return {
+             method: methodKey,
+             amount: t.amount,
+             note: "บันทึกแล้ว",
+             details: {
+                 transactionId: t._id,
+                 status: t.status
+             }
+         };
+      });
+      
+      setRestoredPayments(mappedPayments);
+
+      if (!paymentModalInfo.isOpen && mappedPayments.length > 0) {
+          console.log("[POS Session] Auto-opening Payment Modal due to existing session");
+          setPaymentModalInfo({ isOpen: true, mode: "retail" });
+      }
+
+    } else {
+        // If session is empty/cleared, clear restored payments
+        setRestoredPayments([]);
+    }
+  }, [isLockedScreen, isSessionLoading, productsData, paymentSession, paymentModalInfo.isOpen]);
+
+
+  // MARK: - Callbacks & Handlers
   const setVatMode = useCallback((mode: VatCalculationMode) => setVatModeState(mode), []);
   const setWithholdingTaxPercent = useCallback((percent: number) => setWithholdingTaxPercentState(percent), []);
   const setWithholdingTaxVatMode = useCallback(
@@ -175,125 +291,199 @@ export default function Page() {
   const handleUnlockScreen = (pin: string) => {
     if (pin === POS_PIN) {
       setIsLockedScreen(false);
+      const hasPendingItems = cartItems.some(item => item.status === "pending");
+      
+      if (hasPendingItems || (paymentSession?.transactions?.length ?? 0) > 0) {
+        setPaymentModalInfo({ isOpen: true, mode: "retail" });
+      }
     }
   };
 
-  // ฟังก์ชันนี้จะจัดการแค่การอัปเดตตะกร้า (`selectedProducts`) เท่านั้น
-  // `availableStock` จะถูกคำนวณใหม่โดยอัตโนมัติจาก `useMemo` ด้านบน
   const addProductToCart = useCallback(
     (productToAdd: Product) => {
-      const stock = availableStock.get(productToAdd.id) || 0;
-      if (stock <= 0) {
-        console.warn(`สินค้า ID: ${productToAdd.id} หมดสต็อกแล้ว`);
-        return; // ป้องกันการเพิ่มสินค้าที่หมดสต็อก
+      if (productToAdd._id) {
+        addToCart({ productId: productToAdd._id, employeeId: currentIssuer.staffId }, {
+          onError: (error: unknown) => {
+            console.error("Failed to add to cart:", error);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const status = (error as any).response?.status;
+            let title = "เกิดข้อผิดพลาด";
+            let message = "ไม่สามารถเพิ่มสินค้าลงตะกร้าได้";
+
+            if (status === 409) {
+              title = "สินค้าหมด";
+              message = "สินค้าหมด (Out of stock)";
+            } else if (status === 404) {
+              title = "ไม่พบสินค้า";
+              message = "ไม่พบข้อมูลสินค้า (Product not found)";
+            }
+
+            confirmation.showConfirmation({
+              title,
+              message,
+              type: "error",
+              confirmText: "ตกลง",
+              showCancel: false,
+            });
+          },
+          onSuccess: () => {}
+        });
       }
-
-      setSelectedProducts((prevMap) => {
-        const newMap = new Map(prevMap);
-        const existingGroup = newMap.get(productToAdd.id);
-        const imei = productToAdd.barcode;
-        const newSubItem: SubItem = {
-          uniqueId: `${productToAdd.id}-${Date.now()}-${Math.random()}`,
-          productId: productToAdd.id,
-          name: productToAdd.name,
-          unitPrice: productToAdd.price,
-          imei: imei,
-        };
-
-        if (existingGroup) {
-          const updatedGroup: GroupedProduct = {
-            ...existingGroup,
-            items: [...existingGroup.items, newSubItem],
-          };
-          newMap.set(productToAdd.id, updatedGroup);
-        } else {
-          newMap.set(productToAdd.id, {
-            productId: productToAdd.id,
-            name: productToAdd.name,
-            items: [newSubItem],
-          });
-        }
-        return newMap;
-      });
     },
-    [availableStock],
-  ); // ขึ้นอยู่กับ `availableStock` เพื่อตรวจสอบว่าสามารถเพิ่มสินค้าได้หรือไม่
+    [addToCart, confirmation, currentIssuer.staffId],
+  );
 
-  // MARK: - SIMPLIFIED updateCart
-  // ฟังก์ชันนี้ก็จัดการแค่การอัปเดตตะกร้าเช่นกัน
-  const updateCart = (productId: number, updatedItems: SubItem[]) => {
-    setSelectedProducts((prevMap) => {
-      const newMap = new Map(prevMap);
-      if (updatedItems.length === 0) {
-        newMap.delete(productId);
-      } else {
-        const group = newMap.get(productId);
-        if (group) {
-          const updatedGroup: GroupedProduct = { ...group, items: updatedItems };
-          newMap.set(productId, updatedGroup);
-        }
-      }
-      return newMap;
-    });
-  };
-
-  const handleCashDrawerActivity = (activity: CashDrawerActivity) => {
-    const newTransaction: CashDrawerTransaction = {
-      ...activity,
-      id: `trans_${Date.now()}`,
-      timestamp: new Date(),
-    };
-    setCashDrawerTransactions((prev) => [...prev, newTransaction]);
-  };
-
-  const handlePaymentSuccess = (payments: Payment[], change: number) => {
-    console.log("ชำระเงินสำเร็จ กำลังอัปเดตสต็อกบนเซิร์ฟเวอร์...", { payments, change });
-
-    const updatePromises = Array.from(selectedProducts.values()).map((group) => {
-      const product = productsMap.get(group.productId);
-      if (!product) return Promise.resolve();
-
-      const quantitySold = group.items.length;
-      const newStockLevel = product.stock - quantitySold;
-      const finalStock = Math.max(0, newStockLevel);
-
-      const payload: UpdateProductPayload = {
-        quantity: finalStock,
-      };
-
-      return updateProductMutation.mutateAsync({ id: product.id, payload });
-    });
-
-    Promise.all(updatePromises)
-      .then(() => {
-        console.log("อัปเดตสต็อกทั้งหมดสำเร็จ");
-        // `onSettled` ใน `useUpdateProduct` จะสั่ง refetch ข้อมูลใหม่โดยอัตโนมัติ
-      })
-      .catch((error) => {
-        console.error("เกิดข้อผิดพลาดระหว่างการอัปเดตสต็อก:", error);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleRemoveFromCart = useCallback((uniqueId: string, _name: string) => {
+    removeFromCart(uniqueId, {
+      onSuccess: () => {
+        // Clear price override for removed item
+        setPriceOverrides(prev => {
+          const newMap = new Map(prev);
+          newMap.delete(uniqueId);
+          return newMap;
+        });
+      },
+      onError: () => {
         confirmation.showConfirmation({
           title: "เกิดข้อผิดพลาด",
-          message: "ไม่สามารถอัปเดตสต็อกสินค้าได้ กรุณาตรวจสอบและแก้ไขด้วยตนเอง",
+          message: "ไม่สามารถลบสินค้าออกจากตะกร้าได้",
           type: "error",
           confirmText: "ตกลง",
           showCancel: false,
         });
-      });
+      }
+    });
+  }, [removeFromCart, confirmation]);
+
+  const handleRenewItem = useCallback((uniqueId: string, productId: string) => {
+      renewCartItem(uniqueId, productId).catch(err => console.error(err));
+  }, [renewCartItem]);
+
+  const handleUpdateItem = useCallback((uniqueId: string, price: number) => {
+    // Store price locally without API call
+    setPriceOverrides(prev => {
+      const newMap = new Map(prev);
+      newMap.set(uniqueId, price);
+      return newMap;
+    });
+  }, []);
+
+  const handleAddByBarcode = useCallback((barcode: string) => {
+     addToCartByBarcode({ barcode, employeeId: currentIssuer.staffId }, {});
+  }, [addToCartByBarcode, currentIssuer.staffId]);
+
+
+  // MARK: - Cash & Payment Actions
+  const { mutateAsync: confirmPaymentAsync } = useConfirmPayment();
+
+  const handleCashDrawerActivity = (activity: CashDrawerActivity) => {
+    setCashDrawerTransactions((prev) => [...prev, {
+      ...activity,
+      id: `trans_${Date.now()}`,
+      timestamp: new Date(),
+    }]);
+  };
+
+  const handlePaymentSuccess = async (payments: Payment[], change: number) => {
+    console.log("ชำระเงินสำเร็จ:", { payments, change });
+    
+    // Calculate discount amount from applied discounts
+    // Note: This logic duplicates the calculation in useMemo, might be better to extract or use the memoized value if available/passed
+    // But for now, we can rely on what's in 'appliedDiscounts' and 'subtotal' (if accessible) or just recalculate.
+    // Since 'subtotal' is available in the component scope, we can use it.
+    
+    let discountAmount = 0;
+    // We need to calculate discount amount based on subtotal.
+    // However, 'subtotal' is memoized and available here.
+    allDiscounts.forEach((d) => {
+      discountAmount += d.type === "percentage" ? subtotal * (d.value / 100) : d.value;
+    });
+
+    try {
+        const payload: ConfirmPaymentPayload = {
+            sellerId: currentIssuer.staffId,
+            paymentDetails: payments.map(p => ({
+                method: p.method.toUpperCase(),
+                amount: p.amount,
+                refNo: (p.details as { refNo?: string })?.refNo || "",
+                timestamp: new Date().toISOString() // Or use p.details.timestamp if available
+            })),
+            customer: currentCustomer ? {
+                customerType: currentCustomer.level || "general", // Map appropriately
+                customerName: currentCustomer.name,
+                phoneNumber: currentCustomer.phone
+            } : undefined,
+            isTaxInvoice: isTaxInvoice,
+            discountAmount: discountAmount,
+            vatMode: vatMode,
+            // note: We might want to aggregate notes from payments or have a global note
+            // For now, let's join notes from payments if any
+            note: payments.map(p => p.note).filter(Boolean).join(", ")
+        };
+
+        const response = await confirmPaymentAsync(payload);
+        console.log("Payment Confirmed:", response);
+        
+        // Update Stock (Optimistic update was done, but now we have server confirmation)
+        // The server response 'sold_products' might be useful for receipt
+        
+        // We can pass the transaction ID or document ID to the success screen if needed
+        // But PaymentModal handles the success screen internally.
+        // If we need to print receipt with specific ID, we might need to store it in state
+        // or pass it to PaymentModal (but PaymentModal is already open and in success state).
+        
+        // For now, just log and let the flow continue.
+        
+    } catch (error) {
+        console.error("Confirm payment failed", error);
+        confirmation.showConfirmation({
+            title: "บันทึกการขายไม่สำเร็จ",
+            message: "เกิดข้อผิดพลาดในการบันทึกข้อมูลการขาย แต่การชำระเงินอาจจะสำเร็จแล้ว กรุณาตรวจสอบ",
+            type: "error",
+            confirmText: "ตกลง",
+            showCancel: false
+        });
+    }
+
+    // Legacy local update (can be removed if server handles it entirely, but keeping for safety/UI reflection)
+    const updatePromises = Array.from(selectedProducts.values()).map((group) => {
+      const product = productsMap.get(group.productId);
+      if (!product) return Promise.resolve();
+      const finalStock = Math.max(0, product.quantity - group.items.length);
+      return updateProductMutation.mutateAsync({ id: product.id, payload: { quantity: finalStock } });
+    });
+
+    Promise.all(updatePromises)
+      .then(() => console.log("Stock updated locally/remotely"))
+      .catch((err) => console.error("Stock update error", err));
   };
 
   const handleFinishTransaction = () => {
-    // แค่ล้าง State ของ UI เท่านั้น ไม่ต้องยุ่งกับสต็อกอีกต่อไป
-    setSelectedProducts(new Map());
     setAppliedDiscounts([]);
     setCurrentCustomer(null);
     handleClosePaymentModal();
   };
 
+  // MARK: - Checkout / Cancel / Save Handlers
+  
   const handleClosePaymentModal = () => setPaymentModalInfo({ isOpen: false, mode: "retail" });
 
-  const handleOpenRetailPayment = () => {
+  const handleOpenRetailPayment = async () => {
     if (selectedProducts.size > 0) {
-      setPaymentModalInfo({ isOpen: true, mode: "retail" });
+      try {
+        await checkout(currentIssuer.staffId);
+        setPaymentModalInfo({ isOpen: true, mode: "retail" });
+      } catch (error: unknown) {
+        console.error("Checkout validation failed:", error);
+        confirmation.showConfirmation({
+          title: "ไม่สามารถชำระเงินได้",
+          message: "เกิดข้อผิดพลาดในการเปิดเซสชั่นการขาย (Checkout Failed)",
+          type: "error",
+          confirmText: "ตกลง",
+          showCancel: false,
+        });
+      }
     } else {
       confirmation.showConfirmation({
         title: "ไม่สามารถชำระเงินได้",
@@ -305,23 +495,65 @@ export default function Page() {
     }
   };
 
+  // NEW: Handle Saving Payment Methods to API
+  const handleSavePaymentMethods = async (paymentsToSave: Payment[]) => {
+      try {
+          const payload = {
+              employeeId: currentIssuer.staffId,
+              payments: paymentsToSave.map((p) => ({
+                  method: p.method.toUpperCase() as PaymentMethodType, 
+                  amount: p.amount,
+                  tendered: 0
+              }))
+          };
+          await addPaymentAsync(payload);
+      } catch (error) {
+          console.error("Failed to save payments", error);
+          confirmation.showConfirmation({
+              title: "บันทึกไม่สำเร็จ",
+              message: "ไม่สามารถบันทึกรายการชำระเงินได้",
+              type: "error",
+              confirmText: "ตกลง",
+              showCancel: false
+          });
+          throw error; // Must throw so Modal knows it failed
+      }
+  };
+
+  // NEW: Handle Cancellation of Transaction
+  // This deletes session via API and allows the modal to close cleanly
+  const handleCancelPaymentProcess = async () => {
+     try {
+         await cancelCheckout(currentIssuer.staffId);
+         setRestoredPayments([]); // Clear local
+         console.log("Transaction cancelled, session deleted.");
+         // Important: We let the Modal call 'onClose' after this Promise resolves.
+     } catch (err) {
+         console.error("Failed to cancel checkout", err);
+         confirmation.showConfirmation({
+             title: "เกิดข้อผิดพลาด",
+             message: "ไม่สามารถยกเลิกรายการได้ กรุณาลองใหม่อีกครั้ง",
+             type: "error",
+             confirmText: "ตกลง",
+             showCancel: false
+         });
+         throw err; // Must throw so Modal stays open if cancellation fails
+     }
+  };
+
   const handleOpenCompanyPayment = () => setPaymentModalInfo({ isOpen: true, mode: "record-income" });
 
+  // MARK: - Calculations
   const priceAdjustmentDiscounts = useMemo(() => {
     const adjustments: Discount[] = [];
     for (const group of selectedProducts.values()) {
       const originalProduct = productsMap.get(group.productId);
       if (!originalProduct) continue;
-
       group.items.forEach((item) => {
-        const priceDifference = originalProduct.price - item.unitPrice;
+        const originalPrice = Number(originalProduct.prices?.level_1) || 0;
+        const priceDifference = originalPrice - item.unitPrice;
         if (priceDifference > 0) {
-          adjustments.push({
-            id: `adj-${item.uniqueId}`,
-            name: `ส่วนลด ${item.name}`,
-            type: "fixed",
-            value: priceDifference,
-          });
+          adjustments.push({ id: `adj-${item.uniqueId}`, name: `ส่วนลด ${item.name}`, type: "fixed", value: priceDifference });
         }
       });
     }
@@ -336,7 +568,8 @@ export default function Page() {
   const { subtotal, total, allCartItemsForSummary } = useMemo(() => {
     const allItems: SubItem[] = Array.from(selectedProducts.values()).flatMap((group) => group.items);
     const sub = allItems.reduce((sum, item) => {
-      const originalPrice = productsMap.get(item.productId)?.price ?? item.unitPrice;
+      const originalProduct = productsMap.get(item.productId);
+      const originalPrice = Number(originalProduct?.prices?.level_1) || item.unitPrice;
       return sum + originalPrice;
     }, 0);
 
@@ -348,7 +581,7 @@ export default function Page() {
 
     const summaryItems: SelectedItem[] = Array.from(selectedProducts.values()).map((group) => {
       const originalProduct = productsMap.get(group.productId);
-      const originalPrice = originalProduct?.price ?? 0;
+      const originalPrice = Number(originalProduct?.prices?.level_1) || 0;
       return {
         id: group.productId,
         name: group.name,
@@ -366,21 +599,9 @@ export default function Page() {
 
   const handleSendEReceipt = () => {
     if (currentCustomer) {
-      confirmation.showConfirmation({
-        title: "ส่ง E-Receipt",
-        message: `ส่ง E-Receipt ไปยัง: ${currentCustomer.name}\n(ฟีเจอร์นี้ยังอยู่ในขั้นตอนพัฒนา)`,
-        type: "info",
-        confirmText: "ตกลง",
-        showCancel: false,
-      });
+      console.log("Sending E-receipt to", currentCustomer.name);
     } else {
-      confirmation.showConfirmation({
-        title: "ไม่พบข้อมูลลูกค้า",
-        message: "กรุณาเลือกลูกค้าก่อนส่ง E-Receipt",
-        type: "warning",
-        confirmText: "ตกลง",
-        showCancel: false,
-      });
+        confirmation.showConfirmation({ title: "ไม่พบข้อมูล", message: "กรุณาเลือกลูกค้า", type: "warning", confirmText: "ตกลง", showCancel: false });
     }
   };
 
@@ -390,102 +611,75 @@ export default function Page() {
   };
 
   const handleAddNewCustomer = (newCustomer: Customer) => {
-    setCustomers((prevCustomers) => [newCustomer, ...prevCustomers]);
+    setCustomers((prev) => [newCustomer, ...prev]);
     setCurrentCustomer(newCustomer);
     setIsCustomerModalOpen(false);
   };
 
+  // UPDATE: Safe Total Calculation (Fixing the 'null' error)
+  const paymentModalTotal = paymentSession?.summary?.grandTotal ?? total;
+
   return (
     <div id="pos-page-container" className="flex h-screen flex-col bg-gray-900 dark:bg-black">
-      {/* Screen: Lock Screen */}
       <POSLockScreen isLocked={isLockedScreen} onUnlock={handleUnlockScreen} correctPin={POS_PIN} />
 
-      {/* Header: Top Bar */}
-      <div className="flex w-full shrink-0 items-center gap-2 bg-gray-900 p-2 pt-4">
-        <Button onClick={() => router.replace("/")} className="shrink-0">
-          <FaArrowLeftLong />
-          <span className="ml-2 hidden sm:inline">กลับสู่หน้า CP</span>
-        </Button>
+      <TopBarComponent 
+        activePosOperationMode={activePosOperationMode}
+        setActivePosOperationMode={setActivePosOperationMode}
+        currentIssuer={currentIssuer}
+        setCurrentIssuer={setCurrentIssuer}
+        allStaff={MOCK_STAFF}
+      />
 
-        <div className="flex h-full flex-1 items-center justify-end gap-1 sm:gap-2">
-          {/* Section: Operation Mode Toggle */}
-          <div className="flex h-full items-center gap-0.5 rounded-xl bg-gray-800 p-0.5 sm:gap-1 sm:p-1">
-            {operationModes.map((mode) => (
-              <button
-                key={mode.id}
-                onClick={() => setActivePosOperationMode(mode.id as PosOperationMode)}
-                className={`rounded-md px-2 py-1 text-xs font-semibold transition-colors duration-200 sm:px-4 sm:py-1.5 sm:text-sm ${
-                  activePosOperationMode === mode.id
-                    ? "bg-blue-500 text-white shadow"
-                    : "text-gray-300 hover:bg-gray-700/50"
-                }`}
-              >
-                <span className="hidden sm:inline">{mode.label}</span>
-                <span className="sm:hidden">
-                  {mode.id === "sell" ? "ขาย" : mode.id === "consignment" ? "ฝาก" : "ซ่อม"}
-                </span>
-              </button>
-            ))}
-          </div>
-          {/* Section: Seller Profile */}
-          <SellerProfile currentSeller={currentIssuer} allStaff={MOCK_STAFF} onSellerChange={setCurrentIssuer} />
-        </div>
-      </div>
-
-      {/* Content: Main Content Area */}
       <div className="flex flex-1 overflow-hidden pb-16 md:pb-0">
-        <div
-          id="pos-page-grid"
-          className="flex h-full flex-1 flex-col gap-2 overflow-y-auto p-2 md:grid md:grid-cols-24 md:overflow-hidden"
-        >
-          {/* Section: Product Catalog */}
-          <div
-            id="pos-selling-details-section"
-            className="no-scrollbar order-1 shrink-0 overflow-y-auto rounded-lg md:order-none md:col-span-12 md:shrink lg:col-span-16"
-          >
-            {/* MARK: - ProductCategory will handle data fetching internally */}
-            <SellingDetails onAddProduct={addProductToCart} availableStock={availableStock} />
+        <div id="pos-page-grid" className="flex h-full flex-1 flex-col gap-2 overflow-y-auto p-2 md:grid md:grid-cols-24 md:overflow-hidden">
+          
+          <div id="pos-selling-details-section" className="no-scrollbar order-1 shrink-0 overflow-y-auto rounded-lg md:order-none md:col-span-12 md:shrink lg:col-span-16">
+            <ProductCategory
+              onAddProduct={addProductToCart}
+              availableStock={availableStock}
+              isAdding={isAdding}
+              addingProductId={addingProductId}
+            />
           </div>
-          {/* Section: Cart and Actions */}
-          <div
-            id="pos-selling-action-section"
-            className="order-2 flex w-full shrink-0 flex-col gap-2 overflow-hidden md:order-none md:col-span-12 md:flex-1 md:shrink lg:col-span-8"
-          >
+
+          <div id="pos-selling-action-section" className="order-2 flex w-full shrink-0 flex-col gap-2 overflow-hidden md:order-none md:col-span-12 md:flex-1 md:shrink lg:col-span-8">
             <SellingAction
               selectedProductsMap={selectedProducts}
-              updateCart={updateCart}
+              updateCart={() => {}}
               currentCustomer={currentCustomer}
               appliedDiscounts={appliedDiscounts}
               priceAdjustmentDiscounts={priceAdjustmentDiscounts}
               onDiscountsChange={setAppliedDiscounts}
               onOpenRetailPayment={handleOpenRetailPayment}
               productsMap={productsMap}
+              // Safe active session check
+              hasActiveSession={(paymentSession?.transactions?.length ?? 0) > 0}
+              onRemoveItem={handleRemoveFromCart}
+              onRenewItem={handleRenewItem}
+              onUpdateItem={handleUpdateItem}
+              onAddByBarcode={handleAddByBarcode}
+              isLoading={isCartLoading || isRemoving || isAdding || isRenewing || isUpdating || isAddingByBarcode || isCheckingOut || isSessionLoading || isCancelingCheckout || isAddingPayment}
             />
           </div>
         </div>
 
-        {/* Sidebar: Desktop Sidebar Menu */}
         <div className="hidden md:block">
           <SidebarMenu
-            onCustomerSelect={setCurrentCustomer}
-            currentCustomer={currentCustomer}
-            appliedDiscounts={appliedDiscounts}
-            onDiscountsChange={setAppliedDiscounts}
-            onCashDrawerActivity={handleCashDrawerActivity}
-            onLockScreen={() => setIsLockedScreen(true)}
-            onOpenCompanyPayment={handleOpenCompanyPayment}
             onOpenCustomerModal={() => setIsCustomerModalOpen(true)}
+            onOpenDiscountModal={() => setIsDiscountModalOpen(true)}
+            onOpenCashDrawerModal={() => setIsCashDrawerModalOpen(true)}
             onOpenSummaryModal={() => setIsSummaryModalOpen(true)}
+            onOpenCompanyPayment={handleOpenCompanyPayment}
+            onLockScreen={() => setIsLockedScreen(true)}
             onClearCart={() => {
               confirmation.showConfirmation({
                 title: "ล้างข้อมูลการขาย",
-                message: "คุณต้องการล้างข้อมูลการขายทั้งหมดหรือไม่? (สินค้า, ลูกค้า, ส่วนลด)",
+                message: "คุณต้องการล้างข้อมูลการขายทั้งหมดหรือไม่?",
                 type: "warning",
                 confirmText: "ยืนยัน",
-                cancelText: "ยกเลิก",
                 showCancel: true,
                 onConfirm: () => {
-                  setSelectedProducts(new Map());
                   setCurrentCustomer(null);
                   setAppliedDiscounts([]);
                 },
@@ -495,30 +689,44 @@ export default function Page() {
         </div>
       </div>
 
-      {/* Modal: Payment */}
+      {/* --- MODALS --- */}
+      
       <PaymentModal
         isOpen={paymentModalInfo.isOpen}
         mode={paymentModalInfo.mode}
         onClose={handleClosePaymentModal}
-        totalToPay={total}
+        
+        // Saving Handler
+        onSavePaymentMethods={handleSavePaymentMethods}
+        isSaving={isAddingPayment}
+        
+        // Cancellation Handler
+        onCancelTransaction={handleCancelPaymentProcess}
+        
+        // Totals (Using safe value)
+        totalToPay={paymentModalTotal}
+        
         onPaymentSuccess={handlePaymentSuccess}
         onFinishTransaction={handleFinishTransaction}
         onPrintShortReceipt={handlePrintShortReceipt}
         onPrintFullReceipt={handlePrintFullReceipt}
         onSendEReceipt={handleSendEReceipt}
+        
         vatMode={vatMode}
         setVatMode={setVatMode}
         withholdingTaxPercent={withholdingTaxPercent}
         setWithholdingTaxPercent={setWithholdingTaxPercent}
         withholdingTaxVatMode={withholdingTaxVatMode}
         setWithholdingTaxVatMode={setWithholdingTaxVatMode}
+        
         paymentMethod={paymentMethod}
         setPaymentMethod={setPaymentMethod}
         isTaxInvoice={isTaxInvoice}
         setIsTaxInvoice={setIsTaxInvoice}
+        
+        initialPayments={restoredPayments} 
       />
 
-      {/* Modal: Summary/Receipt */}
       <SummaryModal
         isOpen={isSummaryModalOpen}
         onClose={() => setIsSummaryModalOpen(false)}
@@ -541,7 +749,6 @@ export default function Page() {
         setIsTaxInvoice={setIsTaxInvoice}
       />
 
-      {/* Modal: Customer Selection */}
       <CustomerModal
         isOpen={isCustomerModalOpen}
         onClose={() => setIsCustomerModalOpen(false)}
@@ -550,7 +757,6 @@ export default function Page() {
         onAddNewCustomer={handleAddNewCustomer}
       />
 
-      {/* Modal: Confirmation Dialog */}
       <ConfirmationModal
         isOpen={confirmation.isOpen}
         onClose={confirmation.hideConfirmation}
@@ -563,7 +769,6 @@ export default function Page() {
         showCancel={confirmation.config.showCancel}
       />
 
-      {/* Modal: Discount */}
       <DiscountModal
         isOpen={isDiscountModalOpen}
         onClose={() => setIsDiscountModalOpen(false)}
@@ -571,53 +776,19 @@ export default function Page() {
         onApplyDiscounts={setAppliedDiscounts}
       />
 
-      {/* Modal: Cash Drawer */}
       <CashDrawerModal
         isOpen={isCashDrawerModalOpen}
         onClose={() => setIsCashDrawerModalOpen(false)}
         onConfirm={handleCashDrawerActivity}
       />
 
-      {/* Footer: Mobile Action Buttons */}
-      <div className="fixed right-0 bottom-0 left-0 z-50 border-t border-gray-700 bg-gray-900 md:hidden">
-        <div className="grid grid-cols-5 gap-1 p-2">
-          <button
-            onClick={() => setIsCustomerModalOpen(true)}
-            className="flex flex-col items-center justify-center rounded-lg px-1 py-2 transition-colors hover:bg-gray-800"
-          >
-            <FaUser size={20} className="mb-1 text-white" />
-            <span className="text-[10px] text-white">สมาชิก</span>
-          </button>
-          <button
-            onClick={() => setIsDiscountModalOpen(true)}
-            className="flex flex-col items-center justify-center rounded-lg px-1 py-2 transition-colors hover:bg-gray-800"
-          >
-            <FaTag size={20} className="mb-1 text-white" />
-            <span className="text-[10px] text-white">ส่วนลด</span>
-          </button>
-          <button
-            onClick={() => setIsCashDrawerModalOpen(true)}
-            className="flex flex-col items-center justify-center rounded-lg px-1 py-2 transition-colors hover:bg-gray-800"
-          >
-            <FaCashRegister size={20} className="mb-1 text-white" />
-            <span className="text-[10px] text-white">ลิ้นชัก</span>
-          </button>
-          <button
-            onClick={() => setIsSummaryModalOpen(true)}
-            className="flex flex-col items-center justify-center rounded-lg px-1 py-2 transition-colors hover:bg-gray-800"
-          >
-            <FaPrint size={20} className="mb-1 text-white" />
-            <span className="text-[10px] text-white">พิมพ์</span>
-          </button>
-          <button
-            onClick={handleOpenRetailPayment}
-            className="flex flex-col items-center justify-center rounded-lg bg-blue-600 px-1 py-2 transition-colors hover:bg-blue-700"
-          >
-            <FaBoxArchive size={20} className="mb-1 text-white" />
-            <span className="text-[10px] font-semibold text-white">ชำระ</span>
-          </button>
-        </div>
-      </div>
+      <FooterComponent
+        onOpenCustomerModal={() => setIsCustomerModalOpen(true)}
+        onOpenDiscountModal={() => setIsDiscountModalOpen(true)}
+        onOpenCashDrawerModal={() => setIsCashDrawerModalOpen(true)}
+        onOpenSummaryModal={() => setIsSummaryModalOpen(true)}
+        onOpenRetailPayment={handleOpenRetailPayment}
+      />
     </div>
   );
 }
