@@ -17,9 +17,11 @@ interface SidebarMenuProps {
   onOpenDiscountModal: () => void;
   onOpenCashDrawerModal: () => void;
   onOpenSummaryModal: () => void;
+
   onOpenCompanyPayment: () => void;
   onClearCart: () => void;
   onLockScreen: () => void;
+  onOpenHistoryModal: () => void; // ADD: Prop for opening history modal
 }
 
 export default function SidebarMenu({
@@ -30,6 +32,7 @@ export default function SidebarMenu({
   onOpenCompanyPayment,
   onClearCart,
   onLockScreen,
+  onOpenHistoryModal, // ADD: Destructure prop
 }: SidebarMenuProps) {
   // logic ทั้งหมดถูกย้ายไปจัดการที่ Page.tsx ผ่าน Props
 
@@ -45,6 +48,15 @@ export default function SidebarMenu({
       >
         <FaUser size={24} color="white" />
         <span className="mt-1 text-xs text-white">สมาชิก</span>
+      </button>
+
+      {/* ปุ่มประวัติการขาย (NEW) */}
+      <button
+        onClick={onOpenHistoryModal}
+        className="flex h-20 w-full flex-col items-center justify-center rounded-md hover:bg-gray-700"
+      >
+        <FaCashRegister size={24} color="white" />
+        <span className="mt-1 text-xs text-white">ประวัติ</span>
       </button>
 
       {/* ปุ่มส่วนลด - เรียก prop แทนการ set local state */}

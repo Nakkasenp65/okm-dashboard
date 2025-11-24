@@ -42,34 +42,13 @@ export default function MixedPaymentExecution({
   const [editAmount, setEditAmount] = useState(0);
   const confirmation = useConfirmation();
   
-  // Ref for scroll container and card refs
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // Find the first pending payment (one that isn't fully paid/confirmed yet)
-  // In a real scenario, 'Payment' might need a 'status' field. 
-  // For now, we'll assume the parent manages 'payments' and we just process them in order.
-  // Or we can track local state of which index is "current".
-  // Let's assume the parent passes 'payments' where some might be marked as 'success'.
-  // If the user wants to "confirm" a payment, we likely need to know which one.
-  
-  // Since the user said "payment that has no tendered field in the paymentSession fetched",
-  // we might need to rely on the prop `payments` having some status. 
-  // However, `Payment` interface in PaymentModal doesn't have status yet.
-  // Let's assume for this UI that we process them sequentially 0..N.
-  // But wait, the user said "fetched from paymentSession". 
-  // If we are in "awaiting" state, `payments` passed here should be the merged state of 
-  // what's in the session (saved) and what we are working on.
-  
-  // For this implementation, let's track the "active" index locally or derive it.
-  // If we want to be robust, we should look for the first one that is NOT "SUCCESS".
-  // Let's assume the `payments` prop contains the status in `details`.
-  
+  // Find the first pending payment to scroll to
   const activeIndex = useMemo(() => {
     return payments.findIndex(p => (p.details as { status?: string })?.status !== "SUCCESS");
   }, [payments]);
-
-
 
   // Auto-scroll to center the active card
   useEffect(() => {
@@ -78,16 +57,10 @@ export default function MixedPaymentExecution({
       const activeCard = cardRefs.current[activeIndex];
       
       if (activeCard) {
-        // Use getBoundingClientRect to handle complex positioning/padding
         const containerRect = container.getBoundingClientRect();
         const cardRect = activeCard.getBoundingClientRect();
-        
-        // Calculate the center of the card relative to the viewport
         const cardCenter = cardRect.left + cardRect.width / 2;
-        // Calculate the center of the container relative to the viewport
         const containerCenter = containerRect.left + containerRect.width / 2;
-        
-        // The amount we need to scroll is the difference between the two centers
         const offset = cardCenter - containerCenter;
         
         container.scrollTo({
@@ -98,12 +71,8 @@ export default function MixedPaymentExecution({
     }
   }, [activeIndex]);
   
-  const currentPayment = activeIndex !== -1 ? payments[activeIndex] : null;
-
-
-  const handleConfirmCurrent = async () => {
-    if (!currentPayment) return;
-    await onConfirmPayment(activeIndex, currentPayment.amount);
+  const handleConfirmClick = async (index: number, amount: number) => {
+    await onConfirmPayment(index, amount);
   };
 
   const handleCancelClick = () => {
@@ -137,7 +106,30 @@ export default function MixedPaymentExecution({
     setEditingIndex(null);
   };
 
+  const handleDeleteClick = (index: number) => {
+    confirmation.showConfirmation({
+      title: "ลบรายการ?",
+      message: "คุณต้องการลบรายการชำระเงินนี้ใช่หรือไม่?",
+      type: "warning",
+      confirmText: "ลบ",
+      cancelText: "ยกเลิก",
+      showCancel: true,
+      onConfirm: () => {
+        onRemovePayment(index);
+      },
+    });
+  };
 
+  console.log("payments", payments);
+
+  // Calculate totals
+  const totalPaid = useMemo(() => {
+    return payments
+      .filter(p => (p.details as { status?: string })?.status === "SUCCESS")
+      .reduce((sum, p) => sum + p.amount, 0);
+  }, [payments]);
+
+  const remainingAmount = Math.max(0, totalAmount - totalPaid);
 
   return (
     <div className="relative flex h-screen w-full flex-col overflow-hidden bg-gray-50 md:h-[820px] md:rounded-2xl dark:bg-gray-900">
@@ -145,8 +137,18 @@ export default function MixedPaymentExecution({
       {/* --- Header / Top Bar --- */}
       <div className="flex items-center justify-between px-6 py-4">
         <div className="flex flex-col">
-            <h2 className="text-5xl font-bold text-gray-800 dark:text-white">แบ่งชำระเงิน</h2>
-            <span className="text-3xl mt-2 text-gray-500 dark:text-gray-400">ยอดรวม: ฿{totalAmount.toFixed(2)}</span>
+            <h2 className="text-4xl font-bold text-gray-800 dark:text-white">แบ่งชำระเงิน</h2>
+            <div className="mt-2 flex gap-4 text-lg">
+                <span className="font-semibold text-gray-500 dark:text-gray-400">
+                    ยอดรวม: <span className="text-gray-800 dark:text-white">฿{totalAmount.toFixed(2)}</span>
+                </span>
+                <span className="font-semibold text-green-600 dark:text-green-400">
+                    ชำระแล้ว: ฿{totalPaid.toFixed(2)}
+                </span>
+                <span className="font-semibold text-blue-600 dark:text-blue-400">
+                    คงเหลือ: ฿{remainingAmount.toFixed(2)}
+                </span>
+            </div>
         </div>
         <Button variant="outline" onClick={() => setIsViewAllOpen(true)} className="text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20">
             <FaList className="mr-2" /> ดูรายการทั้งหมด
@@ -155,10 +157,10 @@ export default function MixedPaymentExecution({
 
       {/* --- Main Content: Horizontal Card Layout --- */}
       <div ref={scrollContainerRef} className="flex flex-1 items-center p-4 overflow-x-auto no-scrollbar">
-        <AnimatePresence mode="wait">
-          {currentPayment ? (
+        <AnimatePresence mode="popLayout">
+          {payments.length > 0 ? (
             <div 
-              className="flex gap-4"
+              className="flex gap-6"
               style={{ 
                 paddingLeft: 'calc(50% - 160px)', 
                 paddingRight: 'calc(50% - 160px)',
@@ -167,9 +169,8 @@ export default function MixedPaymentExecution({
             >
               {payments.map((payment, idx) => {
                 const isPaid = (payment.details as { status?: string })?.status === "SUCCESS";
-                const isCurrent = idx === activeIndex;
-                const isPending = !isPaid && !isCurrent;
                 const PaymentIcon = METHOD_ICONS[payment.method] || FaList;
+                const isEditing = editingIndex === idx;
 
                 return (
                   <motion.div
@@ -180,81 +181,128 @@ export default function MixedPaymentExecution({
                     initial={{ x: 300, opacity: 0 }}
                     animate={{ 
                       x: 0, 
-                      opacity: isPending ? 0.4 : 1,
-                      scale: isCurrent ? 1 : 0.95
+                      opacity: 1, // Full opacity for all
+                      scale: isEditing ? 1.05 : 1
                     }}
+                    exit={{ scale: 0, opacity: 0 }}
                     transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                    className={`flex flex-col items-center rounded-3xl p-8 shadow-2xl transition-all min-w-[320px] ${
+                    className={`flex flex-col items-center rounded-3xl p-8 shadow-2xl transition-all min-w-[340px] relative ${
                       isPaid 
                         ? "bg-green-50 border-2 border-green-200 dark:bg-green-900/20 dark:border-green-900" 
-                        : isPending
-                        ? "bg-gray-100 dark:bg-gray-800/50"
-                        : "bg-white dark:bg-gray-800"
+                        : "bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700"
                     }`}
                   >
-                    {/* Icon */}
-                    <div className={`mb-6 flex h-24 w-24 items-center justify-center rounded-full ${
-                      isPaid 
-                        ? "bg-green-100 dark:bg-green-900/30" 
-                        : "bg-blue-50 dark:bg-blue-900/20"
-                    }`}>
-                      {isPaid ? (
-                        <FaCheckCircle className="h-12 w-12 text-green-600 dark:text-green-400" />
-                      ) : (
-                        <PaymentIcon className="h-12 w-12 text-blue-600 dark:text-blue-400" />
-                      )}
-                    </div>
-                    
-                    {/* Payment Method Label */}
-                    <h3 className="mb-2 text-2xl font-bold text-gray-800 dark:text-white">
-                      {PAYMENT_METHOD_LABELS[payment.method as keyof typeof PAYMENT_METHOD_LABELS] || payment.method}
-                    </h3>
-                    
-                    {/* Amount */}
-                    <div className={`mb-8 text-4xl font-extrabold ${
-                      isPaid 
-                        ? "text-green-600 dark:text-green-400" 
-                        : "text-blue-600 dark:text-blue-400"
-                    }`}>
-                      ฿{payment.amount.toFixed(2)}
-                    </div>
+                    {/* Edit Mode Overlay */}
+                    {isEditing ? (
+                       <div className="flex w-full flex-col gap-4">
+                          <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">แก้ไขรายการ</h3>
+                          
+                          <div>
+                            <label className="mb-1 block text-sm font-semibold text-gray-600 dark:text-gray-400">วิธีชำระเงิน</label>
+                            <div className="flex items-center gap-2 rounded-lg bg-gray-100 p-3 dark:bg-gray-700">
+                               <PaymentIcon className="text-gray-500" />
+                               <span className="font-medium">{PAYMENT_METHOD_LABELS[payment.method as keyof typeof PAYMENT_METHOD_LABELS] || payment.method}</span>
+                            </div>
+                          </div>
 
-                    {/* Note */}
-                    {payment.note && (
-                      <div className="mb-6 rounded-lg bg-gray-100 px-4 py-2 text-sm text-gray-600 dark:bg-gray-700 dark:text-gray-300">
-                        Note: {payment.note}
-                      </div>
-                    )}
+                          <div>
+                            <label className="mb-1 block text-sm font-semibold text-gray-600 dark:text-gray-400">ยอดเงิน (฿)</label>
+                            <input 
+                                type="number"
+                                value={editAmount}
+                                onChange={(e) => setEditAmount(Number(e.target.value))}
+                                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-lg font-bold text-blue-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-blue-400"
+                                autoFocus
+                            />
+                          </div>
 
-                    {/* Status/Action */}
-                    {isPaid ? (
-                      <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                        <FaCheckCircle />
-                        <span className="font-semibold">ชำระแล้ว</span>
-                      </div>
-                    ) : isCurrent ? (
-                      <>
-                        <Button 
-                          onClick={handleConfirmCurrent}
-                          className="h-14 w-full rounded-xl text-lg font-bold shadow-lg shadow-blue-500/30 transition-transform hover:scale-105 active:scale-95"
-                        >
-                          ยืนยันการรับเงิน
-                        </Button>
-                        <div className="mt-4 text-xs text-gray-400">
-                          รายการที่ {idx + 1} จาก {payments.length}
-                        </div>
-                      </>
+                          <div className="mt-4 flex gap-3">
+                            <Button onClick={handleSaveEdit} className="flex-1 bg-blue-600 text-white hover:bg-blue-700">
+                                บันทึก
+                            </Button>
+                            <Button variant="outline" onClick={handleCancelEdit} className="flex-1">
+                                ยกเลิก
+                            </Button>
+                          </div>
+                       </div>
                     ) : (
-                      <div className="text-sm text-gray-400 dark:text-gray-500">
-                        รอชำระ
-                      </div>
+                      <>
+                        {/* Action Buttons for Pending Items */}
+                        {!isPaid && (
+                          <div className="absolute right-4 top-4 flex gap-2">
+                            <button 
+                              onClick={() => handleStartEdit(idx, payment.method, payment.amount)}
+                              className="rounded-full bg-gray-100 p-2 text-gray-600 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-blue-900/30 dark:hover:text-blue-400"
+                              title="แก้ไข"
+                            >
+                              <FaEdit size={16} />
+                            </button>
+                            <button 
+                              onClick={() => handleDeleteClick(idx)}
+                              className="rounded-full bg-gray-100 p-2 text-gray-600 transition-colors hover:bg-red-50 hover:text-red-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-red-900/30 dark:hover:text-red-400"
+                              title="ลบ"
+                            >
+                              <FaTrash size={16} />
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Icon */}
+                        <div className={`mb-6 flex h-24 w-24 items-center justify-center rounded-full ${
+                          isPaid 
+                            ? "bg-green-100 dark:bg-green-900/30" 
+                            : "bg-blue-50 dark:bg-blue-900/20"
+                        }`}>
+                          {isPaid ? (
+                            <FaCheckCircle className="h-12 w-12 text-green-600 dark:text-green-400" />
+                          ) : (
+                            <PaymentIcon className="h-12 w-12 text-blue-600 dark:text-blue-400" />
+                          )}
+                        </div>
+                        
+                        {/* Payment Method Label */}
+                        <h3 className="mb-2 text-2xl font-bold text-gray-800 dark:text-white">
+                          {PAYMENT_METHOD_LABELS[payment.method as keyof typeof PAYMENT_METHOD_LABELS] || payment.method}
+                        </h3>
+                        
+                        {/* Amount */}
+                        <div className={`mb-8 text-4xl font-extrabold ${
+                          isPaid 
+                            ? "text-green-600 dark:text-green-400" 
+                            : "text-blue-600 dark:text-blue-400"
+                        }`}>
+                          ฿{payment.amount.toFixed(2)}
+                        </div>
+
+                        {/* Note */}
+                        {payment.note && (
+                          <div className="mb-6 rounded-lg bg-gray-100 px-4 py-2 text-sm text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                            Note: {payment.note}
+                          </div>
+                        )}
+
+                        {/* Status/Action */}
+                        {isPaid ? (
+                          <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                            <FaCheckCircle />
+                            <span className="font-semibold">ชำระแล้ว</span>
+                          </div>
+                        ) : (
+                          <Button 
+                            onClick={() => handleConfirmClick(idx, payment.amount)}
+                            className="h-14 w-full rounded-xl text-lg font-bold shadow-lg shadow-blue-500/30 transition-transform hover:scale-105 active:scale-95 bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            ยืนยันการรับเงิน
+                          </Button>
+                        )}
+                      </>
                     )}
                   </motion.div>
                 );
               })}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center text-center">
+            <div className="flex flex-col items-center justify-center text-center w-full">
               <div className="mb-4 rounded-full bg-green-100 p-6 dark:bg-green-900/30">
                 <FaCheckCircle className="h-16 w-16 text-green-600 dark:text-green-400" />
               </div>
@@ -319,15 +367,10 @@ export default function MixedPaymentExecution({
                                             {/* Edit Mode */}
                                             <div>
                                                 <label className="mb-1 block text-xs font-semibold text-gray-600 dark:text-gray-400">วิธีชำระเงิน</label>
-                                                <select 
-                                                    value={editMethod}
-                                                    onChange={(e) => setEditMethod(e.target.value)}
-                                                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                                                >
-                                                    {Object.entries(PAYMENT_METHOD_LABELS).map(([key, label]) => (
-                                                        <option key={key} value={key}>{label}</option>
-                                                    ))}
-                                                </select>
+                                                <div className="flex items-center gap-2 rounded-lg bg-gray-100 p-2 dark:bg-gray-700">
+                                                   <MethodIcon className="text-gray-500" />
+                                                   <span className="text-sm font-medium">{PAYMENT_METHOD_LABELS[p.method as keyof typeof PAYMENT_METHOD_LABELS] || p.method}</span>
+                                                </div>
                                             </div>
                                             <div>
                                                 <label className="mb-1 block text-xs font-semibold text-gray-600 dark:text-gray-400">ยอดเงิน (฿)</label>
@@ -383,7 +426,7 @@ export default function MixedPaymentExecution({
                                                             <FaEdit size={14} />
                                                         </button>
                                                         <button 
-                                                            onClick={() => onRemovePayment(idx)}
+                                                            onClick={() => handleDeleteClick(idx)}
                                                             className="rounded p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
                                                         >
                                                             <FaTrash size={14} />

@@ -130,3 +130,62 @@ export interface OrderPayload {
   currentPoint?: number; // แต้มสะสมของสมาชิก
   createdAt: string; // วันที่ซื้อขาย
 }
+
+// MARK: - POS History Types
+export interface PosHistoryProduct {
+  productId: string;
+  name: string;
+  name_md5?: string;
+  barcode: string;
+  barcode_md5: string;
+  stockPrice: number;
+  soldPrice: number;
+  discountAmount: number;
+  details?: string;
+}
+
+export interface PosHistoryPayment {
+  method: string;
+  amount: number;
+  refNo: string;
+  timestamp: string;
+}
+
+export interface PosHistoryItem {
+  _id: string;
+  sellerId: string;
+  customer: {
+    customerId: string | null;
+    customerType: string;
+    isMember: boolean;
+    customerName: string;
+    customerAddress: string;
+    customerPhone: string;
+  };
+  product: PosHistoryProduct[];
+  paymentDetails: PosHistoryPayment[];
+  note: string;
+  discountId: string | null;
+  documentId: string;
+  taxDocumentId: string | null;
+  isTaxInvoice: boolean;
+  vatMode: string;
+  discountAmount: number;
+  totalAmount: number;
+  receivedPoint: number;
+  currentPoint: number;
+  createdAt: string;
+}
+
+export interface Pagination {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface PosHistoryResponse {
+  message: string;
+  data: PosHistoryItem[];
+  pagination: Pagination;
+}

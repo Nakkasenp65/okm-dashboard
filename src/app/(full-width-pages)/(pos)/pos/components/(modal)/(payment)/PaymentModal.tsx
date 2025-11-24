@@ -38,6 +38,7 @@ interface PaymentModalProps {
   // Action Handlers (Async)
   onCancelTransaction: () => Promise<void>; 
   onSavePaymentMethods: (payments: Payment[]) => Promise<void>;
+  onConfirmPayment: (payment: Payment, amount: number) => Promise<void>; // New prop
   isSaving?: boolean; 
 
   totalToPay: number;
@@ -138,6 +139,7 @@ export default function PaymentModal({
   
   onCancelTransaction,
   onSavePaymentMethods,
+  onConfirmPayment, // Destructure new prop
   isSaving = false,
 
   totalToPay,
@@ -245,12 +247,15 @@ export default function PaymentModal({
   useEffect(() => {
     if (isOpen && initialPayments.length > 0) {
         setMixedPayments(initialPayments);
-        // If we are in awaiting mode, we might want to update selectedPaymentMethods too
-        // but usually selectedPaymentMethods is set by the save action.
-        // However, if we reload the page and open modal, we want to be in correct state.
-        // For now, just syncing mixedPayments is enough for the "selecting" view.
+        // Also update selectedPaymentMethods if we are in mixed mode or restoring
+        if (paymentMethod === 'mixed' || paymentStep === 'awaiting') {
+            setSelectedPaymentMethods(initialPayments);
+            if (paymentStep === 'selecting') {
+                 setPaymentStep('awaiting');
+            }
+        }
     }
-  }, [initialPayments, isOpen]);
+  }, [isOpen, initialPayments, paymentMethod, paymentStep]);
 
   // --- Handlers ---
 
@@ -423,23 +428,33 @@ ${paymentSummary}
                     setIsCanceling(false);
                 }
             }}
-            onConfirmPayment={async (index: number) => {
-                // 1. Update local state to mark as success
-                // In real app, might call API to confirm specific transaction
-                const updated = [...selectedPaymentMethods];
-                updated[index] = {
-                    ...updated[index],
-                    details: { ...updated[index].details, status: "SUCCESS" }
-                };
-                setSelectedPaymentMethods(updated);
+            onConfirmPayment={async (index: number, amount: number) => {
+                const payment = selectedPaymentMethods[index];
+                if (!payment) return;
 
-                // 2. Check if all complete
-                const allComplete = updated.every(p => (p.details as { status?: string })?.status === "SUCCESS");
-                if (allComplete) {
-                    // Wait a bit for animation then finish
-                    setTimeout(() => {
-                        onPaymentSuccess(updated, 0); // No change for mixed usually, or calculate
-                    }, 500);
+                try {
+                    // Call the prop to confirm via API
+                    await onConfirmPayment(payment, amount);
+
+                    // Update local state to mark as success
+                    const updated = [...selectedPaymentMethods];
+                    updated[index] = {
+                        ...updated[index],
+                        amount: amount, // Update amount in case it was edited
+                        details: { ...updated[index].details, status: "SUCCESS" }
+                    };
+                    setSelectedPaymentMethods(updated);
+
+                    // Check if all complete
+                    const allComplete = updated.every(p => (p.details as { status?: string })?.status === "SUCCESS");
+                    if (allComplete) {
+                        setTimeout(() => {
+                            onPaymentSuccess(updated, 0); 
+                        }, 500);
+                    }
+                } catch (error) {
+                    console.error("Failed to confirm payment", error);
+                    // Error handling (toast etc) should be in parent or here
                 }
             }}
             onUpdatePayment={(index: number, newAmount: number) => {
@@ -449,8 +464,8 @@ ${paymentSummary}
             }}
 
             onRemovePayment={(index: number) => {
-                // Implement remove logic
-                // If removing, might need to go back to selection if empty?
+                // For now, just remove from local list.
+                // If API support is needed, we should add onRemovePayment prop.
                 const updated = selectedPaymentMethods.filter((_, i) => i !== index);
                 setSelectedPaymentMethods(updated);
                 if (updated.length === 0) {

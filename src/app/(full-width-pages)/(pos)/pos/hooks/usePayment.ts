@@ -17,6 +17,8 @@ export interface PaymentRequestItem {
   method: string | PaymentMethodType;
   amount: number;
   transactionId?: string; // If present, indicates an update
+  _id?: string; // Alias for transactionId for confirmation
+  tendered?: number;
 }
 
 /**

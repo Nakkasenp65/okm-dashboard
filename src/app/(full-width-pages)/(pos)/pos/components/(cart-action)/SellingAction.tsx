@@ -90,28 +90,47 @@ export default function SellingAction({
         />
       )}
 
-      {/* Customer Information */}
-      {currentCustomer && (
-        <div className="mb-4 flex items-center gap-3 rounded-lg border border-purple-200 bg-purple-50 p-3 dark:border-purple-800 dark:bg-purple-950/30">
-          <div
-            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-xl shadow-md ${currentCustomer.color}`}
-          >
-            {currentCustomer.emoji}
-          </div>
-          <div>
-            <p className="flex items-center gap-2 text-xs text-purple-700 dark:text-purple-300">
-              ลูกค้าปัจจุบัน {currentCustomer.memberId}{" "}
-              <span className="rounded-xl border bg-purple-700 p-0.5 px-2 text-[10px] text-white">
-                {currentCustomer.level}
-              </span>
-            </p>
-            <p className="font-semibold text-purple-900 dark:text-purple-100">{currentCustomer.name}</p>
-            {currentCustomer.customerPoint !== undefined && (
-              <p className="text-xs text-purple-700 dark:text-purple-300">คะแนนสะสม: {currentCustomer.customerPoint}</p>
-            )}
-          </div>
+      {/* Customer Information - Always Visible */}
+      <div className={`mb-3 flex items-center gap-2 rounded-lg border p-2 transition-all ${
+        currentCustomer 
+          ? 'border-purple-200 bg-purple-50 dark:border-purple-800 dark:bg-purple-950/30' 
+          : 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/50'
+      }`}>
+        <div
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-base shadow-sm ${
+            currentCustomer 
+              ? `bg-gradient-to-br ${currentCustomer.color}` 
+              : 'bg-gradient-to-br from-gray-400 to-gray-500 text-white'
+          }`}
+        >
+          {currentCustomer ? currentCustomer.emoji : '👤'}
         </div>
-      )}
+        <div className="min-w-0 flex-1">
+          {currentCustomer ? (
+            <>
+              <p className="flex items-center gap-1.5 text-xs text-purple-700 dark:text-purple-300">
+                <span className="truncate">ลูกค้า {currentCustomer.memberId}</span>
+                <span className="rounded-md border bg-purple-700 px-1.5 py-0.5 text-[10px] text-white">
+                  {currentCustomer.level}
+                </span>
+              </p>
+              <p className="truncate text-sm font-semibold text-purple-900 dark:text-purple-100">
+                {currentCustomer.name}
+              </p>
+              {currentCustomer.customerPoint !== undefined && (
+                <p className="text-xs text-purple-600 dark:text-purple-400">
+                  {currentCustomer.customerPoint} คะแนน
+                </p>
+              )}
+            </>
+          ) : (
+            <>
+              <p className="text-xs text-gray-500 dark:text-gray-400">ลูกค้าปัจจุบัน</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">ลูกค้าทั่วไป</p>
+            </>
+          )}
+        </div>
+      </div>
 
       {/* Selling List */}
       <SellingList

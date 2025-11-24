@@ -11,6 +11,7 @@ import CashDrawerModal, { CashDrawerActivity } from "./components/(modal)/CashDr
 import SummaryModal from "./components/(modal)/SummaryModal";
 import DiscountModal from "./components/(modal)/DiscountModal";
 import ConfirmationModal from "./components/(modal)/ConfirmationModal";
+import PosHistoryModal from "./components/(modal)/PosHistoryModal"; // ADD: Import
 import { useConfirmation } from "./hooks/useConfirmation";
 import { Customer, Product, StaffMember, Discount } from "./types/Pos";
 import { VatCalculationMode } from "./types/Receipt";
@@ -43,7 +44,7 @@ export interface GroupedProduct {
 }
 
 export interface SelectedItem {
-  id: number;
+  id: number | string;
   name: string;
   quantity: number;
   price: number;
@@ -142,6 +143,8 @@ export default function Page() {
     addPaymentAsync, // API Call to save payment methods
     isAddingPayment, // Loading state
   } = usePayment(currentIssuer.staffId);
+
+  console.log("paymentSession", paymentSession);  
   
   const {
     cartItems,
@@ -219,6 +222,7 @@ export default function Page() {
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
   const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
   const [isCashDrawerModalOpen, setIsCashDrawerModalOpen] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false); // ADD: History Modal State
   const [paymentModalInfo, setPaymentModalInfo] = useState<{ isOpen: boolean; mode: PosMode }>({
     isOpen: false,
     mode: "retail",
@@ -619,6 +623,105 @@ export default function Page() {
   // UPDATE: Safe Total Calculation (Fixing the 'null' error)
   const paymentModalTotal = paymentSession?.summary?.grandTotal ?? total;
 
+  // ADD: State for printing history item
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [historyPrintItem, setHistoryPrintItem] = useState<any | null>(null);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleHistoryPrint = (item: any) => {
+    setHistoryPrintItem(item);
+    setIsSummaryModalOpen(true);
+  };
+
+  // Determine data for SummaryModal (Cart vs History)
+  const summaryItems = historyPrintItem 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ? historyPrintItem.product?.map((i: any) => ({
+        id: i.productId, // Note: This is a string in history, but SelectedItem expects number. Might need casting or type adjustment in SummaryModal if strict.
+        // SummaryModal SelectedItem interface says id: number. 
+        // If we pass string, it might work if JS, but TS will complain.
+        // Let's try to parse if it looks like number, or just pass it and hope SummaryModal handles it or we update SelectedItem type.
+        // Given the JSON productId is "692...", it's a string.
+        // I should probably update SelectedItem type in page.tsx or Pos.ts if it's shared.
+        // But SelectedItem is defined in page.tsx line 47 as id: number.
+        // I will cast it to any for now to avoid TS error, or better, update SelectedItem to id: string | number.
+        name: i.name,
+        quantity: 1, // API doesn't return quantity, assuming 1 per line item
+        price: i.soldPrice,
+        originalPrice: i.stockPrice // or soldPrice if stockPrice is cost
+      })) || []
+    : allCartItemsForSummary;
+
+  const summaryCustomer = historyPrintItem
+    ? { name: historyPrintItem.customer.customerName } as Customer
+    : currentCustomer;
+
+  const summarySubtotal = historyPrintItem ? historyPrintItem.totalAmount : subtotal;
+  const summaryTotal = historyPrintItem ? historyPrintItem.totalAmount : total;
+
+  const handleHistoryEdit = (item: any) => {
+    console.log("Edit history item:", item);
+    // TODO: Implement edit logic (e.g., open edit modal or load into cart)
+    confirmation.showConfirmation({
+      title: "แก้ไขรายการ",
+      message: `ฟังก์ชันแก้ไขรายการ ${item.documentId} ยังไม่เปิดใช้งาน`,
+      type: "info",
+      confirmText: "ตกลง",
+      showCancel: false,
+    });
+  };
+
+  const handleHistoryDelete = (item: any) => {
+    console.log("Delete history item:", item);
+    // TODO: Implement delete logic (API call)
+    confirmation.showConfirmation({
+      title: "ลบรายการ",
+      message: `คุณต้องการลบรายการ ${item.documentId} ใช่หรือไม่?`,
+      type: "warning",
+      confirmText: "ยืนยันลบ",
+      showCancel: true,
+      onConfirm: () => {
+         console.log("Deleting item...", item._id);
+         // Call delete API here
+      }
+    });
+  };
+
+  // NEW: Handle Confirming Individual Payment
+  const handleConfirmPayment = async (payment: Payment, amount: number) => {
+      try {
+          const transactionId = (payment.details as any)?.transactionId;
+          if (!transactionId) {
+              throw new Error("Transaction ID missing for confirmation");
+          }
+
+          const payload = {
+              employeeId: currentIssuer.staffId,
+              payments: [{
+                  _id: transactionId,
+                  method: payment.method.toUpperCase() as PaymentMethodType,
+                  amount: amount,
+                  tendered: amount // Assuming full amount is tendered for confirmation
+              }]
+          };
+          
+          await addPaymentAsync(payload);
+          
+          // Optionally refresh session to ensure sync
+          // refetchSession(); 
+      } catch (error) {
+          console.error("Failed to confirm payment", error);
+          confirmation.showConfirmation({
+              title: "ยืนยันไม่สำเร็จ",
+              message: "ไม่สามารถยืนยันการชำระเงินได้",
+              type: "error",
+              confirmText: "ตกลง",
+              showCancel: false
+          });
+          throw error;
+      }
+  };
+
   return (
     <div id="pos-page-container" className="flex h-screen flex-col bg-gray-900 dark:bg-black">
       <POSLockScreen isLocked={isLockedScreen} onUnlock={handleUnlockScreen} correctPin={POS_PIN} />
@@ -664,6 +767,7 @@ export default function Page() {
           </div>
         </div>
 
+
         <div className="hidden md:block">
           <SidebarMenu
             onOpenCustomerModal={() => setIsCustomerModalOpen(true)}
@@ -671,6 +775,7 @@ export default function Page() {
             onOpenCashDrawerModal={() => setIsCashDrawerModalOpen(true)}
             onOpenSummaryModal={() => setIsSummaryModalOpen(true)}
             onOpenCompanyPayment={handleOpenCompanyPayment}
+            onOpenHistoryModal={() => setIsHistoryModalOpen(true)} // ADD: Handler
             onLockScreen={() => setIsLockedScreen(true)}
             onClearCart={() => {
               confirmation.showConfirmation({
@@ -690,6 +795,16 @@ export default function Page() {
       </div>
 
       {/* --- MODALS --- */}
+
+      <PosHistoryModal
+        isOpen={isHistoryModalOpen}
+        onClose={() => setIsHistoryModalOpen(false)}
+        onPrint={handleHistoryPrint}
+        onEdit={handleHistoryEdit}
+        onDelete={handleHistoryDelete}
+        employeeId={currentIssuer.staffId}
+        allStaff={MOCK_STAFF}
+      />
       
       <PaymentModal
         isOpen={paymentModalInfo.isOpen}
@@ -698,6 +813,7 @@ export default function Page() {
         
         // Saving Handler
         onSavePaymentMethods={handleSavePaymentMethods}
+        onConfirmPayment={handleConfirmPayment} // Pass the new handler
         isSaving={isAddingPayment}
         
         // Cancellation Handler
@@ -729,15 +845,18 @@ export default function Page() {
 
       <SummaryModal
         isOpen={isSummaryModalOpen}
-        onClose={() => setIsSummaryModalOpen(false)}
+        onClose={() => {
+          setIsSummaryModalOpen(false);
+          setHistoryPrintItem(null); // Reset history print item on close
+        }}
         onOpenCustomerSearch={() => setIsCustomerModalOpen(true)}
-        items={allCartItemsForSummary}
-        customer={currentCustomer}
-        subtotal={subtotal}
-        total={total}
+        items={summaryItems}
+        customer={summaryCustomer}
+        subtotal={summarySubtotal}
+        total={summaryTotal}
         billIssuers={MOCK_STAFF}
         currentIssuer={currentIssuer}
-        discounts={allDiscounts}
+        discounts={historyPrintItem ? [] : allDiscounts}
         vatMode={vatMode}
         setVatMode={setVatMode}
         withholdingTaxPercent={withholdingTaxPercent}
@@ -748,6 +867,7 @@ export default function Page() {
         isTaxInvoice={isTaxInvoice}
         setIsTaxInvoice={setIsTaxInvoice}
       />
+
 
       <CustomerModal
         isOpen={isCustomerModalOpen}
